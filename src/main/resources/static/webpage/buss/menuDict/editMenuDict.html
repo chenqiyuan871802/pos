@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html >
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<style>
+	.layui-form-pane .layui-form-label{width: 120px;}
+	.layui-form-pane .layui-input-block{margin-left:120px;}
+</style>
+<body>
+<form class="layui-form layui-form-pane"     id="saveForm" lay-filter="saveForm">
+<input type="hidden" name="menuId"   />
+  <div class="layui-form-item">
+    <label class="layui-form-label">菜单索引编号</label>
+    <div class="layui-input-block">
+      <input type="text" name="menuIndexId" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">菜品名</label>
+    <div class="layui-input-block">
+      <input type="text" name="memuName" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">简称</label>
+    <div class="layui-input-block">
+      <input type="text" name="shortName" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">类目编号</label>
+    <div class="layui-input-block">
+      <input type="text" name="catalogId" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">图片名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="menuImage" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">介绍</label>
+    <div class="layui-input-block">
+      <input type="text" name="menuIntroduce" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">店铺编号</label>
+    <div class="layui-input-block">
+      <input type="text" name="shopId" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">创建人ID</label>
+    <div class="layui-input-block">
+      <input type="text" name="createBy" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">修改用户编号</label>
+    <div class="layui-input-block">
+      <input type="text" name="updateBy" autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form','webplus' ], function() {
+		var webplus=layui.webplus;
+		webplus.initForm('buss/menuDict/update','','','',function(){
+			// 根据id拿到最新数据
+			webplus.doEditAjax({
+				url:'buss/menuDict/edit',
+				params:{id:webplus.getUrlType().id},
+				callback:function(res){
+					if(webplus.isEmpty(res.data)) return false;
+					// 处理后的数据赋值
+					webplus.setFormData("saveForm",res.data);
+				}
+			});
+		});
+		
+	});
+	</script>
+</body>
+</html>

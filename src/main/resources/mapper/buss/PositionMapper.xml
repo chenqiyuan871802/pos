@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.PositionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.Position">
+        <id column="position_id" property="positionId" />
+        <result column="position_code" property="positionCode" />
+        <result column="position_name" property="positionName" />
+        <result column="parent_code" property="parentCode" />
+        <result column="position_type" property="positionType" />
+        <result column="kana" property="kana" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    position_id AS positionId,position_code AS positionCode,position_name AS positionName,parent_code AS parentCode,position_type AS positionType,kana AS kana
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.Position">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_position
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.Position" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_position
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.Position">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_position
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.Position" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_position
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_position
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="positionId != null ">
+             AND position_id = #{positionId}  <!-- 自增编号 -->
+		</if>
+        <if test="positionCode != null and positionCode != ''">
+             AND position_code = #{positionCode}  <!-- 代码 -->
+		</if>
+        <if test="positionName != null and positionName != ''">
+             AND position_name = #{positionName}  <!-- 名称 -->
+		</if>
+        <if test="parentCode != null and parentCode != ''">
+             AND parent_code = #{parentCode}  <!-- 上级代码 -->
+		</if>
+        <if test="positionType != null and positionType != ''">
+             AND position_type = #{positionType}  <!-- 类型1省2市3镇 -->
+		</if>
+        <if test="kana != null and kana != ''">
+             AND kana = #{kana}  <!-- 日文名称 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="positionCode != null and positionCode != ''">
+		      AND position_code LIKE '%${positionCode}%'  <!-- 代码 -->
+		</if>
+        <if test="positionName != null and positionName != ''">
+		      AND position_name LIKE '%${positionName}%'  <!-- 名称 -->
+		</if>
+        <if test="parentCode != null and parentCode != ''">
+		      AND parent_code LIKE '%${parentCode}%'  <!-- 上级代码 -->
+		</if>
+        <if test="positionType != null and positionType != ''">
+		      AND position_type LIKE '%${positionType}%'  <!-- 类型1省2市3镇 -->
+		</if>
+        <if test="kana != null and kana != ''">
+		      AND kana LIKE '%${kana}%'  <!-- 日文名称 -->
+		</if>
+    </sql>
+
+</mapper>

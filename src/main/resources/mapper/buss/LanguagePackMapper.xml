@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.LanguagePackMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.LanguagePack">
+        <id column="language_id" property="languageId" />
+        <result column="language_name" property="languageName" />
+        <result column="language_code" property="languageCode" />
+        <result column="language_value" property="languageValue" />
+        <result column="language_type" property="languageType" />
+        <result column="language_remark" property="languageRemark" />
+        <result column="status" property="status" />
+        <result column="edit_mode" property="editMode" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    language_id AS languageId,language_name AS languageName,language_code AS languageCode,language_value AS languageValue,language_type AS languageType,language_remark AS languageRemark,status AS status,edit_mode AS editMode,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.LanguagePack">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_language_pack
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.LanguagePack" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_language_pack
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.LanguagePack">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_language_pack
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.LanguagePack" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_language_pack
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_language_pack
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="languageId != null and languageId != ''">
+             AND language_id = #{languageId}  <!-- 语言编号 -->
+		</if>
+        <if test="languageName != null and languageName != ''">
+             AND language_name = #{languageName}  <!-- 语言名称 -->
+		</if>
+        <if test="languageCode != null and languageCode != ''">
+             AND language_code = #{languageCode}  <!-- 语言对照码 -->
+		</if>
+        <if test="languageValue != null and languageValue != ''">
+             AND language_value = #{languageValue}  <!--  -->
+		</if>
+        <if test="languageType != null and languageType != ''">
+             AND language_type = #{languageType}  <!-- 语言类型 -->
+		</if>
+        <if test="languageRemark != null and languageRemark != ''">
+             AND language_remark = #{languageRemark}  <!-- 备注 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 当前状态(0:停用;1:启用) -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+             AND edit_mode = #{editMode}  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建用户 -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="languageId != null and languageId != ''">
+		      AND language_id LIKE '%${languageId}%'  <!-- 语言编号 -->
+		</if>
+        <if test="languageName != null and languageName != ''">
+		      AND language_name LIKE '%${languageName}%'  <!-- 语言名称 -->
+		</if>
+        <if test="languageCode != null and languageCode != ''">
+		      AND language_code LIKE '%${languageCode}%'  <!-- 语言对照码 -->
+		</if>
+        <if test="languageValue != null and languageValue != ''">
+		      AND language_value LIKE '%${languageValue}%'  <!--  -->
+		</if>
+        <if test="languageType != null and languageType != ''">
+		      AND language_type LIKE '%${languageType}%'  <!-- 语言类型 -->
+		</if>
+        <if test="languageRemark != null and languageRemark != ''">
+		      AND language_remark LIKE '%${languageRemark}%'  <!-- 备注 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 当前状态(0:停用;1:启用) -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+		      AND edit_mode LIKE '%${editMode}%'  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建用户 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户 -->
+		</if>
+    </sql>
+
+</mapper>

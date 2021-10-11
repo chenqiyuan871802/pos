@@ -1,0 +1,134 @@
+#set($fileNames = "")
+#foreach($field in ${table.fields})
+#set($fileNames=$fileNames+${field.name}+" AS "+${field.propertyName}+",")
+#end
+#set($fileNames=$fileNames.substring(0,$fileNames.lastIndexOf(',')))
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+
+#if(${enableCache})
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+#end
+#if(${baseResultMap})
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+        <id column="${field.name}" property="${field.propertyName}" />
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+    <result column="${field.name}" property="${field.propertyName}" />
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+        <result column="${field.name}" property="${field.propertyName}" />
+#end
+#end
+    </resultMap>
+    
+#end
+#if(${baseColumnList})
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+#foreach($field in ${table.commonFields})
+        ${field.name},
+#end
+    ${fileNames}
+    </sql>
+
+#end
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="${package.Entity}.${entity}">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM ${table.name}
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="${package.Entity}.${entity}" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM ${table.name}
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="${package.Entity}.${entity}">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM ${table.name}
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="${package.Entity}.${entity}" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM ${table.name}
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM ${table.name}
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+#if(${baseColumnList})
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+#foreach($field in ${table.fields})
+#if(${field.columnType} == "STRING")
+        <if test="${field.propertyName} != null and ${field.propertyName} != ''">
+#else
+        <if test="${field.propertyName} != null ">
+#end
+             AND ${field.name} = #{${field.propertyName}}  <!-- ${field.comment} -->
+		</if>
+#end  
+    </sql>
+
+#end
+
+
+#if(${baseColumnList})
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+#foreach($field in ${table.fields})
+#if(${field.columnType} == "STRING")
+        <if test="${field.propertyName} != null and ${field.propertyName} != ''">
+		      AND ${field.name} LIKE '%${${field.propertyName}}%'  <!-- ${field.comment} -->
+		</if>
+#end
+#end 
+    </sql>
+
+#end
+</mapper>

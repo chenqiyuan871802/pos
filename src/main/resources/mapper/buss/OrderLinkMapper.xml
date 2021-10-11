@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.OrderLinkMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.OrderLink">
+        <id column="link_id" property="linkId" />
+        <result column="parent_order_no" property="parentOrderNo" />
+        <result column="child_order_no" property="childOrderNo" />
+        <result column="create_by" property="createBy" />
+        <result column="craete_time" property="craeteTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    link_id AS linkId,parent_order_no AS parentOrderNo,child_order_no AS childOrderNo,create_by AS createBy,craete_time AS craeteTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.OrderLink">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_link
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.OrderLink" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_link
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.OrderLink">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_link
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.OrderLink" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_link
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_order_link
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="linkId != null and linkId != ''">
+             AND link_id = #{linkId}  <!-- 主键编号 -->
+		</if>
+        <if test="parentOrderNo != null and parentOrderNo != ''">
+             AND parent_order_no = #{parentOrderNo}  <!-- 父订单号 -->
+		</if>
+        <if test="childOrderNo != null and childOrderNo != ''">
+             AND child_order_no = #{childOrderNo}  <!-- 子订单号 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人 -->
+		</if>
+        <if test="craeteTime != null ">
+             AND craete_time = #{craeteTime}  <!-- 创建时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="linkId != null and linkId != ''">
+		      AND link_id LIKE '%${linkId}%'  <!-- 主键编号 -->
+		</if>
+        <if test="parentOrderNo != null and parentOrderNo != ''">
+		      AND parent_order_no LIKE '%${parentOrderNo}%'  <!-- 父订单号 -->
+		</if>
+        <if test="childOrderNo != null and childOrderNo != ''">
+		      AND child_order_no LIKE '%${childOrderNo}%'  <!-- 子订单号 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人 -->
+		</if>
+    </sql>
+
+</mapper>

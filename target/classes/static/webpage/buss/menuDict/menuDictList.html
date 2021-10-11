@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<style>
+	.layui-form-label{width: 90px;}
+	.layui-input-block{margin-left: 110px;}
+</style>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">菜单索引编号</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="menuIndexId" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">菜品名</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="memuName" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">简称</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="shortName" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">类目编号</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="catalogId" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">图片名称</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="menuImage" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">介绍</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="menuIntroduce" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">店铺编号</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="shopId" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">创建人ID</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="createBy" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">修改用户编号</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="updateBy" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >查询</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+<div type="text/html" id="trTool" style="display:none">
+    <a  data-grant="buss:menuDict:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a  data-grant="buss:menuDict:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="buss:menuDict:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增</button>
+</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '序号'
+			}, {
+				field : 'menuId',
+				title : '编号',
+				hide : true 
+			},
+            {
+			 field : 'menuIndexId',
+			 title : '菜单索引编号',
+			 width:150
+			},
+            {
+			 field : 'memuName',
+			 title : '菜品名',
+			 width:150
+			},
+            {
+			 field : 'shortName',
+			 title : '简称',
+			 width:150
+			},
+            {
+			 field : 'catalogId',
+			 title : '类目编号',
+			 width:150
+			},
+            {
+			 field : 'menuImage',
+			 title : '图片名称',
+			 width:150
+			},
+            {
+			 field : 'menuIntroduce',
+			 title : '介绍',
+			 width:150
+			},
+            {
+			 field : 'shopId',
+			 title : '店铺编号',
+			 width:150
+			},
+            {
+			 field : 'createTime',
+			 title : '创建时间',
+			 width:150
+			},
+            {
+			 field : 'createBy',
+			 title : '创建人ID',
+			 width:150
+			},
+            {
+			 field : 'updateTime',
+			 title : '修改时间',
+			 width:150
+			},
+            {
+			 field : 'updateBy',
+			 title : '修改用户编号',
+			 width:150
+			},
+       {
+
+				title : '操作',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width :150
+			} ] ];
+		   webplus.init('buss/menuDict/list',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    switch(rowObj.event){
+			    	case 'edit':
+			    		webplus.openEditWindow('editMenuDict.html','编辑',rowObj,'menuId','','700','560');
+			       		
+			   			break;
+			    	case 'del':
+				    	
+				        webplus.removeRow('buss/menuDict/remove',rowObj,'menuId');
+			    		break;
+			    }
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addMenuDict.html','新增','700','560');
+			     	     break;
+			    }
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MemberAddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.MemberAddress">
+        <id column="address_id" property="addressId" />
+        <result column="member_id" property="memberId" />
+        <result column="province" property="province" />
+        <result column="city" property="city" />
+        <result column="town" property="town" />
+        <result column="detail_address" property="detailAddress" />
+        <result column="whether_remove" property="whetherRemove" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    address_id AS addressId,member_id AS memberId,province AS province,city AS city,town AS town,detail_address AS detailAddress,whether_remove AS whetherRemove,create_time AS createTime
+    </sql>
+    <!-- 通用查询结果列 -->
+    <sql id="Common_Column_List">
+    a.address_id AS addressId,a.member_id AS memberId,a.province AS province,a.city AS city,a.town AS town,a.detail_address AS detailAddress,a.whether_remove AS whetherRemove,a.create_time AS createTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.MemberAddress">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_address
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.MemberAddress" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_address
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.MemberAddress">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_address
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.MemberAddress" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_address
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_member_address
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="listMemberAddress" parameterType="Map" resultType="com.ims.buss.model.MemberAddress">
+		SELECT
+			<include refid="Common_Column_List" />,b.username,b.mobile	
+		FROM t_member_address a INNER JOIN t_member b ON a.member_id=b.member_id
+		<where>
+		      <if test="addressId != null and addressId != ''">
+             AND a.address_id = #{addressId}  <!-- 地址编号 -->
+		</if>
+        <if test="memberId != null and memberId != ''">
+             AND a.member_id = #{memberId}  <!-- 会员编号 -->
+		</if>
+        <if test="province != null and province != ''">
+             AND a.province = #{province}  <!-- 省编码 -->
+		</if>
+        <if test="city != null and city != ''">
+             AND a.city = #{city}  <!-- 市编码 -->
+		</if>
+        <if test="town != null and town != ''">
+             AND a.town = #{town}  <!-- 镇编码 -->
+		</if>
+        <if test="detailAddress != null and detailAddress != ''">
+             AND a.detail_address = #{detailAddress}  <!-- 详细地址 -->
+		</if>
+       
+     
+        <if test="mobile != null and mobile != ''">
+             AND b.mobile = #{mobile}  <!-- 是否删除 -->
+		</if>
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 查询单个会员地址 -->
+	<select id="selectMemberAddress" parameterType="String" resultType="com.ims.buss.model.MemberAddress">
+		SELECT
+			<include refid="Common_Column_List" />,b.username,b.mobile	
+		FROM t_member_address a INNER JOIN t_member b ON a.member_id=b.member_id WHERE address_id=#{addressId}
+		
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="addressId != null and addressId != ''">
+             AND address_id = #{addressId}  <!-- 地址编号 -->
+		</if>
+        <if test="memberId != null and memberId != ''">
+             AND Amember_id = #{memberId}  <!-- 会员编号 -->
+		</if>
+        <if test="province != null and province != ''">
+             AND province = #{province}  <!-- 省编码 -->
+		</if>
+        <if test="city != null and city != ''">
+             AND city = #{city}  <!-- 市编码 -->
+		</if>
+        <if test="town != null and town != ''">
+             AND town = #{town}  <!-- 镇编码 -->
+		</if>
+        <if test="detailAddress != null and detailAddress != ''">
+             AND detail_address = #{detailAddress}  <!-- 详细地址 -->
+		</if>
+        <if test="whetherRemove != null and whetherRemove != ''">
+             AND whether_remove = #{whetherRemove}  <!-- 是否删除 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="mobile != null and mobile != ''">
+             AND b.mobile = #{mobile}  <!-- 是否删除 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="addressId != null and addressId != ''">
+		      AND address_id LIKE '%${addressId}%'  <!-- 地址编号 -->
+		</if>
+        <if test="memberId != null and memberId != ''">
+		      AND member_id LIKE '%${memberId}%'  <!-- 会员编号 -->
+		</if>
+        <if test="province != null and province != ''">
+		      AND province LIKE '%${province}%'  <!-- 省编码 -->
+		</if>
+        <if test="city != null and city != ''">
+		      AND city LIKE '%${city}%'  <!-- 市编码 -->
+		</if>
+        <if test="town != null and town != ''">
+		      AND town LIKE '%${town}%'  <!-- 镇编码 -->
+		</if>
+        <if test="detailAddress != null and detailAddress != ''">
+		      AND detail_address LIKE '%${detailAddress}%'  <!-- 详细地址 -->
+		</if>
+        <if test="whetherRemove != null and whetherRemove != ''">
+		      AND whether_remove LIKE '%${whetherRemove}%'  <!-- 是否删除 -->
+		</if>
+		  <if test="mobile != null and mobile != ''">
+             AND mobile LIKE '%${mobile}%'  <!-- 是否删除 -->
+		</if>
+    </sql>
+
+</mapper>

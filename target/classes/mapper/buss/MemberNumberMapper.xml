@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MemberNumberMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.MemberNumber">
+        <id column="member_no" property="memberNo" />
+        <result column="status" property="status" />
+        <result column="use_time" property="useTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    member_no AS memberNo,status AS status,use_time AS useTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.MemberNumber">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_number
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.MemberNumber" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_number
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.MemberNumber">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_number
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.MemberNumber" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_number
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_member_number
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="memberNo != null and memberNo != ''">
+             AND member_no = #{memberNo}  <!-- 会员编号 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 状态0未占用1占用 -->
+		</if>
+        <if test="useTime != null ">
+             AND use_time = #{useTime}  <!-- 使用时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="memberNo != null and memberNo != ''">
+		      AND member_no LIKE '%${memberNo}%'  <!-- 会员编号 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 状态0未占用1占用 -->
+		</if>
+    </sql>
+
+</mapper>

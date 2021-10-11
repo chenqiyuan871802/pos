@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.CashboxRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.CashboxRecord">
+        <id column="record_id" property="recordId" />
+        <result column="shop_id" property="shopId" />
+        <result column="amount" property="amount" />
+        <result column="record_type" property="recordType" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    record_id AS recordId,shop_id AS shopId,amount AS amount,record_type AS recordType,create_time AS createTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.CashboxRecord">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_cashbox_record
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.CashboxRecord" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_cashbox_record
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.CashboxRecord">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_cashbox_record
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.CashboxRecord" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_cashbox_record
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_cashbox_record
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="recordId != null and recordId != ''">
+             AND record_id = #{recordId}  <!-- 记录编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="amount != null ">
+             AND amount = #{amount}  <!-- 金额 -->
+		</if>
+        <if test="recordType != null and recordType != ''">
+             AND record_type = #{recordType}  <!-- 记录编号0储备金1出金2入金 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="recordId != null and recordId != ''">
+		      AND record_id LIKE '%${recordId}%'  <!-- 记录编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="recordType != null and recordType != ''">
+		      AND record_type LIKE '%${recordType}%'  <!-- 记录编号0储备金1出金2入金 -->
+		</if>
+    </sql>
+
+</mapper>

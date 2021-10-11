@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MenuStepMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.MenuStep">
+        <id column="step_id" property="stepId" />
+        <result column="step_index_id" property="stepIndexId" />
+        <result column="menu_index_id" property="menuIndexId" />
+        <result column="shop_id" property="shopId" />
+        <result column="step_num" property="stepNum" />
+        <result column="step_name" property="stepName" />
+        <result column="choose_type" property="chooseType" />
+        <result column="max_choose" property="maxChoose" />
+        <result column="language_type" property="languageType" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    step_id AS stepId,step_index_id AS stepIndexId,menu_index_id AS menuIndexId,shop_id AS shopId,step_num AS stepNum,step_name AS stepName,choose_type AS chooseType,max_choose AS maxChoose,language_type AS languageType,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.MenuStep">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_step
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.MenuStep" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_step
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.MenuStep">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_step
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.MenuStep" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_step
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_menu_step
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="stepId != null and stepId != ''">
+             AND step_id = #{stepId}  <!-- 步骤编号 -->
+		</if>
+        <if test="stepIndexId != null and stepIndexId != ''">
+             AND step_index_id = #{stepIndexId}  <!-- 步骤索引编号 -->
+		</if>
+        <if test="menuIndexId != null and menuIndexId != ''">
+             AND menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!--  店铺编号 -->
+		</if>
+        <if test="stepNum != null and stepNum != ''">
+             AND step_num = #{stepNum}  <!-- 步骤编号 -->
+		</if>
+        <if test="stepName != null and stepName != ''">
+             AND step_name = #{stepName}  <!-- 名称 -->
+		</if>
+        <if test="chooseType != null and chooseType != ''">
+             AND choose_type = #{chooseType}  <!-- 选择类型1单选2多选 -->
+		</if>
+        <if test="maxChoose != null ">
+             AND max_choose = #{maxChoose}  <!-- 最多限制多少个，0不限制 -->
+		</if>
+        <if test="languageType != null and languageType != ''">
+             AND language_type = #{languageType}  <!-- 语言 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="stepId != null and stepId != ''">
+		      AND step_id LIKE '%${stepId}%'  <!-- 步骤编号 -->
+		</if>
+        <if test="stepIndexId != null and stepIndexId != ''">
+		      AND step_index_id LIKE '%${stepIndexId}%'  <!-- 步骤索引编号 -->
+		</if>
+        <if test="menuIndexId != null and menuIndexId != ''">
+		      AND menu_index_id LIKE '%${menuIndexId}%'  <!-- 菜单索引编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!--  店铺编号 -->
+		</if>
+        <if test="stepNum != null and stepNum != ''">
+		      AND step_num LIKE '%${stepNum}%'  <!-- 步骤编号 -->
+		</if>
+        <if test="stepName != null and stepName != ''">
+		      AND step_name LIKE '%${stepName}%'  <!-- 名称 -->
+		</if>
+        <if test="chooseType != null and chooseType != ''">
+		      AND choose_type LIKE '%${chooseType}%'  <!-- 选择类型1单选2多选 -->
+		</if>
+        <if test="languageType != null and languageType != ''">
+		      AND language_type LIKE '%${languageType}%'  <!-- 语言 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+
+</mapper>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>规格管理-添加</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<style>
+	html{
+		background-color:#fff;
+		height: 100%;
+		border-bottom: 2px solid #f2f2f2;
+		box-sizing: border-box;
+	}
+	.layui-card{box-shadow: 0 0 0 0 rgba(0,0,0,.05);}
+	.price-ipt{width:120px;}
+	.layui-form-item>.del-box{width: 80px;}
+</style>
+<body>
+<div class="layui-fluid">
+		<div class="layui-card">
+		<form class="layui-form layui-form-pane" id="saveForm" lay-filter="saveForm">
+			<!-- 步骤id -->
+			<input type="hidden" name="stepId" value="" id="stepId">
+			<!-- 步骤索引id -->
+			<input type="hidden" name="stepIndexId" value="" id="stepIndexId">
+			<!-- 规格id -->
+			<input type="hidden" name="specId" value="" id="specId">
+			<!-- 规格索引id -->
+			<input type="hidden" name="specIndexId" value="" id="specIndexId">
+			<!-- 语言类型 -->
+			<input type="hidden" name="languageType" value="1" id="languageType">
+			<!-- 语言类型当前选中的 -->
+			<input type="hidden" name="languageTypeChecked" value="1" id="languageTypeChecked">
+			<!-- 菜品id -->
+			<input type="hidden" name="menuIndexId" value="" id="menuIndexId">
+			<div class="layui-form-item" >
+			    <label class="layui-form-label" style="width: 150px;">言語</label>
+				<div class="layui-btn-group" id="languageDiv"  ></div>
+			</div>
+			<div class="layui-form-item">
+				
+				<label class="layui-form-label" style="width: 150px;">表示順番</label>
+				<div class="layui-input-inline" style="width: 210px;" >
+					<input type="text" 
+					name="stepNum" 
+					placeholder="表示順番を入力してください" 
+					lay-verify="required|integer|minInt:1|maxInt:10" 
+					autocomplete="off" class="layui-input">
+				</div>
+				<label class="layui-form-label" style="width: 150px;">オプション（大）</label>
+				<div class="layui-input-inline"  style="width: 210px;">
+					<input type="text" name="stepName" placeholder="オプション（大）を入力してください" lay-verify="required|max:50" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width: 150px;">種類</label>
+				<div class="layui-input-block" id="chooseTypeDiv">
+					<input type="radio" name="chooseType" value="1" title="一種" checked lay-filter="chooseType" >
+				    <input type="radio" name="chooseType" value="2" title="多種" lay-filter="chooseType">
+				</div>
+			</div>
+			<div class="layui-form-item" id="maxChooseTypeDiv" style="display:none">
+				
+				<label class="layui-form-label" style="width: 150px;">選択上限</label>
+				<div class="layui-input-inline"  style="width: 250px;">
+					<input type="radio" name="maxChooseType" value="1" title="無制限" checked lay-filter="maxChooseType" >
+				    <input type="radio" name="maxChooseType" value="2" title="制限設定" lay-filter="maxChooseType">
+				    
+				</div>
+			    <div class="layui-input-inline" id="maxChooseDiv" style="display:none">
+				<input type="text" id="maxChoose" name="maxChoose" placeholder="制限数を入力してください" value="0"  autocomplete="off" class="layui-input">
+				</div>
+				
+			</div>
+			<!-- 配菜box -->
+			<div class="cata-box" id="cata-box"></div>
+			<!-- 添加配菜 -->
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" id="add-cata">追加</button>
+				</div>
+			</div>
+			
+			<!-- 隐藏域 -->
+			<div class="layui-form-item" style="display:none;">
+			  <button class="layui-btn"  lay-submit="" lay-filter="saveSubmit">提交</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script>
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form','webplus', 'upload' ], function() {
+		var $ = layui.$, form = layui.form, webplus=layui.webplus;
+		var $stepId = $('#stepId'),//步骤id
+			$stepIndexId = $('#stepIndexId'),//步骤索引id
+			$specId = $('#specId'),//规格id
+			$specIndexId = $('#specIndexId'),//规格索引id
+			$menuIndexId = $('#menuIndexId'),//菜单索引id 
+			$languageType = $("#languageType"), //语言标签jquery对象
+			$languageTypeChecked = $("#languageTypeChecked"),
+			$cataBox = $("#cata-box");	// 规格box
+			$addCata = $("#add-cata"); //追加按钮
+		var urlData= webplus.getUrlType();
+		//设置菜单索引id 
+		$menuIndexId.val(urlData.menuIndexId);
+		// 初始化语言 	
+		webplus.doAjax('buss/menuCatalog/listLanguage','','','',3,function(data){
+			var htmlStr='';
+			for(var i=0;i<data.dataList.length;i++){
+				var dict=data.dataList[i];
+				if("1"==dict.itemCode){
+					htmlStr+='<button type="button" data-code="'+dict.itemCode+'" class="layui-btn">'+dict.itemName+'</button>';
+				}else{
+					htmlStr+='<button type="button" data-code="'+dict.itemCode+'" class="layui-btn layui-btn-primary">'+dict.itemName+'</button>';
+				}
+			}
+			$("#languageDiv").html(htmlStr);
+			// 切换语言 
+			$("#languageDiv>button").click(function(){
+				var _this = $(this);
+				var languageType = _this.data('code');
+				//如果stepIndexId为空,说明没有添加过日本语,禁用其他语言
+				if(webplus.isEmpty($stepIndexId.val())){
+					$("#languageDiv>button:gt(0)").prop("disabled",true).addClass("layui-btn-disabled");
+					return false;
+				}
+				//如果不是日本语则禁用添加规格按钮/禁用价格输入框
+
+				if(languageType == "1" ){
+					// 价格/序号/步骤名称/类型/启用
+					$(".specs-price,[name=stepNum],[name=chooseType],[name=maxChooseType],[name=maxChoose]").prop("disabled",false).removeClass("layui-btn-disabled");
+					// 添加按钮启用
+					$addCata.prop("disabled",false).removeClass("layui-btn-disabled");
+				}else{
+					// 价格/序号/步骤名称/类型/禁用
+					$(".specs-price,[name=stepNum],[name=chooseType],[name=maxChooseType],[name=maxChoose]").prop("disabled",true).addClass("layui-btn-disabled");
+					// 添加按钮禁用
+					$addCata.prop("disabled",true).addClass("layui-btn-disabled");
+				}
+				// 如果当前按钮被选中
+				if(_this.attr("class").indexOf('layui-btn-primary')<0) return false;
+				// 设置语言
+				$languageType.val(languageType);
+				$languageTypeChecked.val(languageType);
+				// 切换按钮样式
+				_this.removeClass('layui-btn-primary').siblings("button").attr('class','layui-btn layui-btn-primary');
+				// 切换语言请求数据---
+				ajaxResultData(languageType);
+			});
+		});
+		// 切换语言请求数据
+		function ajaxResultData(languageType){
+			var data = {
+				languageType:languageType,
+				stepIndexId:$stepIndexId.val()
+			};
+			webplus.doAjax('buss/menuDict/showStepSpec',data,'','',3,function(res){
+				var data = res.data;
+				
+				// 根据返回的值设置规格
+				if(webplus.isEmpty(res.dataList)){
+					$cataBox.empty();
+				}else{
+					setSpecData(res.dataList,languageType);
+				}
+				if(!webplus.isEmpty(data)){
+					delete data['createBy'];
+					delete data['createTime'];
+					delete data['shopId'];
+					delete data['updateBy'];
+					delete data['updateTime'];
+					delete data['stepIndexId'];
+					delete data['languageType'];
+					// 处理后的数据赋值
+				   webplus.setFormData("saveForm",data);
+				}
+				
+			});
+		}
+		
+		//根据数据加载配菜信息
+		function setSpecData(res,type){
+			var specHtml = "";
+			if(type == "1"){
+				for(var i=0;i<res.length;i++){
+					var data = res[i];
+					specHtml += '<div class="layui-form-item">'+
+								'<label class="layui-form-label" style="width: 150px;">オプション（小）</label>'+
+								'<div class="layui-input-inline" style="width: 210px;">'+
+									'<input type="text" value="'+data.specName+'" class="layui-input specs-name"/>'+
+								'</div>'+
+								'<label class="layui-form-label price-ipt" style="width: 150px;">価格</label>'+
+								'<div class="layui-input-inline" style="width: 210px;">'+
+									'<input type="text" value="'+data.specPrice+'" lay-verify="required|integer|minInt:0|maxInt:10000000" class="layui-input specs-price"/>'+
+								'</div>'+
+								'<p style="display:none;" data-specid="'+data.specId+'" data-specindexid="'+data.specIndexId+'"></p>'+
+								'<div class="layui-input-inline del-box">'+
+									'<span class="layui-btn layui-btn-danger del-cata"  data-id="'+data.specIndexId+'">削除</span>'+
+								'</div>'+
+							'</div>';
+				}
+			}else{
+				for(var i=0;i<res.length;i++){
+					var data = res[i];
+					specHtml += '<div class="layui-form-item">'+
+								'<label class="layui-form-label" style="width: 150px;">オプション（小）</label>'+
+								'<div class="layui-input-inline" style="width: 210px;">'+
+									'<input type="text" value="'+data.specName+'" class="layui-input specs-name"/>'+
+								'</div>'+
+								'<label class="layui-form-label price-ipt" style="width: 150px;">価格</label>'+
+								'<div class="layui-input-inline" style="width: 210px;">'+
+									'<input type="text" disabled value="'+data.specPrice+'" lay-verify="required|integer|minInt:0|maxInt:10000000" class="layui-input specs-price layui-btn-disabled"/>'+
+								'</div>'+
+								'<p style="display:none;" data-specid="'+data.specId+'" data-specindexid="'+data.specIndexId+'"></p>'+
+							'</div>';
+				}
+			}
+			$cataBox.html(specHtml);
+		}
+		//监控类型
+		 form.on('radio(chooseType)', function (data) {
+			 if ($('#chooseTypeDiv input[name="chooseType"]:checked ').val() == "1") {
+                $("#maxChooseTypeDiv").hide();
+                $("#maxChoose").val(0);
+                $("#maxChoose").attr("lay-verify","");
+             }else{
+            	  $("#maxChooseTypeDiv").show();
+            	 
+             }
+
+          });
+		//监控类型
+		 form.on('radio(maxChooseType)', function (data) {
+			 if ($('#maxChooseTypeDiv input[name="maxChooseType"]:checked ').val() == "1") {
+                $("#maxChooseDiv").hide();
+                $("#maxChoose").val(0)
+                $("#maxChoose").attr("lay-verify","");
+             }else{
+            	  $("#maxChoose").val(1)
+            	  $("#maxChoose").attr("lay-verify","required|integer|minInt:1|maxInt:20")
+            	  $("#maxChooseDiv").show();
+            	  
+            	 
+             }
+
+          });
+      
+		// 添加配菜
+		$addCata.click(function(){
+			var cataHtml = '<div class="layui-form-item">'+
+								'<label class="layui-form-label" style="width: 150px;">オプション（小）</label>'+
+								'<div class="layui-input-inline" style="width: 210px;">'+
+									'<input type="text" class="layui-input specs-name"/>'+
+								'</div>'+
+								'<label class="layui-form-label price-ipt" style="width: 150px;">価格</label>'+
+								'<div class="layui-input-inline" style="width: 210px;">'+
+									'<input type="text" lay-verify="required|integer|minInt:0|maxInt:10000000" class="layui-input specs-price"/>'+
+								'</div>'+
+								'<div class="layui-input-inline del-box">'+
+									'<span class="layui-btn layui-btn-danger del-cata">削除</span>'+
+								'</div>'+
+							'</div>';
+			$cataBox.append(cataHtml);
+			return false;
+		});
+		// 删除配菜
+		$cataBox.on("click",".layui-form-item .del-cata",function(e){
+			var _this = this;
+			specIndexId = $(_this).data("id");
+			// 如果步骤规格为空,说明没有提交过,直接删除
+			if(webplus.isEmpty(specIndexId)){
+				$(_this).parents(".layui-form-item").remove();
+			}else{
+				var obj = {
+					data:{
+						specIndexId:specIndexId
+					}
+				}
+				webplus.removeRow('buss/menuDict/removeStepSpec',obj,'specIndexId','specIndexId','','削除しますか',function(){
+					$(_this).parents(".layui-form-item").remove();
+				});
+			}
+		});
+		// 获取配菜信息
+		function getSpecsData(){
+			var specsArr = [];
+			// 遍历添加的配菜
+			$cataBox.find(".layui-form-item").each(function(){
+				var _this = $(this);
+				specsArr.push({
+					specId:_this.find("p").data('specid'),
+					specIndexId:_this.find("p").data('specindexid'),
+					specName: _this.find(".specs-name").val(),
+					specPrice: _this.find(".specs-price").val()
+				});
+			});
+			return specsArr;
+		}
+		// +-----------------------------
+		// 提交表单
+		// +-----------------------------
+		form.on('submit(saveSubmit)', function(data) {
+			var paramData = data.field;
+			// 获取规格数据
+			var stepSpecArray=getSpecsData();
+		
+			if(stepSpecArray.length==0){
+				webplus.alertError("オプション（小）が必須です");
+				return false;
+			}
+			paramData.stepSpecs = JSON.stringify(stepSpecArray)
+			// 删除规格ID参数
+			delete paramData['specId'];
+			delete paramData['specIndexId'];
+			webplus.doAjax('buss/menuDict/saveMenuStep', paramData,'', '', '1',function(res){
+				if(res.appCode == 1){
+					var data = res.data;
+					// 如果是日本语
+					if(paramData.languageType == "1" && $languageTypeChecked.val()== 1 ){
+						parent.$("body").find('[lay-submit]').click();
+						// 日语更新menuIndexId
+						$menuIndexId.val(data.menuIndexId);
+						// 更新步骤索引ID信息,用于切换其他语言的判断
+						$stepIndexId.val(data.stepIndexId);
+						
+						// 重置步骤规格(因为保存后步骤规格有了specIndexId，要做删除步骤规格操作，所以要重置)
+						setSpecData(res.dataList,paramData.languageType);
+						$("#languageDiv>button:gt(0)").prop("disabled",false).removeClass("layui-btn-disabled");
+					}
+					$stepId.val(data.stepId);
+				}else{
+					webplus.alertError("Error、タイムオーバー");
+				}
+			});
+			return false;
+		});
+	});
+</script>
+</body>
+</html>

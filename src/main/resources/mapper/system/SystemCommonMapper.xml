@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.SystemCommonMapper">
+   
+	
+	<!-- 查询授权菜单-->
+	<select id="listRoleMenu" parameterType="Map" resultMap="com.ims.system.mapper.MenuMapper.BaseResultMap">
+	  SELECT  a.* FROM sys_menu a 
+	  <where>
+	     <if test="userId != null and userId != ''">
+           AND EXISTS (SELECT 1 FROM sys_role_user b INNER JOIN  sys_role_menu c ON b.role_id=c.role_id WHERE a.menu_id=c.menu_id AND b.user_id=#{userId})
+		</if>
+	   <if test="status != null and status != ''">
+             AND a.status = #{status}  <!-- 当前状态(0:停用;1:启用) -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+             AND a.edit_mode = #{editMode}  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+		
+		  <if test="cascadeId != null and cascadeId != ''">
+		      AND cascade_id LIKE '%${cascadeId}%'  <!-- 分类科目语义ID -->
+		</if>
+        <if test="menuName != null and menuName != ''">
+		      AND menu_name LIKE '%${menuName}%'  <!-- 菜单名称 -->
+		</if>
+        <if test="menuCode != null and menuCode != ''">
+		      AND menu_code LIKE '%${menuCode}%'  <!-- 菜单编码 -->
+		</if>
+	  </where>
+	    ORDER BY LENGTH(a.cascade_id) ASC,a.sort_no ASC
+	</select>
+	
+	<!-- 查询授权菜单编号-->
+	<select id="listRoleMenuId" parameterType="String" resultType="String">
+	  SELECT DISTINCT c.menu_id  FROM sys_role_user b INNER JOIN  sys_role_menu c ON b.role_id=c.role_id WHERE   b.user_id=#{userId}
+	</select>
+</mapper>

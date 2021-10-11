@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html >
+<head >
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+   <link rel="stylesheet"    href="../../../layuiadmin/style/font-awesome/css/font-awesome.min.css" media="all"/>
+<link rel="stylesheet"    href="../../../lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css" media="all">
+</head>
+<body>
+	<div class="layui-fluid">
+<div class="layui-row tree-item" >
+<div class="childLeft-item">
+			<div class="layui-card" style="overflow:auto">
+	          <div class="layui-card-header">菜单树</div>
+	          <div class="layui-card-body">
+	          	<ul id="ztree" class="ztree"></ul>
+	          </div>
+	        </div>
+		</div>
+		
+		<div class="childRight-item">
+			<div class="layui-card">
+				<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">菜单名称</label>
+							<div class="layui-input-block">
+							<input type="hidden" name="cascadeId" id="cascadeId"/>
+								<input type="text" name="menuName" id="menuName" placeholder="请输入"
+									autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<button class="layui-btn layuiadmin-btn-sm" lay-submit
+								lay-filter="searchSubmit" >查询</button>
+							
+						</div>
+	
+					</div>
+				</div>
+				<div class="layui-card-body">
+					<table id="dataList" lay-filter="dataList" ></table>
+					
+		
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div type="text/html" id="trTool" style="display:none">
+	<a   data-grant="system:menu:add" class="layui-btn layui-btn-xs" lay-event="add"><i class="layui-icon">&#xe654;</i>新增子菜单</a>
+    <a   data-grant="system:menu:edit"  class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a   data-grant="system:menu:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+<div type="text/html" id="toolbar" style="display:none" >
+  <div class="layui-btn-container">
+    <button data-grant="system:menu:add"  class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增父级菜单</button>
+    <button data-grant="system:menu:refreshCache" class="layui-btn layui-btn-danger layui-btn-sm" lay-event="refreshCache"> <i class="layui-icon">&#xe669;</i>刷新缓存</button>
+  </div>
+</div>
+<script type="text/html" id="switchTpl">
+  <input type="checkbox" name="isAutoExpand" value="{{d.menuId}}" lay-skin="switch" lay-text="是|否" lay-filter="isAutoExpand" {{ d.isAutoExpand == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="iconTpl">
+  <li><span class="{{d.iconName}}" aria-hidden="true"></span></li></ul>
+</script>
+<script type="text/html" id="statusTpl">
+  
+  <input type="checkbox" name="status"  value="{{d.menuId}}" title="启用" lay-filter="status" {{ d.status == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="editModeTpl">
+  <input type="checkbox" name="editMode" value="{{d.menuId}}"  lay-skin="switch" lay-text="可编辑|只读" lay-filter="editMode" {{ d.editMode == '1' ? 'checked' : '' }}>
+</script>
+   <script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+   <script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.exedit.js"></script>
+	<script>
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus' //主入口模块
+	}).use([ 'table', 'form','webplus' ], function() {
+		var $ = layui.$, 
+		form = layui.form, 
+		table = layui.table,
+		webplus=layui.webplus;
+		var reloadFlag=true;
+		var setting = {
+			check: {
+				enable: false
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {
+				onClick: zTreeOnClick//节点点击事件
+			}
+		};
+		function zTreeOnClick(event, treeId, treeNode) {
+		    var cascadeId="";
+		    if(treeNode.id!='0'){
+		    	//获取查询对象数据
+		    	cascadeId=treeNode.cascadeId;
+		    }
+		    $("#cascadeId").val(cascadeId)
+		    $("#menuName").val("")
+		    reloadFlag=false;
+   			//执行重载
+   			webplus.reloadTable();
+		    
+		};
+		var cols=[ [ {
+			type : 'numbers',
+			title : '序号',
+			width : 60
+		},{
+			field : 'iconName',
+			title : '图标',
+			templet: '#iconTpl',
+			align:'center',
+			unresize: true,
+			width : 60
+		}, {
+			field : 'menuName',
+			title : '菜单名称',
+			width : 140
+		},{
+			field : 'menuCode',
+			title : '菜单编码',
+			minWidth : 120
+		}, {
+			field : 'url',
+			title : 'url地址',
+			minWidth : 180
+		},{
+			field : 'moduleType_dict',
+			title : '模块类型',
+			width : 100
+		},{
+			field : 'menuType_dict',
+			title : '菜单类型',
+			width : 100
+		}, {
+			field : 'status_dict',
+			title : '当前状态',
+			templet: '#statusTpl', 
+			unresize: true,
+			width : 110
+		}, {
+			field : 'editMode',
+			title : '编辑模式',
+			hide : true 
+		}, {
+			field : 'editMode_dict',
+			title : '编辑模式',
+			templet: '#editModeTpl', 
+			unresize: true,
+			width : 110,
+		}, {
+			field : 'isAutoExpand_dict',
+			title : '自动展开',
+			width : 90,
+			templet: '#switchTpl', 
+			unresize: true
+		},{
+			field : 'sortNo',
+			title : '排序号',
+			width : 80,
+		}, {
+			title : '操作',
+			toolbar : '#trTool',
+			width : 250,
+			fixed: 'right'
+		} ] ];
+		  webplus.init('system/menu/list',cols,'','','','','','','full-67',function(){
+			   if(reloadFlag){
+				   webplus.initTree("system/menu/loadMenuTree",setting);
+			   }
+			   reloadFlag=true;
+		   });
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(obj){
+			    var data = obj.data;
+			    //判断操作的按钮类别  需要在标签上配置  lay-event='判断的类型值'
+			    switch(obj.event){
+			    	case 'add':
+			    		  var moduleType=data.moduleType;
+			    	  	  if(moduleType=='3'){
+			    		    webplus.alertError("按钮不可以再新增子菜单");
+			    		    return false;
+			    	 	  }
+				          //打开新增弹出框
+				         var moduleType=data.moduleType;
+				         var menuType=data.menuType;
+				         webplus.openWindow('addMenu.html?id='+data.menuId+'&moduleType='+moduleType+'&menuType='+menuType,'新增子菜单','700','510');
+		     	     break;
+			    	case 'edit':
+			    		//打开编辑弹出框
+			       		webplus.openEditWindow('editMenu.html?moduleType='+data.moduleType,'编辑菜单',obj,'menuId','','700','510');
+			   			break;
+			    	case 'del':
+				    	var editMode=data.editMode;
+			    	  	if(editMode=='0'){
+			    		  compoment.alertError("当前数据的模式为只读，不能进行删除");
+			    		  return false;
+			    	 	}
+			    	  	webplus.removeRow('system/menu/remove',obj,'menuId');
+			    		break;
+			    }
+			  });
+			 
+			 
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开新增弹出框
+				         webplus.openWindow('addMenu.html?id=0&moduleType=1','新增父菜单','700','510');
+			     	     break;
+			      	case 'refreshCache':
+			      		webplus.doAjax('system/menu/refreshCache',{},'你确定刷新菜单缓存吗？')
+				        break;
+			    }
+			  });
+			  var rowObj;
+			     //行单击事件
+				  table.on('row(dataList)', function(obj){
+					  obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+					     rowObj=obj;
+				     });
+			      //监听启用操作
+				  form.on('checkbox(status)', function(obj){
+					  
+					  if(webplus.checkFormEditMode(obj)){
+						  var status="0";
+				    	   if(obj.elem.checked){
+				    		   status="1";
+				    	   }
+				    	   
+				    	   var params={};
+				    	   params.menuId=obj.value;
+				    	   params.status=status;
+				    	   webplus.doAjax("system/menu/update",params,"","","0");
+					  }
+					 
+				  });
+				 
+				  //监听启用操作
+				  form.on('switch(editMode)', function(obj){
+					  if(webplus.checkFormEditMode(obj)){
+						  var editMode="0";
+				    	   if(obj.elem.checked){
+				    		   editMode="1";
+				    	   }
+				    	   
+				    	   var params={};
+				    	   params.menuId=obj.value;
+				    	   params.editMode=editMode;
+				    	   webplus.doAjax("system/menu/update",params,"","","3",function(data){
+				    		   rowObj.update({editMode:editMode});
+				    	   }); 
+					  }
+						 
+				  });
+			  form.on('switch(isAutoExpand)', function(obj){
+		           var isAutoExpand="0";
+		    	   if(obj.elem.checked){
+		    		   isAutoExpand="1";
+		    	   }
+		    	   var menuId=obj.value;
+		    	   var params={};
+		    	   params.isAutoExpand=isAutoExpand;
+		    	   params.menuId=menuId;
+		    	   webplus.doAjax("system/menu/update",params,"","0","",function(data){
+		    		   webplus.initTree("system/menu/loadMenuTree",setting);
+		    	   });
+			 });
+		
+		});
+		
+		
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="41px" height="41px" viewBox="0 0 41 41" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>形状结合 2</title>
+    <desc>Created with Sketch.</desc>
+    <g id="整合" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页" transform="translate(-30.000000, -64.000000)">
+            <g id="navigation" transform="translate(0.000000, 40.000000)">
+                <g id="形状结合-2" transform="translate(30.000000, 24.000000)">
+                    <rect id="矩形" fill="#D8D8D8" opacity="0" x="0" y="0" width="41" height="41"></rect>
+                    <path d="M37.5,33 C38.8807119,33 40,34.1192881 40,35.5 C40,36.8807119 38.8807119,38 37.5,38 L2.5,38 C1.11928813,38 1.69088438e-16,36.8807119 0,35.5 C-1.69088438e-16,34.1192881 1.11928813,33 2.5,33 L37.5,33 Z M37.5,18 C38.8807119,18 40,19.1192881 40,20.5 C40,21.8807119 38.8807119,23 37.5,23 L2.5,23 C1.11928813,23 1.69088438e-16,21.8807119 0,20.5 C-1.69088438e-16,19.1192881 1.11928813,18 2.5,18 L37.5,18 Z M37.5,3 C38.8807119,3 40,4.11928813 40,5.5 C40,6.88071187 38.8807119,8 37.5,8 L2.5,8 C1.11928813,8 1.69088438e-16,6.88071187 0,5.5 C-1.69088438e-16,4.11928813 1.11928813,3 2.5,3 L37.5,3 Z" id="形状结合" fill="#FFFFFF"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

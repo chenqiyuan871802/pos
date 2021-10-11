@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all" />
+	<link rel="stylesheet" href="../../../css/common/loader.css" media="all" />
+	<link rel="stylesheet" href="../../../css/common/openshow.css" media="all" />
+</head>
+<style>
+	.layui-card-body>.layui-form{padding:15px;}
+	.addPto{width: 140px;height: 140px;border:2px solid #aaa;padding:6px;box-sizing:border-box;}
+	.addPto:hover{border-color:#009688;cursor: pointer;}
+	/* 上传照片样式 */
+	.img-box>div{display: inline-block;position: relative;}
+	.img-box>div:hover{cursor: pointer;}
+	.img-box>div:hover span{display: inline-block;}
+	.img-box>div>span{
+		display: none;
+		width: 140px;
+		height: 140px;
+		line-height: 140px;
+		text-align: center;
+		position: absolute;
+		bottom:10px;
+		left: 0;
+		background:rgba(255,255,255,.8);
+	}
+	.img-box>div>span>i{color:#ff5722;font-size:30px;}
+	.img-box>div>img{width: 140px;height: 140px;margin:10px 10px 10px 0;}
+	.img-box button{height: 140px;width: 140px;}
+</style>
+<body>
+	<form class="layui-form layui-form-pane" action="" id="saveForm">
+		<div class="layui-form-item">
+			<label class="layui-form-label">语言</label>
+			<div class="layui-input-block" id="languageDiv">
+
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">菜品名</label>
+			<div class="layui-input-block">
+				<input name="foodName" class="layui-input" lay-verify="required|max:50" autocomplete="off" />
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">价格</label>
+			<div class="layui-input-block">
+				<input name="price" class="layui-input" />
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">规格</label>
+			<div class="layui-input-block">
+				<p class="layui-btn layui-btn-sm" id="addFood">追加</p>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label"></label>
+			<!-- 表格数据 -->
+			<script type="text/html" id="barDemo">
+				<a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+			  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+			</script>
+			<div class="layui-input-block">
+				<!-- 转换表格 -->
+				<table lay-filter="tableList" id="tableList">
+					<thead>
+						<tr>
+							<th lay-data="{field:'username'}">名称</th>
+							<th lay-data="{field:'price'}">金额</th>
+							<th lay-data="{toolbar: '#barDemo', width: 180}">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>辛味增1</td>
+							<td>100</td>
+						</tr>
+						<tr>
+							<td>贤心2</td>
+							<td>2016-11-29</td>
+						</tr>
+						<tr>
+							<td>贤心3</td>
+							<td>2016-11-30</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">图片</label>
+			<div class="layui-input-block img-box">
+				<button type="button" class="addPto" id="addPto"><img src="../../../layuiadmin/images/add.png" alt=""></button>
+				<!-- 隐藏图片信息传值输入框 -->
+				<input type="hidden" id="pictureUrl" name="pictureUrl" />
+			</div>
+		</div>
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">介绍</label>
+			<div class="layui-input-block">
+				<textarea placeholder="请输入内容" name="content" lay-verify="required|max:200" autocomplete="off" class="layui-textarea"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit="" lay-filter="saveSubmit">更新</button>
+				<p id="reset" class="layui-btn layui-btn-primary">取消</p>
+			</div>
+		</div>
+	</form>
+	<script src="../../../layuiadmin/layui/layui.js"></script>
+	<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js"></script>
+	<script>
+		layui.config({
+			base: '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus: 'lib/webplus', //主入口模块
+		}).use(['form', 'webplus'], function() {
+			var $ = layui.$,
+				form = layui.form,
+				webplus = layui.webplus;
+			// +-----------------------------
+			// 初始请求语音
+			// +-----------------------------
+			webplus.getDict('language_type', '', function(data) {
+				var htmlStr = '';
+				for (var i = 0; i < data.length; i++) {
+					var dict = data[i];
+					if ("1" == dict.itemCode) {
+						htmlStr += '<input type="checkbox" name="languageType" checked value="' + dict.itemCode + '" title="' + dict
+							.itemName + '">'
+					} else {
+						htmlStr += '<input type="checkbox" name="languageType" value="' + dict.itemCode + '" title="' + dict.itemName +
+							'">'
+					}
+
+
+				}
+				$("#languageDiv").html(htmlStr);
+				form.render('checkbox');
+			});
+			
+			// +-----------------------------
+			// 追加规格
+			// +-----------------------------
+			$("#addFood").click(function(){
+				layer.msg('追加');
+			});
+			// +-----------------------------
+			// 转换表格
+			// +-----------------------------
+			table.init('tableList')
+			// +-----------------------------
+			// 监听表格行按钮事件
+			// +-----------------------------
+			table.on('tool(tableList)', function(obj){
+			  var data = obj.data; //获得当前行数据
+				var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值
+				switch(layEvent){
+					case 'edit':
+						layer.msg('编辑');
+						break;
+					case 'del':
+						layer.confirm('真的删除行么', function(index){
+							layer.close(index);
+						});
+						break;
+				}
+			});
+			// +-----------------------------
+			// 文件上传
+			// +-----------------------------
+			var imgUrl,uploadBtn = "#addPto",$uploadBtn = $(uploadBtn);
+			var uploadInst = upload.render({
+				elem: uploadBtn,
+				exts:'jpg|png|jpeg',
+				url: 'dfg',
+				before: function(obj){
+					console.log("sdf");
+			
+			    //预读本地文件示例，不支持ie8
+			    obj.preview(function(index, file, result){
+			      var str = '<div>' +
+			      		'<img src="' + result + '" alt="">' +
+			      		'<span class="' + index + '" ><i class="layui-icon">&#xe640;</i></span>' +
+			      		'</div>';
+			      $uploadBtn.before(str);
+						// $uploadBtn.prop("disabled",true).removeClass("layui-btn-disabled");
+			    });
+			  },
+			  done: function(res){
+			    //如果上传成功
+			    if(res.code == '100'){
+					layer.msg('上传成功');
+					$uploadBtn.prop("disabled",false).removeClass("layui-btn-disabled");
+					var pictureUrl = $("#pictureUrl").val();
+					// 将返回的文件名保存到隐藏input,用于提交
+					pictureUrl = pictureUrl.split("").push(res.fullFileName).join();
+					$("#pictureUrl").val(pictureUrl);
+			    }else{
+						//上传失败
+						
+				}
+			  },
+			  error: function(){
+			    layer.msg('网络发生错误！');
+			  }
+			});
+			// +-----------------------------
+			// 删除文件
+			// +-----------------------------
+			
+			
+			// +-----------------------------
+			// 提交表格
+			// +-----------------------------
+			form.on('submit(saveSubmit)', function(data) {
+				var checkResult = false;
+				var arr = new Array();
+				$("input:checkbox[name='languageType']:checked").each(function(i) {
+					var checkVal = $(this).val()
+					arr[i] = checkVal;
+					if ("1" == checkVal) {
+						checkResult = true;
+					}
+				});
+				if (arr.length == 0) {
+					webplus.alertError("请选择语言");
+					return false;
+				}
+				if (!checkResult) {
+					webplus.alertError("日本语为必须选项");
+					return false;
+				}
+
+				var paramData = data.field;
+				paramData.language = arr.join(",");
+				webplus.doAjax('buss/shop/save', paramData,
+					'', '', '1')
+				return false;
+			});
+
+		});
+	</script>
+</body>
+</html>

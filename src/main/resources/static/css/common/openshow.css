@@ -1,0 +1,41 @@
+body{height:auto;background:#fff;padding:20px 20px 3px;}
+
+/* 表格 */
+.layui-input-block input,
+.layui-input-inline input{height:38px;}
+
+/*必填图标*/
+.layui-red-star{position:relative;top:4px;color:#f20;}
+
+/* label宽度  input宽度*/
+.label-w7 .layui-form-item .layui-form-label{
+	width:150px;
+}
+.label-w7 .layui-form-item .layui-input-block{
+	margin-left:150px;
+}
+.label-w7 .layui-form-item .layui-input-inline{
+	width:150px;
+}
+
+.label-w6 .layui-form-item .layui-form-label{
+	width:140px;
+}
+.label-w6 .layui-form-item .layui-input-block{
+	margin-left:140px;
+}
+.label-w6 .layui-form-item .layui-input-inline{
+	width:160px;
+}
+
+.label-w5 .layui-form-item .layui-form-label{
+	width:130px;
+}
+.label-w5 .layui-form-item .layui-input-block{
+	margin-left:130px;
+}
+.label-w6 .layui-form-item .layui-input-inline{
+	width:170px;
+}
+/*备注  */
+.layui-form-pane .layui-textarea-label{height:100px;line-height:80px;}

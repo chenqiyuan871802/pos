@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MenuDictMapper">
+
+    
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.MenuDict">
+        <id column="menu_id" property="menuId" />
+        <result column="menu_index_id" property="menuIndexId" />
+        <result column="menu_name" property="menuName" />
+        <result column="menu_price" property="menuPrice" />
+        <result column="short_name" property="shortName" />
+        <result column="catalog_index_id" property="catalogIndexId" />
+        <result column="menu_image" property="menuImage" />
+        <result column="menu_introduce" property="menuIntroduce" />
+        <result column="shop_id" property="shopId" />
+        <result column="language_type" property="languageType" />
+        <result column="menu_type" property="menuType" />
+        <result column="meal_type" property="mealType" />
+        <result column="menu_num" property="menuNum" />
+        <result column="sort_no" property="sortNo" />
+        <result column="whether_spec" property="whetherSpec" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="menu_status" property="menuStatus" />
+        <result column="cost_price" property="costPrice" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    menu_id AS menuId,menu_index_id AS menuIndexId,menu_name AS menuName,menu_price AS menuPrice,short_name AS shortName,catalog_index_id AS catalogIndexId,menu_image AS menuImage,menu_introduce AS menuIntroduce,shop_id AS shopId,language_type AS languageType,menu_type AS menuType,meal_type AS mealType,menu_num AS menuNum,sort_no AS sortNo,whether_spec AS whetherSpec,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy,menu_status AS menuStatus,cost_price AS costPrice
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.MenuDict">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_dict
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.MenuDict" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_dict
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.MenuDict">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_dict
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.MenuDict" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_dict
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_menu_dict
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	<!-- 向上更新排序 -->
+	 <update id="updateSortUp" parameterType="Map">
+      UPDATE t_menu_dict set sort_no=sort_no-1,update_time=NOW()
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoGt != null ">
+              AND sort_no &gt;#{sortNoGt}
+		</if>
+		 <if test="menuIndexId != null and menuIndexId != ''">
+             AND menu_index_id != #{menuIndexId}  <!-- 类目索引编号 -->
+		</if>
+		 <if test="catalogIndexId != null and catalogIndexId != ''">
+             AND catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+		</if>
+      </where>
+       
+     </update>
+	
+	 <!-- 向下更新排序 -->
+	 <update id="updateSortDown" parameterType="String">
+      UPDATE t_menu_dict set sort_no=sort_no+1,update_time=NOW()
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+		<if test="menuIndexId != null and menuIndexId != ''">
+             AND menu_index_id != #{menuIndexId}  <!-- 类目索引编号 -->
+		</if>
+		 <if test="catalogIndexId != null and catalogIndexId != ''">
+             AND catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+		</if>
+        <if test="sortNoLt != null ">
+              AND sort_no &lt;#{sortNoLt}
+		</if>
+		
+      </where>
+     </update>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="menuId != null and menuId != ''">
+             AND menu_id = #{menuId}  <!--  -->
+		</if>
+        <if test="menuIndexId != null and menuIndexId != ''">
+             AND menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+		</if>
+        <if test="menuName != null and menuName != ''">
+             AND menu_name = #{menuName}  <!-- 菜品名 -->
+		</if>
+        <if test="shortName != null and shortName != ''">
+             AND short_name = #{shortName}  <!-- 简称 -->
+		</if>
+		 <if test="menuPrice != null ">
+             AND menu_price = #{menuPrice}  <!-- 菜单价格 -->
+		</if>
+        <if test="catalogIndexId != null and catalogIndexId != ''">
+             AND catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+		</if>
+        <if test="menuImage != null and menuImage != ''">
+             AND menu_image = #{menuImage}  <!-- 图片名称 -->
+		</if>
+        <if test="menuIntroduce != null and menuIntroduce != ''">
+             AND menu_introduce = #{menuIntroduce}  <!-- 介绍 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="languageType != null and languageType != ''">
+             AND language_type = #{languageType}  <!-- 语言 -->
+		</if>
+		  <if test="menuType != null and menuType != ''">
+             AND menu_type = #{menuType}  <!-- 菜品类型0通用1常规2自助餐 -->
+		</if>
+        <if test="mealType != null and mealType != ''">
+             AND meal_type = #{mealType}  <!-- 菜品所属1通用2中餐3晚餐 -->
+		</if>
+		<if test="menuTypeList != null and menuTypeList.size()>0">
+             AND menu_type IN
+         <foreach item="menuTypeItem" index="index" collection="menuTypeList" separator="," open="(" close=")">
+		 #{menuTypeItem}
+	    </foreach>
+		</if>
+		 <if test="mealTypeList != null and mealTypeList.size()>0">
+             AND meal_type IN
+         <foreach item="mealTypeItem" index="index" collection="mealTypeList" separator="," open="(" close=")">
+		 #{mealTypeItem}
+	    </foreach>
+		</if>
+        <if test="sortNo != null ">
+             AND sort_no = #{sortNo}  <!-- 排序号 -->
+		</if>
+        <if test="whetherSpec != null and whetherSpec != ''">
+             AND whether_spec = #{whetherSpec}  <!-- 是否存在规格0否1是 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+		<if test="sortNoGt != null ">
+             AND sort_no &gt;#{sortNoGt}
+		</if>
+		 <if test="sortNoLt != null ">
+            AND  sort_no &lt;#{sortNoLt}
+		</if>
+	   <if test="menuNum != null and menuNum != ''">
+             AND menu_num = #{menuNum}  <!-- 菜单序号 -->
+		</if>
+		 <if test="menuStatus != null and menuStatus != ''">
+             AND menu_status = #{menuStatus}  <!-- 菜单状态1在售，2售完 -->
+		</if>
+		
+    </sql>
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="menuId != null and menuId != ''">
+		      AND menu_id LIKE '%${menuId}%'  <!--  -->
+		</if>
+       <if test="menuIndexId != null and menuIndexId != ''">
+             AND menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+		</if>
+		 <if test="menuPrice != null ">
+             AND menu_price = #{menuPrice}  <!-- 菜单价格 -->
+		</if>
+        <if test="menuName != null and menuName != ''">
+		      AND menu_name LIKE '%${menuName}%'  <!-- 菜品名 -->
+		</if>
+        <if test="shortName != null and shortName != ''">
+		      AND short_name LIKE '%${shortName}%'  <!-- 简称 -->
+		</if>
+       <if test="catalogIndexId != null and catalogIndexId != ''">
+             AND catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+		</if>
+        <if test="menuImage != null and menuImage != ''">
+		      AND menu_image LIKE '%${menuImage}%'  <!-- 图片名称 -->
+		</if>
+        <if test="menuIntroduce != null and menuIntroduce != ''">
+		      AND menu_introduce LIKE '%${menuIntroduce}%'  <!-- 介绍 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="languageType != null and languageType != ''">
+             AND language_type = #{languageType}  <!-- 语言 -->
+		</if>
+		  <if test="menuType != null and menuType != ''">
+             AND menu_type = #{menuType}  <!-- 菜品类型0通用1常规2自助餐 -->
+		</if>
+        <if test="mealType != null and mealType != ''">
+             AND meal_type = #{mealType}  <!-- 菜品所属1通用2中餐3晚餐 -->
+		</if>
+		<if test="menuTypeList != null and menuTypeList.size()>0">
+             AND menu_type IN
+         <foreach item="menuTypeItem" index="index" collection="menuTypeList" separator="," open="(" close=")">
+		 #{menuTypeItem}
+	    </foreach>
+		</if>
+		 <if test="mealTypeList != null and mealTypeList.size()>0">
+             AND meal_type IN
+         <foreach item="mealTypeItem" index="index" collection="mealTypeList" separator="," open="(" close=")">
+		 #{mealTypeItem}
+	    </foreach>
+		</if>
+         <if test="whetherSpec != null and whetherSpec != ''">
+             AND whether_spec = #{whetherSpec}  <!-- 是否存在规格0否1是 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+		 <if test="menuNum != null and menuNum != ''">
+		      AND menu_num LIKE '%${menuNum}%'  <!-- 菜单序号 -->
+		</if>
+		 <if test="menuStatus != null and menuStatus != ''">
+             AND menu_status = #{menuStatus}  <!-- 菜单状态1在售，2售完 -->
+		</if>
+	
+    </sql>
+
+</mapper>

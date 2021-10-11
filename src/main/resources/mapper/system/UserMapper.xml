@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.system.model.User">
+        <id column="user_id" property="userId" />
+        <result column="account" property="account" />
+        <result column="password" property="password" />
+        <result column="username" property="username" />
+        <result column="lock_num" property="lockNum" />
+        <result column="error_num" property="errorNum" />
+        <result column="sex" property="sex" />
+        <result column="status" property="status" />
+        <result column="user_type" property="userType" />
+        <result column="dept_id" property="deptId" />
+        <result column="mobile" property="mobile" />
+        <result column="qq" property="qq" />
+        <result column="wechat" property="wechat" />
+        <result column="email" property="email" />
+        <result column="idno" property="idno" />
+        <result column="style" property="style" />
+        <result column="address" property="address" />
+        <result column="remark" property="remark" />
+        <result column="is_del" property="isDel" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_id AS userId, account, password, username, lock_num AS lockNum, error_num AS errorNum, sex, status, user_type AS userType, dept_id AS deptId, mobile, qq, wechat, email, idno, style, address, remark, is_del AS isDel, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+    <!-- 通用查询结果列 -->
+    <sql id="inner_Column_List">
+        a.user_id AS userId, a.account, a.password, a.username, a.lock_num AS lockNum, a.error_num AS errorNum, a.sex, a.status, a.user_type AS userType, a.dept_id AS deptId, a.mobile, a.qq, a.wechat, a.email, a.idno, a.style, a.address, a.remark, a.is_del AS isDel, a.create_time AS createTime, a.create_by AS createBy, a.update_time AS updateTime, a.update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.system.model.User">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_user
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.system.model.User" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_user
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.system.model.User">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_user
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.system.model.User" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_user
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM sys_user
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="userId != null and userId != ''">
+             AND user_id = #{userId}  <!-- 用户编号 -->
+		</if>
+        <if test="account != null and account != ''">
+             AND account = #{account}  <!-- 用户登录帐号 -->
+		</if>
+        <if test="password != null and password != ''">
+             AND password = #{password}  <!-- 密码 -->
+		</if>
+        <if test="username != null and username != ''">
+             AND username = #{username}  <!-- 用户姓名 -->
+		</if>
+        <if test="lockNum != null ">
+             AND lock_num = #{lockNum}  <!-- 锁定次数 默认5次 -->
+		</if>
+        <if test="errorNum != null ">
+             AND error_num = #{errorNum}  <!-- 密码错误次数  如果等于锁定次数就自动锁定用户 -->
+		</if>
+        <if test="sex != null and sex != ''">
+             AND sex = #{sex}  <!-- 性别  1:男2:女3:未知 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 用户状态 1:正常2:停用 3:锁定 -->
+		</if>
+        <if test="userType != null and userType != ''">
+             AND user_type = #{userType}  <!-- 用户类型 -->
+		</if>
+        <if test="deptId != null and deptId != ''">
+             AND dept_id = #{deptId}  <!-- 所属部门流水号 -->
+		</if>
+        <if test="mobile != null and mobile != ''">
+             AND mobile = #{mobile}  <!-- 联系电话 -->
+		</if>
+        <if test="qq != null and qq != ''">
+             AND qq = #{qq}  <!-- QQ号码 -->
+		</if>
+        <if test="wechat != null and wechat != ''">
+             AND wechat = #{wechat}  <!-- 微信 -->
+		</if>
+        <if test="email != null and email != ''">
+             AND email = #{email}  <!-- 电子邮件 -->
+		</if>
+        <if test="idno != null and idno != ''">
+             AND idno = #{idno}  <!-- 身份证号 -->
+		</if>
+        <if test="style != null and style != ''">
+             AND style = #{style}  <!-- 界面风格 -->
+		</if>
+        <if test="address != null and address != ''">
+             AND address = #{address}  <!-- 联系地址 -->
+		</if>
+        <if test="remark != null and remark != ''">
+             AND remark = #{remark}  <!-- 备注 -->
+		</if>
+        <if test="isDel != null and isDel != ''">
+             AND is_del = #{isDel}  <!-- 是否已删除 0有效 1删除 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="userId != null and userId != ''">
+		      AND user_id LIKE '%${userId}%'  <!-- 用户编号 -->
+		</if>
+        <if test="account != null and account != ''">
+		      AND account LIKE '%${account}%'  <!-- 用户登录帐号 -->
+		</if>
+        <if test="password != null and password != ''">
+		      AND password LIKE '%${password}%'  <!-- 密码 -->
+		</if>
+        <if test="username != null and username != ''">
+		      AND username LIKE '%${username}%'  <!-- 用户姓名 -->
+		</if>
+        <if test="sex != null and sex != ''">
+		      AND sex LIKE '%${sex}%'  <!-- 性别  1:男2:女3:未知 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 用户状态 1:正常2:停用 3:锁定 -->
+		</if>
+        <if test="userType != null and userType != ''">
+		      AND user_type LIKE '%${userType}%'  <!-- 用户类型 -->
+		</if>
+        <if test="deptId != null and deptId != ''">
+		      AND dept_id LIKE '%${deptId}%'  <!-- 所属部门流水号 -->
+		</if>
+        <if test="mobile != null and mobile != ''">
+		      AND mobile LIKE '%${mobile}%'  <!-- 联系电话 -->
+		</if>
+        <if test="qq != null and qq != ''">
+		      AND qq LIKE '%${qq}%'  <!-- QQ号码 -->
+		</if>
+        <if test="wechat != null and wechat != ''">
+		      AND wechat LIKE '%${wechat}%'  <!-- 微信 -->
+		</if>
+        <if test="email != null and email != ''">
+		      AND email LIKE '%${email}%'  <!-- 电子邮件 -->
+		</if>
+        <if test="idno != null and idno != ''">
+		      AND idno LIKE '%${idno}%'  <!-- 身份证号 -->
+		</if>
+        <if test="style != null and style != ''">
+		      AND style LIKE '%${style}%'  <!-- 界面风格 -->
+		</if>
+        <if test="address != null and address != ''">
+		      AND address LIKE '%${address}%'  <!-- 联系地址 -->
+		</if>
+        <if test="remark != null and remark != ''">
+		      AND remark LIKE '%${remark}%'  <!-- 备注 -->
+		</if>
+        <if test="isDel != null and isDel != ''">
+		      AND is_del LIKE '%${isDel}%'  <!-- 是否已删除 0有效 1删除 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+   <!-- 根据Dto对象分页查询 -->
+	<select id="listUserPage" parameterType="Map" resultType="com.ims.system.model.User">
+		SELECT
+		<include refid="inner_Column_List" />
+		FROM sys_user a  
+		<where>
+		<if test="queryParam!= null and queryParam != ''">
+		      AND (a.account LIKE '%${queryParam}%' OR a.username LIKE '%${queryParam}%')<!-- 登陆账号或登陆名 -->
+		</if>
+		 <if test="outRoleId != null and outRoleId != ''">
+		      AND  NOT EXISTS (SELECT  1 FROM sys_role_user r WHERE r.user_id=a.user_id AND r.role_id=#{outRoleId})
+		</if>
+		<if test="inRoleId != null and inRoleId != ''">
+		       AND   EXISTS (SELECT  1 FROM sys_role_user r WHERE r.user_id=a.user_id AND r.role_id=#{inRoleId})
+		 </if>   
+	    <if test="cascadeId != null and cascadeId != ''">
+		      AND b.cascade_id LIKE '${cascadeId}%'    <!-- 使用语义ID关联 -->
+		</if>
+	    <if test="account != null and account != ''">
+		      AND a.account LIKE '%${account}%'  <!-- 用户登录帐号 -->
+		</if>
+	  
+	    <if test="username != null and username != ''">
+		      AND a.username LIKE '%${username}%'  <!-- 用户姓名 -->
+		</if>
+	     <if test="sex != null and sex != ''">
+		      AND a.sex = #{sex}  <!-- 性别  1:男2:女3:未知 -->
+		</if>
+	   <if test="status != null and status != ''">
+		      AND a.status = #{status}  <!-- 用户状态 1:有效2:停用 3:锁定 -->
+		</if>
+	    <if test="user_type != null and user_type != ''">
+		      AND a.user_type =#{user_type}
+		</if>
+	    <if test="dept_id != null and dept_id != ''">
+		      AND a.dept_id=#{dept_id}
+		</if>
+	    <if test="mobile != null and mobile != ''">
+		      AND a.mobile LIKE '%${mobile}%'  <!-- 联系电话 -->
+		</if>
+	    <if test="qq != null and qq != ''">
+		      AND a.qq LIKE '%${qq}%'   <!-- QQ号码 -->
+		</if>
+	    <if test="wechat != null and wechat != ''">
+		      AND a.wechat LIKE '%${wechat}%'  <!-- 微信 -->
+		</if>
+	    <if test="email != null and email != ''">
+		      AND a.email LIKE '%${email}%'  <!-- 电子邮件 -->
+		</if>
+	    <if test="idno != null and idno != ''">
+		      AND a.idno LIKE '%${idno}%'  <!-- 身份证号 -->
+		</if>
+	    <if test="style != null and style != ''">
+		      AND a.style =#{style}
+		</if>
+	    <if test="address != null and address != ''">
+		      AND a.address LIKE '%${address}%'  <!-- 联系地址 -->
+		</if>
+	   
+	    <if test="isDel != null and isDel != ''">
+		      AND a.is_del =#{isDel} 
+		</if>
+	    
+	     <if test="careteTimeBegin!= null and careteTimeBegin != ''">
+		      AND a.create_time &gt;=TO_DATE(#{careteTimeBegin},'YYYY-MM-DD')
+		</if>
+	    <if test="careteTimeEnd!= null and careteTimeEnd != ''">
+		      AND a.create_time &lt;=TO_DATE(#{careteTimeEnd},'YYYY-MM-DD')
+		</if>
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+</mapper>

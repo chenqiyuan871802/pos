@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<style>
+	#orderTimeStart{margin-right:5px;}
+	#orderTimeEnd{margin-left:5px;}
+	#orderTimeStart,#orderTimeEnd{display: inline-block;position: relative;top:-3px;}
+</style>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+
+                
+                   <div class="layui-inline">
+						<label class="layui-form-label">時間</label>
+						<div class="layui-input-block" >
+							<input type="text" name="beginDate" id="orderTimeStart"
+								autocomplete="off" class="layui-input">-<input type="text" name="endDate" id="orderTimeEnd"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >検索</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+<div type="text/html" id="trTool" style="display:none">
+    <a  data-grant="buss:orderDate:detail" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>詳細</a>
+</div>
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="buss:orderMonth:export"   class="layui-btn layui-btn-sm" lay-event="export"> <i class="layui-icon layui-icon-download-circle"></i>ダウロード</button>
+</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','laydate', 'webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			laydate = layui.laydate, 
+			table = layui.table;
+			//日期
+			laydate.render({
+				elem : '#orderTimeStart'
+			});
+			//日期
+			laydate.render({
+				elem : '#orderTimeEnd'
+			});
+			   var cols= [ [ {
+					type : 'numbers',
+					title : '番号'
+				}, {
+					field : 'orderDate',
+					title : '日付',
+					width:120
+				},
+	            {
+				 field : 'totalAmount',
+				 title : '売上',
+				 width:120,
+				 templet:function(d){
+					 
+					 return webplus.number_format(d.totalAmount,0,"",",");
+				 }
+				},
+				{
+					 field : 'deskNum',
+					 title : '客数',
+					 width:100
+				 },	
+				 {
+					 field : 'avgAmount',
+					 title : '平均単価',
+					 width:100,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.avgAmount,0,"",",");
+					 }
+				 },	
+				 {
+					 field : 'eatNum',
+					 title : '人数',
+					 width:100
+				 },	
+				 {
+					 field : 'deskAmount',
+					 title : 'お通し',
+					 width:100,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.deskAmount,0,"",",");
+					 }
+				 },	
+	            {
+				 field : 'tenMenuAmount',
+				 title : '税抜売上(10%)',
+				 width:130,
+				 templet:function(d){
+					 
+					 return webplus.number_format(d.tenMenuAmount,0,"",",");
+				 }
+				},
+	            {
+				 field : 'eightMenuAmount',
+				 title : '税抜売上(8%)',
+				 width:120,
+				 templet:function(d){
+					 
+					 return webplus.number_format(d.eightMenuAmount,0,"",",");
+				 }
+				},
+				 {
+					 field : 'tenTaxAmount',
+					 title : '消費税（10％）',
+					 width:130,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.tenTaxAmount,0,"",",");
+					 }
+				},
+				 {
+					 field : 'outTaxAmount',
+					 title : '消費税（8％）',
+					 width:130,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.outTaxAmount,0,"",",");
+					 }
+				},
+				 {
+					 field : 'cashTotalAmount',
+					 title : '現金売上',
+					 width:120,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.cashTotalAmount,0,"",",");
+					 }
+				},
+				 {
+					 field : 'cardTotalAmount',
+					 title : 'クレジット売上',
+					 width:130,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.cardTotalAmount,0,"",",");
+					 }
+				},
+				 {
+					 field : 'otherTotalAmount',
+					 title : 'その他売上',
+					 width:120,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.otherTotalAmount,0,"",",");
+					 }
+				},
+	            {
+
+					title : '編集',
+					toolbar : '#trTool',
+					fixed: 'right',
+					width :100
+				} ] ];
+		   webplus.init('buss/order/listSumMonthOrder',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    switch(rowObj.event){
+			    case 'detail':
+		    		webplus.openDetailWindow('showSumOrder.html','詳細',rowObj,'orderDate','queryMonth','700','560');
+		       		
+		   			break;
+		    	
+			  case 'export':
+			    	var params={};
+			    	params.beginDate=$("#orderTimeStart").val();
+			    	params.endDate=$("#orderTimeEnd").val();
+			    	webplus.doAjax("/buss/order/exportSumMonthOrder",params,"","","3",function(data){
+		        		 window.location.href=webplus.cxt()+"/file/downloadExcelFile?fid="+data.fid+"&fileName=月報.xlsx&token="+webplus.getToken();
+			    	   
+		        	 }); 
+		   			break;
+		    	
+			    }
+			  });
+		
+		    
+			 //监听表头按钮事件
+			 table.on('toolbar(dataList)', function(obj){
+				    switch(obj.event){
+				      
+				    case 'export':
+				    	var params={};
+				    	params.beginDate=$("#orderTimeStart").val();
+				    	params.endDate=$("#orderTimeEnd").val();
+				    	webplus.doAjax("/buss/order/exportSumMonthOrder",params,"","","3",function(data){
+			        		 window.location.href=webplus.cxt()+"/file/downloadExcelFile?fid="+data.fid+"&fileName=月報.xlsx&token="+webplus.getToken();
+				    	   
+			        	 }); 
+			   			break;
+				    }
+				  });
+		});
+	</script>
+
+</body>
+</html>

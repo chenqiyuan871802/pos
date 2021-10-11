@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label" style="width:90px;">设备编号</label>
+				  <div class="layui-input-block" style="margin-left:110px;">
+				  <input type="text" name="printNum" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+               <!--   <div class="layui-inline">
+						<label class="layui-form-label">设备类型</label>
+						<div class="layui-input-block">
+							<select name="printType" lay-select-dict="print_type" >
+								
+							</select>
+						</div>
+				  </div> -->
+                 <div class="layui-inline">
+						<label class="layui-form-label">网关类型</label>
+						<div class="layui-input-block">
+							<select name="gatewayType" lay-select-dict="gateway_type" >
+								
+							</select>
+						</div>
+				  </div>
+				  <div class="layui-inline">
+						<label class="layui-form-label">分配店铺</label>
+						<div class="layui-input-block">
+						 <input type="text" name="shopName" autocomplete="off" class="layui-input">
+						</div>
+				  </div>
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >查询</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+<div type="text/html" id="trTool" style="display:none">
+     <a  data-grant="system:printer:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a> 
+     {{#  if(d.whetherGrant === '0'){ }}
+      <a data-grant="system:printer:grant" class="layui-btn layui-btn-success layui-btn-xs" lay-event="grant"><i class="layui-icon layui-icon-auz"></i>分配</a>
+     {{#  } else { }}
+     <a data-grant="system:printer:removeGrant" class="layui-btn layui-btn-danger layui-btn-xs"  lay-event="removeGrant"><i class="layui-icon layui-icon-delete"></i>解除分配</a>
+     {{#  } }}
+     {{#  if(d.whetherEnroll === '0'){ }}
+      <a data-grant="system:printer:enroll" class="layui-btn layui-btn-turquo layui-btn-xs" lay-event="enroll"><i class="layui-icon layui-icon-util"></i>注册</a>
+      
+     {{#  } else { }}
+      <a data-grant="system:printer:removeEnroll" class="layui-btn layui-btn-danger layui-btn-xs"  lay-event="removeEnroll"><i class="layui-icon layui-icon-delete"></i>解除注册</a>
+       <a  data-grant="system:printer:send" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="send"><i class="layui-icon layui-icon-edit"></i>发送指令</a> 
+     {{#  } }}
+   
+    <a  data-grant="system:printer:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>削除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="system:printer:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增</button>
+</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '序号'
+			}, {
+				field : 'printId',
+				title : '编号',
+				hide : true 
+			},
+            {
+			 field : 'printNum',
+			 title : '设备编号',
+			 width:110
+			},
+			  {
+				 field : 'printSecretKey',
+				 title : '设备秘钥',
+				 width:120
+			},
+			 
+			 {
+				 field : 'gatewayType_dict',
+				 title : '网关类型',
+				 width:90
+			},
+			{
+				 field : 'printStatus_dict',
+				 title : '设备状态',
+				 width:90
+			},
+			{
+				 field : 'whetherEnroll_dict',
+				 title : '是否注册',
+				 width:90
+			},
+			{
+				 field : 'shopName',
+				 title : '分配店铺',
+				 width:140
+			},
+           {
+
+				title : '操作',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width :430
+			} ] ];
+		   webplus.init('buss/printer/listPrinter',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+				  var printId=rowObj.data.printId;
+				  var params = {};
+					params.printId=printId;
+			    switch(rowObj.event){
+			    	case 'edit':
+			    		webplus.openEditWindow('editPrinter.html','編集',rowObj,'printId','','500','500');
+			       		
+			   			break;
+			   			
+			    	case 'enroll':
+			    		webplus.doAjax("buss/printer/enroll",params,"你确定注册该打印机到云服务吗？","","0");
+			       		
+			   			break;
+			   			
+			    	case 'removeEnroll':
+			    		webplus.doAjax("buss/printer/removeEnroll",params,"你确定把该打印机从云服务上解除注册吗？","","0");
+			       		
+			   			break;
+			    	case 'grant':
+			    		webplus.openDetailWindow('grantShop.html','分配店铺',rowObj,'printId','','700');
+			       		
+			   			break;
+			   			
+			    	case 'removeGrant':
+			    		webplus.doAjax("buss/printer/removeGrant",params,"你确定解除该打印机分配吗？","","0");
+			       		
+			   			break;
+			   			
+			    	case 'send':
+			    		webplus.openEditWindow('sendPrint.html','发送指令',rowObj,'printId','','500','270');
+			       		
+			   			break;
+			    	case 'del':
+				    	
+				        webplus.removeRow('buss/printer/remove',rowObj,'printId','','','プリンターを削除しますか？');
+			    		break;
+			    }
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addPrinter.html','新增','500','500');
+			     	     break;
+			    }
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+package ${package.Controller};
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.ims.core.matatype.Dto;
+import com.ims.core.matatype.Dtos;
+import com.ims.core.util.WebplusFormater;
+import com.ims.core.vo.R;
+#if($!cfg.size()>0)
+import com.ims.core.cache.WebplusCache;
+#end
+import java.util.List;
+import ${package.Entity}.${entity};
+import ${package.Service}.${table.serviceName};
+#if(${restControllerStyle})
+import org.springframework.web.bind.annotation.RestController;
+#else
+import org.springframework.stereotype.Controller;
+#end
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+
+    @Autowired
+    private ${table.serviceName} ${table.entityPath}Service;
+
+
+	/**
+	 * 
+	 * 简要说明：分页查询 
+	 * 编写者：${author}
+	 * 创建时间：${date}
+	 * @param 说明
+	 * @return 说明
+	 */
+	@RequestMapping("list")
+	@ResponseBody
+	public R list() {
+		Dto pDto = Dtos.newDto(request);
+		Page<${entity}> page =${table.entityPath}Service.likePage(pDto);
+#if($!cfg.size()>0)
+         WebplusCache.convertItem(page);
+#end
+		return R.toPage(page);
+	}
+
+
+
+	/**
+	 * 
+	 * 简要说明： 新增信息保存 
+	 * 编写者：陈骑元
+	 * 创建时间：${date}
+	 * @param 说明
+	 * @return 说明
+	 */
+	@PostMapping("save")
+	@ResponseBody
+	public R save(${entity} ${table.entityPath}) {
+		boolean result = ${table.entityPath}Service.insert(${table.entityPath});
+		if (result) {
+			return R.ok();
+		} else {
+			return R.error("保存失败");
+		}
+
+	}
+	/**
+	 * 
+	 * 简要说明： 跳转到编辑页面 
+	 * 编写者：陈骑元
+	 * 创建时间：${date}
+	 * @param 说明
+	 * @return 说明
+	 */
+	@PostMapping("edit")
+	@ResponseBody
+	public R edit(String id) {
+		${entity} ${table.entityPath}=${table.entityPath}Service.selectById(id);
+		return R.toData(${table.entityPath});
+	}
+	
+	/**
+	 * 
+	 * 简要说明：修改信息
+	 * 编写者：陈骑元
+	 * 创建时间：${date}
+	 * @param 说明
+	 * @return 说明
+	 */
+	@PostMapping("update")
+	@ResponseBody
+	public R update(${entity} ${table.entityPath}) {
+		boolean result = ${table.entityPath}Service.updateById(${table.entityPath});
+		if (result) {
+			return R.ok();
+		} else {
+			return R.error("更新失败");
+		}
+		
+	}
+	
+	
+	/**
+	 * 
+	 * 简要说明：删除信息
+	 * 编写者：陈骑元
+	 * 创建时间：${date}
+	 * @param 说明
+	 * @return 说明
+	 */
+	@PostMapping("remove")
+	@ResponseBody
+	public R remove(String id) {
+		boolean result = ${table.entityPath}Service.deleteById(id);
+		if (result) {
+			return R.ok();
+		} else {
+			return R.error("删除失败");
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * 简要说明：批量删除信息
+	 * 编写者：陈骑元
+	 * 创建时间：${date}
+	 * @param 说明
+	 * @return 说明
+	 */
+	@PostMapping("batchRemove")
+	@ResponseBody
+	public R batchRemove(String ids) {
+		List<String> idList=WebplusFormater.separatStringToList(ids);
+		boolean result = ${table.entityPath}Service.deleteBatchIds(idList);
+		if (result) {
+			return R.ok();
+		} else {
+			return R.error("删除失败");
+		}
+		
+	}
+	
+}
+
+#end

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label" style="width:90px;">プリンターID</label>
+				  <div class="layui-input-block" style="margin-left:110px;">
+				  <input type="text" name="printNum" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >検索</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+<div type="text/html" id="trTool" style="display:none">
+   
+    <a  data-grant="buss:printer:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="send"><i class="layui-icon layui-icon-edit"></i>Send Test</a> 
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="buss:printer:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>追加</button>
+</div>
+</div>
+<script type="text/html" id="whetherServerTpl">
+  <input type="checkbox" name="whetherServerTpl" value="{{d.printId}}"  lay-skin="switch" lay-text="YES|NO" lay-filter="whetherServer" {{ d.whetherServer == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="whetherPosTpl">
+  <input type="checkbox" name="whetherPosTpl" value="{{d.printId}}"  lay-skin="switch" lay-text="YES|NO" lay-filter="whetherPos" {{ d.whetherPos == '1' ? 'checked' : '' }}>
+</script>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '番号'
+			}, {
+				field : 'printId',
+				title : '编号',
+				hide : true 
+			},
+            {
+			 field : 'printNum',
+			 title : 'プリンターID',
+			 width:350
+			},
+			{
+				field : 'whetherServer',
+				title : '呼出会計',
+				templet: '#whetherServerTpl', 
+				unresize: true,
+				width :140
+			},
+			{
+				field : 'whetherPos',
+				title : 'レジ用',
+				templet: '#whetherPosTpl', 
+				unresize: true,
+				width :140
+			},
+           
+           {
+
+				title : '編集',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width :240
+			} ] ];
+		   webplus.init('buss/printer/list',cols,'','','','-1')
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    switch(rowObj.event){
+			    	case 'edit':
+			    		webplus.openEditWindow('editPrinter.html','編集',rowObj,'printId','','500','300');
+			       		
+			   			break;
+			   			
+			    	case 'send':
+			    		webplus.openEditWindow('sendPrint.html','Send Test',rowObj,'printId','','500','270');
+			       		
+			   			break;
+			    	case 'del':
+				    	
+				        webplus.removeRow('buss/printer/remove',rowObj,'printId','','','プリンターを削除しますか？');
+			    		break;
+			    }
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addPrinter.html','追加','500','300');
+			     	     break;
+			    }
+			  });
+			 
+			  //监听启用操作
+			  form.on('switch(whetherServer)', function(obj){
+				  
+					  var whetherServer="0";
+			    	   if(obj.elem.checked){
+			    		   whetherServer="1";
+			    	   }
+			    	   
+			    	   var params={};
+			    	   params.printId=obj.value;
+			    	   params.whetherServer=whetherServer;
+			    	   webplus.doAjax("buss/printer/updateStatus",params,"","","3")
+				  
+					 
+			  });
+			  //监听启用操作
+			  form.on('switch(whetherPos)', function(obj){
+				  
+					  var whetherPos="0";
+			    	   if(obj.elem.checked){
+			    		   whetherPos="1";
+			    	   }
+			    	   
+			    	   var params={};
+			    	   params.printId=obj.value;
+			    	   params.whetherPos=whetherPos;
+			    	   webplus.doAjax("buss/printer/updateStatus",params,"","","3")
+				  
+					 
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

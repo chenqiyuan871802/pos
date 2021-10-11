@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.DeskMapper">
+ <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.Desk">
+        <id column="desk_id" property="deskId" />
+        <result column="desk_name" property="deskName" />
+        <result column="desk_remark" property="deskRemark" />
+        <result column="shop_id" property="shopId" />
+        <result column="area_id" property="areaId" />
+        <result column="desk_status" property="deskStatus" />
+        <result column="eat_num" property="eatNum" />
+        <result column="sort_no" property="sortNo" />
+        <result column="order_no" property="orderNo" />
+        <result column="order_time" property="orderTime" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="whether_show_price" property="whetherShowPrice" />
+        <result column="display_type" property="displayType" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    desk_id AS deskId,desk_name AS deskName,desk_remark AS deskRemark,shop_id AS shopId,area_id AS areaId,desk_status AS deskStatus,eat_num AS eatNum,sort_no AS sortNo,order_no AS orderNo,order_time AS orderTime,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy,whether_show_price AS whetherShowPrice,display_type AS displayType
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.Desk">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_desk
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.Desk" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_desk
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.Desk">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_desk
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.Desk" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_desk
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_desk
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	 <!-- 向上更新排序 -->
+	 <update id="updateSortUp" parameterType="Map">
+      UPDATE t_desk set sort_no=sort_no-1
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoGt != null ">
+              AND sort_no &gt;#{sortNoGt}
+		</if>
+		 <if test="areaId != null and areaId != ''">
+	         <if test='areaId !="0"'>
+	             AND area_id = #{areaId}  <!-- 区域编号 -->
+	          </if>
+	          <if test='areaId =="0"'>
+	             AND IFNULL(area_id,'') = ''
+	          </if>
+            
+		</if>
+      </where>
+       
+     </update>
+	
+	 <!-- 向下更新排序 -->
+	 <update id="updateSortDown" parameterType="String">
+      UPDATE t_desk set sort_no=sort_no+1
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoLt != null ">
+              AND sort_no &lt;#{sortNoLt}
+		</if>
+		 <if test="areaId != null and areaId != ''">
+	        <if test='areaId !="0"'>
+	             AND area_id = #{areaId}  <!-- 区域编号 -->
+	          </if>
+	          <if test='areaId =="0"'>
+	             AND IFNULL(area_id,'') = ''
+	          </if>
+            
+		</if>
+      </where>
+     </update>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="deskId != null and deskId != ''">
+             AND desk_id = #{deskId}  <!--  -->
+		</if>
+        <if test="deskName != null and deskName != ''">
+             AND desk_name = #{deskName}  <!-- 桌号 -->
+		</if>
+        <if test="deskRemark != null and deskRemark != ''">
+             AND desk_remark = #{deskRemark}  <!-- 备注 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="deskStatus != null and deskStatus != ''">
+             AND desk_status = #{deskStatus}  <!-- 桌子状态0空闲1占用 -->
+		</if>
+		 <if test="eatNum != null ">
+             AND eat_num = #{eatNum}  <!-- 吃饭人数 -->
+		</if>
+        <if test="sortNo != null ">
+             AND sort_no = #{sortNo}  <!-- 排序号 -->
+		</if>
+		<if test="sortNoGt != null ">
+             AND sort_no &gt;#{sortNoGt}
+		</if>
+		 <if test="sortNoLt != null ">
+            AND  sort_no &lt;#{sortNoLt}
+		</if>
+		 <if test="orderNo != null and orderNo != ''">
+             AND order_no = #{orderNo}  <!-- 创建二维码 -->
+		</if>
+		 <if test="orderTime != null ">
+             AND order_time = #{orderTime}  <!-- 开餐时间 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+		 <if test="areaId != null and areaId != ''">
+	         <if test='areaId !="0"'>
+	             AND area_id = #{areaId}  <!-- 区域编号 -->
+	          </if>
+	          <if test='areaId =="0"'>
+	             AND IFNULL(area_id,'') = ''
+	          </if>
+            
+		</if>
+		<if test="whetherShowPrice != null and whetherShowPrice != ''">
+             AND whether_show_price = #{whetherShowPrice}  <!-- 是否显示价格0否1是 -->
+		</if>
+		 <if test="displayType != null and displayType != ''">
+             AND display_type = #{displayType}  <!-- 展示类型0全部1普通菜品2自助餐 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="deskId != null and deskId != ''">
+		      AND desk_id LIKE '%${deskId}%'  <!--  -->
+		</if>
+        <if test="deskName != null and deskName != ''">
+		      AND desk_name LIKE '%${deskName}%'  <!-- 桌号 -->
+		</if>
+        <if test="deskRemark != null and deskRemark != ''">
+		      AND desk_remark LIKE '%${deskRemark}%'  <!-- 备注 -->
+		</if>
+       <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+		 <if test="eatNum != null ">
+             AND eat_num = #{eatNum}  <!-- 吃饭人数 -->
+		</if>
+		 <if test="orderTime != null ">
+             AND order_time = #{orderTime}  <!-- 开餐时间 -->
+		</if>
+		  <if test="orderNo != null and orderNo != ''">
+		      AND order_no LIKE '%${orderNo}%'  <!-- 创建二维码 -->
+		</if>
+        <if test="deskStatus != null and deskStatus != ''">
+             AND desk_status = #{deskStatus}  <!-- 桌子状态0空闲1占用 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+	   <if test="areaId != null and areaId != ''">
+	        <if test='areaId !="0"'>
+	             AND area_id = #{areaId}  <!-- 区域编号 -->
+	          </if>
+	          <if test='areaId =="0"'>
+	             AND IFNULL(area_id,'') = ''
+	          </if>
+            
+		</if>
+		<if test="whetherShowPrice != null and whetherShowPrice != ''">
+             AND whether_show_price = #{whetherShowPrice}  <!-- 是否显示价格0否1是 -->
+		</if>
+		 <if test="displayType != null and displayType != ''">
+             AND display_type = #{displayType}  <!-- 展示类型0全部1普通菜品2自助餐 -->
+		</if>
+    </sql>
+
+</mapper>

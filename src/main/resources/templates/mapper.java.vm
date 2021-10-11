@@ -1,0 +1,59 @@
+package ${package.Mapper};
+
+import ${package.Entity}.${entity};
+import ${superMapperClassPackage};
+import java.util.List;
+import com.ims.core.matatype.Dto;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+
+/**
+ * <p>
+ * $!{table.comment} Mapper 接口
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${kotlin})
+interface ${table.mapperName} : ${superMapperClass}<${entity}>
+#else
+public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
+
+    /**
+	 * 根据Dto查询并返回数据持久化对象集合
+	 * 
+	 * @return List<${entity}>
+	 */
+	List<${entity}> list(Dto pDto);
+    /**
+	 * 根据Dto查询并返回分页数据持久化对象集合
+	 * 
+	 * @return List<${entity}>
+	 */
+	List<${entity}> listPage(Pagination page,Dto pDto);
+		
+	/**
+	 * 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)
+	 * 
+	 * @return List<${entity}>
+	 */
+	List<${entity}> like(Dto pDto);
+
+	/**
+	 * 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)
+	 * 
+	 * @return List<${entity}>
+	 */
+	List<${entity}> likePage(Pagination page,Dto pDto);
+	
+	/**
+	 * 根据数学表达式进行数学运算
+	 * 
+	 * @param pDto
+	 * @return String
+	 */
+	 String calc(Dto pDto);
+
+
+}
+#end

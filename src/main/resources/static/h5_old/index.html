@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" href="css/resetCss.css">
+		<link href="css/dialog.css" rel="stylesheet" />
+		<link href="css/mobile-select-date.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/order.css">
+		
+		<title></title>
+	</head>
+
+	<body>
+		<input type="hidden" id="whetherBuffet" />
+		<div class='container' id='container' v-cloak>
+			<header class='menu-header header' v-show='!hasChoiceBuffet'>
+				<nav class='nav'>
+					<!-- <span class='menu'><img src="img/menu.svg"></span> -->
+					<h1 class='nav-title home-nav-name'></h1>
+					<span class='language' style="background-color: #2699f8;padding:0 5px;right:0;">
+						<span class='blue-color'><img src="img/Launguage_mark.svg"></span>
+						<!-- <img src=""> -->
+					</span>
+				</nav>
+				<div class='bgBox'>
+					<!-- 三期修改 -->
+						<img class='bgImg' src="" alt="">
+						<p class="store-info"></p>
+						<p class="store-info-content"></p>
+				</div>
+			</header>
+			<header class='garnish-header' v-show='hasChoiceBuffet'>
+				<nav class='nav'>
+					<span class='garnish-back back'><img src="img/close.svg"></span>
+					<h1 class='nav-title detail-title'>选择菜品</h1>
+				</nav>
+			</header>
+			<div :class='{"buffet":toolbarData==="buffet"}'>
+				<div class='toolbar' v-show='!hasChoiceBuffet' style="padding: 0;">
+					<ul>
+						<li class="active"><span data-name='menu' class='menu' id="tab-menu">菜单</span></li>
+						<li><span data-name='buffet' class='buffet' id="tab-buffet">套餐</span></li>
+						<!-- v-show判断是否下单过套餐，下单过则显示当前此套餐，当前菜单切换点击时会显示左右布局的菜单页面 -->
+						<!-- <li><span data-name='menu' class='buffet' id="tab-buffet">套餐</span></li> -->
+						<li ><span data-name='order' class='order' id="tab-order">订单</span></li>
+					</ul>
+				</div>
+
+				<div class='toolbar grnish' v-show='hasChoiceBuffet || buffetDataType'>
+					<!-- <img class='grnish-warn' src='img/what.svg'> -->
+					<span id='g-count'>{{getGarnishMax}}</span>
+				</div>
+				<!-- ------------菜单panel---------- -->
+				<div class='menu-container' v-show='toolbarData==="menu"' :style="{height:getContainerHeight+'px','padding-bottom':lastPadding+'px'}">
+					<div class='menu-left left'>
+						<ul class='ull'>
+							<li v-for='(type,index) in getFoodTypes' :key='index' :class='{active:index===0}' @click='leftHandClick(index)'>
+								<div>{{type.catalogName}}</div>
+							</li>
+						</ul>
+					</div>
+					<div class='menu-right right'>
+						<ul class='ulr'>
+							<li v-for='(item,type) in getFoodItems' :key='type'>
+								<div class='item-title'>{{item.catalogName}}</div>
+								<div v-for='(food,index) in item.menuDictList' :key='index+"item"' class='food' :data-type='type' :data-index='index'>
+									<div class='food-img' @click.stop='showFoodPanel(food,type,index)' :style="{'background-image':`url(${isEmpty(food.menuImage)?'':picPrefix}${isEmpty(food.menuImage)?'':food.menuImage})`}">
+										<!-- <div :style="{'background-image':`url(${isEmpty(food.menuImage)?noneImage:picPrefix}${isEmpty(food.menuImage)?'':food.menuImage})`}"> -->
+										<div :style="{'background-image':`url(${isEmpty(food.menuImage)?noneImage:''})`}"></div>
+									</div>
+									<div class='food-msg'>
+										<div class='food-title'>{{food.menuName}}</div>
+										<div class='food-info'>{{food.menuIntroduce}}</div>
+										<div class='food-price price-color' v-if='food.iszizhucan && !food.zizhucan && food.isShowPrice'>{{food.menuPrice|priceFormat}}円</div>
+										<div class='food-price price-color' v-if='food.isShowPrice && !food.iszizhucan '>{{food.menuPrice|priceFormat}}円</div>
+										<div class='food-buy' v-if="food.whetherSpec=='0'">
+											<img :src="food.iconAdd"  @click.stop='addHandClick($event,food,type,index)'>
+											
+											<div class='count' v-if='food.count'>{{food.count}}</div>
+											
+											<img :src="food.iconReduce" v-if='food.count' @click.stop='reduceHandClick(food,type,index)'>
+										</div>
+										<!-- 三期修改当是规格菜品并且 food.zizhucan为true是显示按钮-->
+										<div v-if="food.whetherSpec=='1' && food.zizhucan" class='food-specifications blue-color' @click.stop='specificationsEvent(food,type,index)'>
+											<img style="width:30px;" v-if="!food.iszizhucan" src="img/guige.png" />
+											<img style="width:30px;" v-else src="img/guige-l.png" />
+										</div>
+										<!-- 如果 zizhucan == 0 -->
+										<div v-if="!food.zizhucan" @click.stop='showFoodPanel(food,type,index)' class='food-specifications blue-color'>
+											<img style="width:24px;" src="img/add-l.png" />
+										</div>
+									</div>
+									<!-- 三期修改 1在售 2售完-->
+									<div class="mask-panel" v-if="food.menuStatus == 2">
+										<p>{{languageOption}}</p>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- ---------自助餐panel------------- -->
+			<div class='buffet-container' style="" v-show='toolbarData==="buffet"'>
+				<div v-for='(food,index) in buffetList' :key='index' class='food' @click.stop='showFoodPanel(food,"",index)'
+				 :data-index='index'>
+					<div class='food-img' :style="{'background-image':`url(${isEmpty(food.buffetImage)?noneImage:picPrefix}${isEmpty(food.buffetImage)?'':food.buffetImage})`}"></div>
+					<div class='food-msg'>
+						<div class='food-title buffet-title'>{{food.catalogName}}</div>
+						<div class='food-price price-color buffet-price' v-if='isShowPrice'>{{food.buffetPrice|priceFormat}}円</div>
+					</div>
+				</div>
+			</div>
+			<div class='buffet-status-panel' v-show='toolbarData==="order"'>
+				<div class='order-content' style='margin-bottom: 90px;'>
+					<div class='order-content-title item'>请出示此页面给店员</div>
+					<!-- <div class='order-content-items item' id='status-items'>
+          <div class='order-item'>
+            <span class='item-title'>迷你叉烧套餐迷你叉烧套餐迷你叉烧套餐</span>
+            <span class='item-price price-color'>4000円</span>
+            <span class='item-count'>1</span>
+          </div>
+        </div> -->
+				</div>
+				<footer class='buffet-status-footer'>
+					<ul class='finish-footer-ul'>
+						<li>
+							<div class='finish-footer-item addMore' id='addMore'>
+								<img src="img/home-h.svg">
+								<span>首页</span>
+							</div>
+						</li>
+						<li>
+							<div class='finish-footer-item service' id='service'>
+								<img src="img/service.svg">
+								<span>呼叫服务</span>
+							</div>
+						</li>
+						<li>
+							<div class='finish-footer-item checkout' id='checkout'>
+								<img src="img/pay.svg">
+								<span>结算</span>
+							</div>
+						</li>
+					</ul>
+				</footer>
+			</div>
+		</div>
+		<div class='pop-panel menu-panel'>
+			<div class='pop-panel-bg'></div>
+			<div class='close-btn'><img class='close' src="img/close.svg"></div>
+			<div class="content">
+				<ul class='top-content text-left'>
+					<li class='home' id='home'><span>Home</span></li>
+					<li id='showStatus'><span>订单状态</span></li>
+					<!-- <li><span>店铺信息</span></li> -->
+				</ul>
+			</div>
+		</div>
+		<div class='pop-panel language-panel'>
+			<div class='pop-panel-bg'></div>
+			<div class='close-btn'><img class='close' src="img/close.svg"></div>
+			<div class="content">
+				<p class="language-content-title language-content"><img src="img/home-p.svg" alt="">语言切换</p>
+				<ul class='top-content text-center' id='language-select'>
+					<!-- <li data-lg='China'><img src="img/China.svg"><span>中文简体</span></li> -->
+					<li class='China' data-lg='China' data-type="2"><span>中文简体</span></li>
+					<li class='Japan' data-lg='Japan' data-type="1"><span>日本語</span></li>
+					<li class='UK' data-lg='UK' data-type="5"><span>English</span></li>
+					<li class='HongKong' data-lg='HongKong' data-type="3"><span>中文繁體</span></li>
+					<li class='Korean' data-lg='Korean' data-type="4"><span>한국어</span></li>
+				</ul>
+				<!-- 积分 -->
+				<p class="language-content-title jifen-box" id="jifen-box"><img src="img/dl-jifen.svg" alt=""><span>ポイントを調べる</span></p>
+			</div>
+		</div>
+		<div class='shopping-cart slide-panel' style="z-index: 103;">
+			<div class='slide-panel-bg'></div>
+			<div class='cart-panel'>
+				<div class='cart-stage'>
+					<div class='cart-header'>
+						<span class='cart-title'>购物车</span>
+						<div class='clear-all' id='delete-all'>
+							<img class='cart-delete' src="img/delete.svg">
+							<span class='cart-clear'>清空</span>
+						</div>
+					</div>
+					<div class='cart-content'>
+						<ul id='cart-content'>
+							<!-- <li>
+              <div class='food-title'>迷你叉烧套餐</div>
+              <div class='food-buy'>
+                <img src="img/add.svg" class='cart-add'>
+                <div class='count cart-count'>1</div>
+                <img src="img/reduce.svg" class='cart-reduce'>
+              </div>
+            </li> -->
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='specifications-panel'>
+			<div class='pop-panel-bg'></div>
+			<div class='center-content'>
+				<div class='pop-title title '><span class='specifications-title'>澳大利亚和牛</span> <img class='close-btn' id='close-specifications'
+					 src="img/close.svg"></div>
+				<div class='pop-header title'>规格:</div>
+				<div class='pop-center'>
+					<ul class='center-ul' id="specs-box">
+						<li class='active'>玉子</li>
+						<li>玉子</li>
+						<li>玉子</li>
+						<li>玉子</li>
+						<li>玉子</li>
+						<li>玉子</li>
+						<li>玉子</li>
+						<li>玉子</li>
+						<li>玉子</li>
+					</ul>
+				</div>
+				<footer class='pop-footer'>
+					<div class='price price-color'><span class='specifications-price'>4000</span> 円</div>
+					<div class='food-buy'>
+						<img src="img/add.svg" class='specifications-add'>
+						<div class='count specifications-count'>0</div>
+						<img src="img/reduce.svg" class='specifications-reduce'>
+					</div>
+				</footer>
+			</div>
+		</div>
+		<div class='food-panel'>
+			<!-- 返回键 -->
+			<div class="back-icon-box food-back-detail"><img src="img/back_icon.png"></div>
+
+			<header class='header'>
+				<nav class='nav'>
+					<span class='food-back back food-back-detail'><img src="img/close.svg"></span>
+					<!-- <span class='back'><img src="img/back.svg"></span> -->
+					<!-- <h1 class='nav-title detail-title'>详情</h1> -->
+					<!-- <span class='language'>
+          <span class='blue-color'>language</span>
+        </span> -->
+				</nav>
+			</header>
+			<div class='food-panel-bg'></div>
+			<div class='food-content'>
+				<div class='bgBox bgBox-detail'>
+					<div class='bgImg bgImg-detail'>
+						<div></div>
+					</div>
+				</div>
+				<div class='food-msg'>
+					<div class='food-title food-panel-title'>迷你叉烧套餐</div>
+					<div class='food-price price-color'><span class="food-panel-price">1080</span>円</div>
+					<div class='food-buy' id='buffet-panel-buy'>
+						<img src="img/add.svg" class='food-add'>
+						<div class='count food-count'>1</div>
+						<img src="img/reduce.svg" class='food-reduce'>
+					</div>
+					<div class='food-specifications blue-color buffet-specifications' id='buffet-panel-specifications'></div>
+					<div class='food-info food-panel-info'>拉面，迷你叉烧饭，饺子3个</div>
+					<div class="buffet-btn-box">
+						<p class="add-buffet-menu" style="background-image:url('img/add-l.png')"></p>
+						<p class="add-buffet-dishes" style="display: none;">自助餐菜单</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class='order-panel'>
+			<!-- 返回键 -->
+			<div class="back-icon-box order-back-box"><img src="img/back_icon.png"></div>
+			<header class='header'>
+				<nav class='nav'>
+					<span class='order-back back order-back-box'><img src="img/close.svg"></span>
+					<!-- <span class='back'><img src="img/back.svg"></span> -->
+					<!-- <h1 class='nav-title'>提交订单</h1> -->
+					<!-- <span class='language'>
+          <span class='blue-color'>language</span>
+        </span> -->
+				</nav>
+			</header>
+			<div class='order-panel-bg' style="bottom: 50px;"></div>
+			<div class='order-content'>
+				<div class='order-content-title item'>订单内容</div>
+				<div class='order-content-items item' id='order-items'>
+					<!-- <div class='order-item'>
+          <span class='item-title'>迷你叉烧套餐迷你叉烧套餐迷你叉烧套餐</span>
+          <span class='item-price price-color'>￥4000</span>
+          <span class='item-count'>1</span>
+        </div> -->
+				</div>
+				<!-- 三期下单小计 -->
+				<div class="order-content-items item" id="order-total-box">
+					<!-- <div class="item total-money"  style="line-height: 30px;"> -->
+						<!-- <p>
+							<span class="title-left">小计:</span>
+							<span id="finish-money">23,530</span>円 
+							<span class="suffix-info">&nbsp;(带*标识的为税金8%)</span>
+						</p>
+							<p><span class="title-left">税金:</span><span id="finish-tax">1,863</span>円<span class="suffix-info"> （10%）</span></p>
+							<p><span class="title-left">税金:</span><span id="finish-tax">392</span>円<span class="suffix-info">  （8%）</span></p>
+						<p class="bold">
+							<span class="title-left">合计:</span> 
+							<span id="finish-total">25,785円</span>
+						</p> -->
+					<!-- </div> -->
+				</div>
+				<!-- 三期下单提示 -->
+				<div class="order-content-items item">
+					<p class="submit-info-title"><img src="img/what.svg"/>下单尚未完成，请点击右下角提交按钮完成下单。</p>
+				</div>
+			</div>
+		</div>
+		<div class='finish-panel'>
+			<!-- 返回键 -->
+			<div class="back-icon-box finish-back-box"><img src="img/back_icon.png"></div>
+			<header class='header'>
+				<nav class='nav'>
+					<span class='finish-back back finish-back-box'><img src="img/close.svg"></span>
+					<!-- <span class='back'><img src="img/back.svg"></span> -->
+					<!-- <h1 class='nav-title'>订单</h1> -->
+					<!-- <span class='language'>
+          <span class='blue-color'>language</span>
+        </span> -->
+				</nav>
+			</header>
+			<div class='finish-panel-bg'></div>
+			<div class='order-content' id='finish-content'>
+				<div class='order-content-title item no-add'>已下单,请耐心等待</div>
+
+				<!-- 规格订单内容 -->
+				<div class='order-content-items item' id='step-order-content'>
+					<!-- 下拉列表 -->
+					<div class="order-item">
+						<!-- 规格 -->
+						<div class="order-item-list panel-collapse">
+
+						</div>
+						<!-- 规格菜品 -->
+						<div class="step-order-collapse steps-panel-box ">
+
+						</div>
+					</div>
+				</div>
+				<div class='order-content-items item' id='finish-items'>
+					<!-- <div class='order-item'>
+          <span class='item-title'>迷你叉烧套餐迷你叉烧套餐迷你叉烧套餐</span>
+          <span class='item-price price-color'>￥4000</span>
+          <span class='item-count'>1</span>
+        </div> -->
+				</div>
+				<!-- <div class="order-item add-cata-box"><span>追加菜品</span></div> -->
+			</div>
+
+			<!-- <div class='item total-money'>
+      <p><span class='title-left'>小计</span> <span id='finish-money'>0</span>円</p>
+      <p><span class='title-left'>税金</span><span id='finish-tax'>0</span>円</p>
+      <p class='bold'><span class='title-left'>合计</span> <span  class='price-color'><span id='finish-total'>0</span>円</span></p>
+    </div> -->
+	<!-- 是否登录领积分页面 -->
+	<div class="login-to-score">
+		<div class="score-box">
+			<p class="to-title">登録したらポイントがもらえます！</p>
+			<p class="to-login" id="to-login">ログインします</p>
+			<img src="img/dl-nav.svg" >
+		</div>
+	</div>
+			<footer class='finish-footer'>
+				<ul class='finish-footer-ul'>
+					<li>
+						<div class='finish-footer-item addMore' id='addMore'>
+							<img src="img/home-h.svg">
+							<span>首页</span>
+						</div>
+					</li>
+					<li>
+						<div class='finish-footer-item service' id='service'>
+							<img src="img/service.svg">
+							<span>呼叫服务</span>
+						</div>
+					</li>
+					<li>
+						<div class='finish-footer-item checkout' id='checkout'>
+							<img src="img/pay.svg">
+							<span>结算</span>
+						</div>
+					</li>
+				</ul>
+			</footer>
+		</div>
+		<div class='status-panel'>
+			<header class='header'>
+				<nav class='nav'>
+					<span class='status-back back'><img src="img/close.svg"></span>
+					<h1 class='nav-title'>订单</h1>
+					<!-- <span class='language'>
+          <span class='blue-color'>language</span>
+        </span> -->
+				</nav>
+			</header>
+			<div class='order-panel-bg'></div>
+			<div class='order-content'>
+				<div class='order-content-title item'>请出示此页面给店员</div>
+				<div class='order-content-items item' id='status-items'>
+					<!-- <div class='order-item'>
+          <span class='item-title'>迷你叉烧套餐迷你叉烧套餐迷你叉烧套餐</span>
+          <span class='item-price price-color'>4000円</span>
+          <span class='item-count'>1</span>
+        </div> -->
+				</div>
+			</div>
+		</div>
+		<div class='service-panel pop-panel'>
+			<div class='service-panel-bg pop-panel-bg'></div>
+			<div class='center-content'>
+				<p class='service-msg shops-service'>呼叫服务员</p>
+				<p class='is-water-buy water-buy'>是否呼叫服务员?</p>
+				<img src="img/close.svg" class='no choice close-water' id='service-no'/>
+				<span class='yes choice sure-water' id='service-yes'>确定</span>
+			</div>
+		</div>
+
+		<div class='buffet-order-panel pop-panel'>
+			<div class='buffet-panel-bg pop-panel-bg'></div>
+			<div class='center-content'>
+				<p class='checkout-msg buffet-msg'>确认下单吗？</p>
+				<div class='order-content'>
+					<!-- <div class='buffet-order-title item'>
+						<div class="order-content-title">订单内容</div>
+					</div> -->
+					<div class='order-content-items' id='buffet-order-content'>
+
+					</div>
+					<div class='food-buy'>
+						<img src="img/add-l.png" class='food-add'>
+						<div class='count food-count'>1</div>
+						<img src="img/reduce-l.png" class='food-reduce'>
+					</div>
+				</div>
+				<img src="img/close.svg" class='no choice close-water' id='service-no'/>
+				<span class='yes choice sure-water' id='buffet-yes'>提交订单</span>
+			</div>
+		</div>
+
+		<div class='checkout-panel pop-panel'>
+			<div class='checkout-panel-bg pop-panel-bg'></div>
+			<div class='center-content'>
+				<p class='checkout-msg shop-service'>呼叫买单</p>
+				<p class='is-water-buy water-buy-text'>是否呼叫服务员买单?</p>
+				<img src="img/close.svg" class='no choice close-water' id='checkout-no'/>
+				<span class='yes choice sure-water' id='checkout-yes'>确定</span>
+			</div>
+		</div>
+		<div class='delete-all-panel pop-panel'>
+			<div class='checkout-panel-bg pop-panel-bg'></div>
+			<div class='center-content'>
+				<p class='checkout-msg del-all'>删除全部商品？</p>
+				<!-- <span class='no choice' id='delete-no'>否</span> -->
+				<img src="img/close.svg" class='no choice close-water'/>
+				<span class='yes choice delete-sure sure-water' id='delete-yes'>是</span>
+			</div>
+		</div>
+		<footer class='footer'>
+			<div class='footer-bar'>
+				<div class='cart' id='cart'>
+					<img src="img/cart.svg">
+					<span class='cart-num' id='cart-num'>0</span>
+				</div>
+				<div class='total-price'><span id='cart-total'>0</span> 円</div>
+				<div class='next' id='next'>下一步</div>
+			</div>
+		</footer>
+		<!-- ---------------步骤panel-------------- -->
+		<div class='yzk-panel step-panel'>
+			<header class='yzk-panel-header'>
+				<nav class='nav'>
+					<div class='yzk-close-btn'><img class='close' src="img/close.svg"></div>
+				</nav>
+			</header>
+			<div class="steps-info p10"><span>Step</span><span class="steps-index">1</span>/<span class="steps-total"></span></div>
+			<div class="steps-box">
+				<!-- 步骤列表 -->
+				<div class="steps-list-box"></div>
+				<!-- 步骤列表规格可选数量内容 -->
+				<div id="steps-check-info-box" class="steps-check-info-box"></div>
+
+				<!-- 步骤列表对应内容 -->
+				<div id="steps-list-items" class="steps-list-items"></div>
+				<!-- 步骤按钮 -->
+				<div id="sp-steps-btn-box" class="steps-btn-box-c">
+					<p id="sp-next-btn">下一步</p>
+				</div>
+				<div class='yzk-panel-bg'></div>
+			</div>
+		</div>
+
+		<!-- -----------步骤订单确认panel--------------- -->
+		<div class='yzk-panel step-sure-panel' >
+			<header class='yzk-panel-header'>
+				<nav class='nav'>
+					<div class='yzk-close-btn' style="left:0;"><img class='close' src="img/close.svg"></div>
+				</nav>
+			</header>
+			<div class='yzk-panel-bg' style="bottom: 50px;"></div>
+			<div class='yzk-panel-content'>
+				<div class='yzk-panel-title item'>订单确认</div>
+				<!-- 规格菜品区域 -->
+				<div class='yzk-content-items' id='steps-sure-items'>
+					<div class='yzk-content-item'></div>
+				</div>
+				<!-- 菜品规格列表区域 -->
+				<div class="steps-panel-box" id="steps-panel-box"></div>
+				<!-- 自助餐数量说明 -->
+				<div class="steps-price-box">
+					<div class="steps-panel-list order-item">
+						<span class='item-title'><span class="sum-total">小计</span>：<span class="item-title-price"></span>円</span>
+						<div class='food-buy steps-box-buy'>
+							<img src="img/add.svg" class='cart-add'>
+							<div class='count cart-count'>1</div>
+							<img src="img/reduce.svg" class='cart-reduce'>
+						</div>
+					</div>
+				</div>
+				<!-- 步骤订单按钮 -->
+				<div id="sp-steps-btn-box" class="steps-btn-box">
+					<p id="sp-update-order" class="hide steps-btn-order btn-inline">重新选择</p>
+					<p id="sp-buy" class="btn-inline">添加到购物车</p>
+				</div>
+			</div>
+		</div>
+		<!-- 注册页面 -->
+		<div class='register-panel dl-panel'>
+			<header class='header'>
+				<nav class='nav'>
+					<span class='order-back back dl-box'><img src="img/dl-back.svg"></span>
+				</nav>
+			</header>
+			<div class="title">YUI Point</div>
+			<div class='order-panel-bg'></div>
+			<div class='order-content'>
+				<div class="cu-input">
+					<img src="img/dl-user.svg" alt="" style="width: 19px;height:21px;">
+					<input type="text" name="xm" placeholder="姓名"/>
+				</div>
+				<div class="cu-input">
+					<img src="img/dl-date.svg" alt="" style="width: 21px;height:19px;">
+					<input type="text" name="csrq" class="input-rr"  id="USER_AGE" placeholder="生年月日"/>
+					<div class="select-date">
+						<img src="img/dl-nav.svg"  alt="">
+					</div>
+				</div>
+				<div class="cu-input">
+					<img src="img/dl-email.svg" alt="" style="width: 21px;height:17px;padding-right: 0;">
+					<input type="text" name="email"  placeholder="メール"/>
+				</div>
+				<div class="cu-input">
+					<img src="img/dl-phone.svg" alt="" style="width: 16px;height:23px;">
+					<input type="text" name="phone" class="input-r"  placeholder="携帯番号"/>
+					<button class="code-btn" id="code-btn">検証</button>
+				</div>
+				<div class="cu-input">
+					<img src="img/dl-code.svg" alt="" style="width: 20px;height:22px;">
+					<input type="text" name="code"  placeholder="検証コード"/>
+				</div>
+				<div class="cu-input">
+					<img src="img/dl-mm.svg" alt="" style="width: 19px;height:24px;">
+					<input type="text" name="pwd"  placeholder="パスワード"/>
+				</div>
+			</div>
+			<div class="register-btn" id="first-register">新規登録</div>
+		</div>
+		<!-- 登录页面 -->
+		<div class='login-panel dl-panel'>
+			<header class='header'>
+				<nav class='nav'>
+					<span class='order-back back dl-box'><img src="img/close.svg"></span>
+				</nav>
+			</header>
+			<div class="title">YUI Point</div>
+			<div class='order-panel-bg'></div>
+			<div class='order-content'>
+				<div class="cu-input">
+					<img src="img/dl-user.svg" alt="" style="width: 19px;height:21px;">
+					<input type="text" name="account" placeholder="アカウント" />
+				</div>
+				<div class="cu-input">
+					<img src="img/dl-mm.svg" alt="" style="width: 19px;height:24px;">
+					<input type="password" name="loginPwd"  style="padding-right: 140px;" placeholder="パスワード"/>
+					<button class="forget-btn">パスワードを忘れた?</button>
+				</div>
+				<div id="">
+					<label class="yzk-checkbox checkbox-dc min-box"><input type="checkbox" value=""><span>ログインを維持する</span></label>
+				</div>
+			</div>
+			<div class="register-btn" id="login-box">ログイン</div>
+			<div class="register-btn border"  id="register-box">新規登録</div>
+		</div>
+		<!-- 积分页面 -->
+		<div class='jifen-panel dl-panel'>
+			<header class='header'>
+				<nav class='nav'>
+					<span class='order-back back dl-box'><img src="img/close.svg"></span>
+				</nav>
+			</header>
+			<div class='order-panel-bg'></div>
+			<div class="card-box">
+				<div class="left-box">
+					<p class="card-title" id="card-title">TANAKA TSUYOSHI</p>
+					<div class="card-price"><img src="img/dl-jf.svg" ><p class=""></p></div>
+				</div>
+				<div class="right-box" id="auth-code">
+					<img src="" alt="">
+				</div>
+			</div>
+			<div class="jifen-title">ポイント履歴</div>
+			<div class='order-content'>
+				<!-- <div class="jifen-list">
+					<div class="date-name">
+						<p class="jifen-name-title">OKIRIZO居酒屋</p>
+						<p class="jifen-name-date">019/12/01 12:40:20</p>
+					</div>
+					<p>+50</p>
+				</div> -->
+			</div>
+		</div>
+		
+		
+		<!-- 主页按钮-->
+		<!-- <div class='home-button' ><img src="img/back_icon.svg" alt=""></div> -->
+		<!-- loading -->
+		<div class="cu-load">
+			<!-- <view class="cuIcon-emojifill text-orange"></view> -->
+			<img src="img/logo.png"/>
+			<p class="gray-text">loading...</p>
+		</div>
+	</body>
+	<script src="js/vue.min.js"></script>
+	<script src='js/bscroll.min.js'></script>
+	<script src="js/jquery-1.9.1.js"></script>
+	<script src="js/dialog.js"></script>
+	<script src="js/mobile-select-date.js"></script> 
+	<script src="js/fastclick.js"></script>
+	<script src="js/common.js"></script>
+	<script src="js/common-dom.js"></script>
+	<script src="js/jquery.selectlist.js"></script>
+	<script src='js/order.js'></script>
+
+</html>

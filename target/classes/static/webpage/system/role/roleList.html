@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html >
+<head >
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+  <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+  <link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+  <link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+  <link rel="stylesheet"    href="../../../layuiadmin/style/font-awesome/css/font-awesome.min.css" media="all"/>
+  <link rel="stylesheet"    href="../../../lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css" media="all">
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">角色名称</label>
+						<div class="layui-input-block">
+							<input type="text" name="name" placeholder="请输入"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					
+					<div class="layui-inline">
+						<button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit" >查询</button>
+						
+					</div>
+
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+	
+<div type="text/html" id="trTool" style="display:none">
+    <a data-grant="system:role:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a data-grant="system:role:roleMenu" class="layui-btn layui-btn-success layui-btn-xs" lay-event="roleMenu"><i class="layui-icon layui-icon-auz"></i>菜单授权</a>
+    <a data-grant="system:role:roleUser" class="layui-btn layui-btn-turquo layui-btn-xs" lay-event="roleUser"><i class="layui-icon layui-icon-group"></i>用户授权</a>
+    <a data-grant="system:role:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+<div type="text/html" id="toolbar" style="display:none" >
+  <div class="layui-btn-container">
+    <button data-grant="system:role:add" class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon">&#xe654;</i>添加</button>
+    <button data-grant="system:role:refreshCache" class="layui-btn layui-btn-danger layui-btn-sm" lay-event="refreshCache"> <i class="layui-icon">&#xe669;</i>刷新缓存</button>
+  </div>
+</div>
+<script type="text/html" id="statusTpl">
+  
+  <input type="checkbox" name="status" value="{{d.roleId}}" title="启用" lay-filter="status" {{ d.status == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="editModeTpl">
+  <input type="checkbox" name="editMode" value="{{d.roleId}}" lay-skin="switch" lay-text="可编辑|只读" lay-filter="editMode" {{ d.editMode == '1' ? 'checked' : '' }}>
+</script>
+	<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+   <script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.exedit.js"></script>
+	<script>
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus' //主入口模块
+	}).use([ 'table', 'form','webplus' ], function() {
+		var $ = layui.$, 
+		form = layui.form, 
+		table = layui.table,
+		webplus=layui.webplus;
+		var cols=[ [ {
+			type : 'numbers',
+			title : '序号',
+			width : 50
+		},{
+			field : 'roleId',
+			title : '角色编号',
+			hide:true
+		}, {
+			field : 'roleName',
+			title : '角色名称',
+			minWidth : 150
+		},{
+			field : 'roleType_dict',
+			title : '角色类型',
+			width : 120
+		}, {
+			field : 'status_dict',
+			title : '当前状态',
+			templet: '#statusTpl', 
+			unresize: true,
+			width : 110,
+		}, {
+			field : 'status',
+			title : '当前状态',
+			width : 100,
+			hide:true
+		}, {
+			field : 'editMode',
+			title : '编辑模式',
+			hide : true 
+		}, {
+			field : 'editMode_dict',
+			title : '编辑模式',
+			templet: '#editModeTpl', 
+			unresize: true,
+			width : 110,
+		},{
+			field : 'createTime',
+			title : '创建时间',
+			width : 170
+		}, {
+			title : '操作',
+			toolbar : '#trTool',
+			width : 330,
+			fixed: 'right'
+		} ] ];
+		
+		webplus.init('system/role/list',cols);
+		 //行单击事件
+		  table.on('row(dataList)', function(obj){
+			  obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+			     rowObj=obj;
+		     });
+	      //监听启用操作
+		  form.on('checkbox(status)', function(obj){
+			  
+			  if(webplus.checkFormEditMode(obj)){
+				  var status="0";
+		    	   if(obj.elem.checked){
+		    		   status="1";
+		    	   }
+		    	   
+		    	   var roleId=obj.value;
+		    	   var params={};
+		    	   params.roleId=roleId;
+		    	   params.status=status;
+		    	   webplus.doAjax("system/role/update",params,"","0");
+			  }
+			  
+		  });
+		 
+		  //监听启用操作
+		  form.on('switch(editMode)', function(obj){
+			  if(webplus.checkFormEditMode(obj)){
+				  var editMode="0";
+		    	   if(obj.elem.checked){
+		    		   editMode="1";
+		    	   }
+		    	   
+		    	   var params={};
+		    	   params.roleId=obj.value;
+		    	   params.editMode=editMode;
+		    	   webplus.doAjax("system/role/update",params,"","","3",function(data){
+		    		   rowObj.update({editMode:editMode});
+		    	   });
+			  }
+			 
+	    	   
+		  });
+		 //监听行工具事件
+		  table.on('tool(dataList)', function(obj){
+		    var data = obj.data;
+		    //判断操作的按钮类别  需要在标签上配置  lay-event='判断的类型值'
+		    switch(obj.event){
+		    	case 'edit':
+		    		//打开编辑弹出框
+		    	   if(webplus.checkRowEditMode(obj)){
+		    	     webplus.openEditWindow('editRole.html','编辑角色',obj,'roleId','','500','450');
+		    	   }
+		   			break;
+		    	case 'roleMenu':
+		    		//打开编辑弹出框
+		    		if(webplus.checkRowEditMode(obj)){
+		    		  webplus.openEditWindow('roleMenu.html','授权菜单',obj,'roleId','roleId','500','');
+		    		}
+		   			break;
+		    	case 'roleUser':
+		    		if(webplus.checkRowEditMode(obj)){
+		    		  webplus.openDetailWindow('roleUser.html','授权用户',obj,'roleId');
+		    		}
+		       		
+		   			break;
+		    	case 'del':
+		    		if(webplus.checkRowEditMode(obj)){
+		    		  webplus.removeRow('system/role/remove',obj,'roleId','','','删除角色相应的权限也会删除，请慎重');
+		    		}
+		    		break;
+		    }
+		  });
+		 
+		 
+		 //监听表头按钮事件
+		  table.on('toolbar(dataList)', function(obj){
+		    var checkStatus = table.checkStatus(obj.config.id);
+		    switch(obj.event){
+		      	case 'add':
+			         //打开添加弹出框
+			         webplus.openWindow('addRole.html','新增角色','500','450');
+		     	     break;
+		      	case 'refreshCache':
+		      		webplus.doAjax('system/role/refreshCache',{},'你确定刷新角色权限缓存吗？')
+			        break;
+			        break;
+		    }
+		  });	
+			
+
+		});
+	</script>
+
+</body>
+</html>

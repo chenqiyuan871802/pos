@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include :: header"></head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="query-item">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">日志内容</label>
+						<div class="layui-input-block">
+							<input type="text"  style="width:120px;" name="content" 
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">操作用户</label>
+						<div class="layui-input-block">
+							<input type="text"  style="width:120px;" name="userName" 
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">日志类型</label>
+						<div class="layui-input-block">
+							<select name="logType" select-code="log_type">
+								
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">操作日期</label>
+						<div class="layui-input-block">
+							<input style="width:180px;" name="operateDate" type="text" class="layui-input" id="operateDate">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="submit-search" >查询</button>
+						
+					</div>
+
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="logList" lay-filter="logList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+	<link rel="stylesheet"    th:href="@{/css/common/loader.css}" media="all"/>
+<link rel="stylesheet"    th:href="@{/css/common/tablepage.css}" media="all"/>
+<script type="text/html" id="toolbar">
+  <div class="layui-btn-container">
+    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del"> <i class="layui-icon layui-icon-delete"></i>删除日志</button>
+<button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="clear"> <i class="layui-icon layui-icon-delete"></i>清空日志</button>
+  </div>
+</script>
+	<div th:include="include :: footer"></div>
+	<script>
+		layui.config({
+			base :  cxt+'layuiadmin/' //静态资源所在路径
+		}).extend({
+			index : 'lib/index', //主入口模块
+			interfaceAddr:'../js/interface' //接口方法模块
+		}).use([ 'index', 'table', 'common','interfaceAddr','form' ,'laydate'], function() {
+			var $ = layui.$, 
+			form = layui.form,
+			table = layui.table,
+			laydate = layui.laydate,
+			interfaceAddr = layui.interfaceAddr;
+			 laydate.render({
+			        elem: '#operateDate'
+			        ,range: true
+			        ,max:0
+			    });
+			//加载下拉框
+			compoment.initSelect($('#query-item'),form);
+			//加载动画
+			compoment.showLoader();
+			//定义默认请求数据
+			var params = {};
+			/* 加载表单 */
+			form.on('submit(submit-search)', function(data) {
+				//加载动画
+				compoment.showLoader();
+				//获取查询对象数据
+	   			params = data.field;
+	   			//执行重载
+	   			compoment.loadTable(table,params,'logList');
+	   		});
+			table.on('row(logList)', function(obj){
+				obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+		     });
+			table.render({
+				elem : '#logList',//表id
+				url : cxt+'system/log/list',
+				where:{
+					token:compoment.getToken()
+				},
+				method : 'post',   //请求方式
+				height : 'full-67',//控制表格高度
+				toolbar: '#toolbar',//引入表头按钮
+				defaultToolbar:[],//不开启工具栏['filter', 'print']    @@@@    filter: 显示筛选图标  print: 显示打印图标
+				cellMinWidth : 80, //每列最小宽度
+				loading:false,
+				page : true,//开启分页
+				limit : 20,//默认一页显示20条信息
+				limits : [ 10, 20, 50, 100, 200 ], //配置每页显示条数下拉框选项
+				cols : [ [ {
+					type : 'numbers',
+					title : '序号'
+				}, {
+					checkbox : true
+				}, {
+					field : 'logId',
+					title : '编号',
+					hide : true 
+				}, {
+					field : 'content',
+					title : '日志内容',
+					minWidth : 150
+				},{
+					field : 'logType_dict',
+					title : '日志类型',
+					width : 90
+				},{
+					field : 'method',
+					title : '请求方法',
+					width : 200
+				},{
+					field : 'params',
+					title : '请求参数',
+					minWidth : 120
+				},{
+					field : 'ip',
+					title : '请求ip',
+					width : 100
+				}, {
+					field : 'responseTime',
+					title : '响应时间',
+					width : 90
+				}, {
+					field : 'userName',
+					title : '操作用户',
+					width : 90
+				},{
+					field : 'createTime',
+					title : '操作时间',
+					width : 180
+				}] ],
+				done:function(){//表格加载成功后执行的函数
+					
+					//关闭动画
+					compoment.hideLoader();
+					//开启点击分页加载动画   
+					compoment.pageSilderLoader();
+					//设置高度
+					compoment.setTableHeight();
+				}
+			});
+			//监听表头按钮事件
+			table.on('toolbar(logList)',function(obj) {
+
+								var logIds = compoment.getCheckedTableData(table,'logList','logId');
+								switch (obj.event) {
+								case 'del':
+									if (logIds == '') {
+										compoment.alertError("请选择你要删除日志");
+										return;
+									}
+									layer.confirm('你确定要删除选择的日志吗？',function(index) {
+														layer.close(index);
+														//加载动画
+						                     compoment.ajaxPost(cxt+ 'system/log/batchRemove?ids='+ logIds,{},function(res) {
+						                    	//刷新表单
+							                             $("body").find('[lay-submit]').click();
+                                                            compoment.alertSuccess(res.appmsg);					
+													});
+											});
+
+									break;
+								case 'clear':
+									
+									layer.confirm('你确定要清空所有的日志吗？',function(index) {
+														layer.close(index);
+														//加载动画
+						                     compoment.ajaxPost(cxt+ 'system/log/clearLog',{},function(res) {
+						                    	//刷新表单
+							                             $("body").find('[lay-submit]').click();
+                                                            compoment.alertSuccess(res.appmsg);					
+													});
+											});
+
+									break;
+								}
+							});
+
+			 
+		});
+	</script>
+
+</body>
+</html>

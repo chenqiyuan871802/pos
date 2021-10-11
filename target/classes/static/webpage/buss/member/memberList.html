@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<style>
+	#beginTime{margin-right:5px;}
+	#endTime{margin-left:5px;}
+	#beginTime,#endTime{display: inline-block;position: relative;top:-3px;}
+</style>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">会员编号</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="memberNum" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">手机号码</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="mobile"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">姓</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="firstName"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">名字</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="lastName" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+                
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">邮箱</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="email"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">性别</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="sex" placeholder="请输入" autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+                    <div class="layui-inline">
+						<label class="layui-form-label">注册时间</label>
+						<div class="layui-input-block" >
+							<input type="text" name="beginTime" id="beginTime"
+								autocomplete="off" class="layui-input">-<input type="text" name="endTime" id="endTime"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >查询</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+<div type="text/html" id="trTool" style="display:none">
+    <a  data-grant="buss:member:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a  data-grant="buss:member:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="system:member:export"   class="layui-btn layui-btn-sm " lay-event="export"> <i class="layui-icon layui-icon-download-circle"></i>导出</button>
+</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','laydate','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			laydate = layui.laydate, 
+			table = layui.table;
+			//日期
+			laydate.render({
+				elem : '#beginTime'
+			});
+			//日期
+			laydate.render({
+				elem : '#endTime'
+			});
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '序号'
+			}, {
+				field : 'memberId',
+				title : '编号',
+				hide : true 
+			},
+            {
+			 field : 'memberNum',
+			 title : '会员编号',
+			 width:140
+			},
+            {
+			 field : 'mobile',
+			 title : '手机号码',
+			 width:120
+			},
+            {
+			 field : 'firstName',
+			 title : '姓',
+			 width:90
+			},
+            {
+			 field : 'lastName',
+			 title : '名字',
+			 width:100
+			},
+            {
+			 field : 'username',
+			 title : '全名',
+			 width:130
+			},
+           
+            {
+			 field : 'email',
+			 title : '邮箱',
+			 width:170
+			},
+            {
+			 field : 'birthDate',
+			 title : '出生日期',
+			 width:110
+			},
+            {
+			 field : 'sex_dict',
+			 title : '性别',
+			 width:80
+			},
+            
+            {
+			 field : 'enrollTime',
+			 title : '注册时间',
+			 width:170
+			}
+          ] ];
+		   webplus.init('buss/member/list',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    switch(rowObj.event){
+			    	case 'edit':
+			    		webplus.openEditWindow('editMember.html','编辑',rowObj,'memberId','','700','560');
+			       		
+			   			break;
+			    	case 'del':
+				    	
+				        webplus.removeRow('buss/member/remove',rowObj,'memberId','','','削除しますか');
+			    		break;
+			    }
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addMember.html','新增','700','560');
+			     	     break;
+			      	case 'export':
+				         //打开添加弹出框
+				         webplus.doAjax("/buss/member/export",{},"","","3",function(data){
+		        		 window.location.href=webplus.cxt()+"/file/downloadExcelFile?fid="+data.fid+"&fileName=export_csv_template.xlsx&token="+webplus.getToken();
+			    	   
+		        	     }); 
+			     	     break;
+			    }
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

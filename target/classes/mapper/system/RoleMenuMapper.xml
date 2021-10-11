@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.RoleMenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.system.model.RoleMenu">
+        <id column="role_menu_id" property="roleMenuId" />
+        <result column="role_id" property="roleId" />
+        <result column="menu_id" property="menuId" />
+        <result column="grant_type" property="grantType" />
+        <result column="create_by" property="createBy" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        role_menu_id AS roleMenuId, role_id AS roleId, menu_id AS menuId, grant_type AS grantType, create_by AS createBy, create_time AS createTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.system.model.RoleMenu">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role_menu
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.system.model.RoleMenu" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role_menu
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.system.model.RoleMenu">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role_menu
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.system.model.RoleMenu" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role_menu
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM sys_role_menu
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="roleMenuId != null and roleMenuId != ''">
+             AND role_menu_id = #{roleMenuId}  <!-- 角色与菜单关联编号 -->
+		</if>
+        <if test="roleId != null and roleId != ''">
+             AND role_id = #{roleId}  <!--  角色流水号 -->
+		</if>
+        <if test="menuId != null and menuId != ''">
+             AND menu_id = #{menuId}  <!-- 功能模块流水号 -->
+		</if>
+        <if test="grantType != null and grantType != ''">
+             AND grant_type = #{grantType}  <!-- 权限类型 1 经办权限 2管理权限 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="roleMenuId != null and roleMenuId != ''">
+		      AND role_menu_id LIKE '%${roleMenuId}%'  <!-- 角色与菜单关联编号 -->
+		</if>
+        <if test="roleId != null and roleId != ''">
+		      AND role_id LIKE '%${roleId}%'  <!--  角色流水号 -->
+		</if>
+        <if test="menuId != null and menuId != ''">
+		      AND menu_id LIKE '%${menuId}%'  <!-- 功能模块流水号 -->
+		</if>
+        <if test="grantType != null and grantType != ''">
+		      AND grant_type LIKE '%${grantType}%'  <!-- 权限类型 1 经办权限 2管理权限 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+    </sql>
+
+</mapper>

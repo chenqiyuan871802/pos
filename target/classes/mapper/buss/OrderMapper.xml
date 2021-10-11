@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.OrderMapper">
+   <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.Order">
+        <id column="order_id" property="orderId" />
+        <result column="shop_id" property="shopId" />
+        <result column="desk_id" property="deskId" />
+        <result column="desk_name" property="deskName" />
+        <result column="eat_num" property="eatNum" />
+        <result column="desk_amount" property="deskAmount" />
+        <result column="tax_amount" property="taxAmount" />
+        <result column="out_tax_amount" property="outTaxAmount" />
+        <result column="menu_amount" property="menuAmount" />
+        <result column="total_amount" property="totalAmount" />
+        <result column="cash_amount" property="cashAmount" />
+        <result column="pay_way" property="payWay" />
+        <result column="bill_way" property="billWay" />
+        <result column="whether_pay" property="whetherPay" />
+        <result column="pay_time" property="payTime" />
+        <result column="order_time" property="orderTime" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="whether_remove" property="whetherRemove" />
+        <result column="remove_time" property="removeTime" />
+        <result column="order_remark" property="orderRemark" />
+        <result column="order_type" property="orderType" />
+        <result column="point_amount" property="pointAmount" />
+        <result column="plus_point" property="plusPoint" />
+        <result column="sub_point" property="subPoint" />
+        <result column="member_id" property="memberId" />
+        <result column="desk_num" property="deskNum" />
+        <result column="sub_amount" property="subAmount" />
+        <result column="sub_rate" property="subRate" />
+        <result column="order_status" property="orderStatus" />
+        <result column="order_category" property="orderCategory" />
+        <result column="address_id" property="addressId" />
+        <result column="order_address" property="orderAddress" />
+        <result column="append_address" property="appendAddress" />
+        <result column="order_staff" property="orderStaff" />
+        <result column="update_staff" property="updateStaff" />
+        <result column="mobile" property="mobile" />
+        <result column="username" property="username" />
+        <result column="pick_up_time" property="pickUpTime" />
+        <result column="whether_receipt" property="whetherReceipt" />
+        <result column="receipt_title" property="receiptTitle" />
+        <result column="consume_tax" property="consumeTax" />
+        <result column="deliver_amount" property="deliverAmount" />
+        <result column="food_num" property="foodNum" />
+        <result column="credit_amount" property="creditAmount" />
+        <result column="coupons_amount" property="couponsAmount" />
+        <result column="zero_amount" property="zeroAmount" />
+        <result column="other_amount" property="otherAmount" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    order_id AS orderId,shop_id AS shopId,desk_id AS deskId,desk_name AS deskName,eat_num AS eatNum,desk_amount AS deskAmount,tax_amount AS taxAmount,out_tax_amount AS outTaxAmount,menu_amount AS menuAmount,total_amount AS totalAmount,cash_amount AS cashAmount,pay_way AS payWay,bill_way AS billWay,whether_pay AS whetherPay,pay_time AS payTime,order_time AS orderTime,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy,whether_remove AS whetherRemove,remove_time AS removeTime,order_remark AS orderRemark,order_type AS orderType,point_amount AS pointAmount,plus_point AS plusPoint,sub_point AS subPoint,member_id AS memberId,desk_num AS deskNum,sub_amount AS subAmount,sub_rate AS subRate,order_status AS orderStatus,order_category AS orderCategory,address_id AS addressId,order_address AS orderAddress,append_address AS appendAddress,order_staff AS orderStaff,update_staff AS updateStaff,mobile AS mobile,username AS username,pick_up_time AS pickUpTime,whether_receipt AS whetherReceipt,receipt_title AS receiptTitle,consume_tax AS consumeTax,deliver_amount AS deliverAmount,food_num AS foodNum,credit_amount AS creditAmount
+    ,coupons_amount AS couponsAmount,zero_amount AS zeroAmount,other_amount AS otherAmount
+    </sql>
+      <!-- 通用查询结果列 -->
+    <sql id="Common_Column_List">
+    a.order_id AS orderId,a.shop_id AS shopId,a.desk_id AS deskId,a.desk_name AS deskName,a.eat_num AS eatNum,
+    a.desk_amount AS deskAmount,a.tax_amount AS taxAmount,a.out_tax_amount AS outTaxAmount,a.menu_amount AS menuAmount,a.total_amount AS totalAmount,
+    a.cash_amount AS cashAmount,a.pay_way AS payWay,a.bill_way AS billWay,a.whether_pay AS whetherPay,
+    a.pay_time AS payTime,a.order_time AS orderTime,a.create_time AS createTime,a.create_by AS createBy,a.update_time AS updateTime,a.update_by AS updateBy,
+    a.whether_remove AS whetherRemove,a.remove_time AS removeTime,a.order_remark AS orderRemark,
+    a.order_type AS orderType,a.point_amount AS pointAmount,
+    a.plus_point AS plusPoint,a.sub_point AS subPoint,a.member_id AS memberId,a.order_category AS orderCategory,
+    a.desk_num AS deskNum,a.sub_amount AS subAmount,a.sub_rate AS subRate,
+    a.order_status AS orderStatus,a.address_id AS addressId,a.order_address AS orderAddress,a.append_address AS appendAddress,a.order_staff AS orderStaff,a.update_staff AS updateStaff,a.order_category AS orderCategory,
+    a.consume_tax AS consumeTax,a.deliver_amount AS deliverAmount,a.food_num AS foodNum,a.credit_amount AS creditAmount,a.coupons_amount AS couponsAmount,a.zero_amount AS zeroAmount,a.other_amount AS otherAmount
+    </sql>
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.Order">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.Order" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.Order">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.Order" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_order
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="orderId != null and orderId != ''">
+             AND order_id = #{orderId}  <!-- 订单编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="deskId != null and deskId != ''">
+             AND desk_id = #{deskId}  <!-- 桌号编号 -->
+		</if>
+        <if test="deskName != null and deskName != ''">
+             AND desk_name = #{deskName}  <!-- 桌号名称 -->
+		</if>
+        <if test="eatNum != null ">
+             AND eat_num = #{eatNum}  <!-- 进餐人数 -->
+		</if>
+        <if test="deskAmount != null ">
+             AND desk_amount = #{deskAmount}  <!-- 桌位金额 -->
+		</if>
+        <if test="taxAmount != null ">
+             AND tax_amount = #{taxAmount}  <!-- 税金 -->
+		</if>
+        <if test="menuAmount != null ">
+             AND menu_amount = #{menuAmount}  <!-- 菜单金额 -->
+		</if>
+        <if test="totalAmount != null ">
+             AND total_amount = #{totalAmount}  <!-- 总金额 -->
+		</if>
+        <if test="cashAmount != null ">
+             AND cash_amount = #{cashAmount}  <!-- 收银 -->
+		</if>
+        <if test="payWay != null and payWay != ''">
+             AND pay_way = #{payWay}  <!-- 支付方式 -->
+		</if>
+        <if test="billWay != null and billWay != ''">
+             AND bill_way = #{billWay}  <!--  -->
+		</if>
+        <if test="whetherPay != null and whetherPay != ''">
+             AND whether_pay = #{whetherPay}  <!-- 是否结算 -->
+		</if>
+        <if test="payTime != null ">
+             AND pay_time = #{payTime}  <!-- 支付时间 -->
+		</if>
+        <if test="orderTime != null ">
+             AND order_time = #{orderTime}  <!-- 订单时间 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+        <if test="whetherRemove != null and whetherRemove != ''">
+             AND whether_remove = #{whetherRemove}  <!-- 是否删除0否1是 -->
+		</if>
+        <if test="removeTime != null ">
+             AND remove_time = #{removeTime}  <!-- 删除时间 -->
+		</if>
+        <if test="orderRemark != null and orderRemark != ''">
+             AND order_remark = #{orderRemark}  <!-- 备注 -->
+		</if>
+		<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d")=#{queryDate}
+		 </if>
+		 <if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d") &gt;=#{beginDate}
+		 </if>
+		<if test="endDate != null and endDate!= ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d") &lt;=#{endDate}
+		 </if>
+		 <if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d %H:%i")&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d %H:%i")&lt;=#{endTime}
+			</if>
+		  <if test="orderType != null and orderType != ''">
+             AND order_type = #{orderType}  <!-- 订单类型1普通单2合并母单3合并子单 -->
+		</if>
+		<if test="orderTypeList != null and orderTypeList.size()>0">
+             AND order_type IN
+         <foreach item="orderTypeItem" index="index" collection="orderTypeList" separator="," open="(" close=")">
+		 #{orderTypeItem}
+	    </foreach>
+		</if>
+		 <if test="parentOrderNo != null and parentOrderNo != ''">
+             AND EXISTS (SELECT 1 FROM t_order_link  WHERE child_order_no=order_id AND parent_order_no=#{parentOrderNo})  <!-- 是否外卖 -->
+		 </if>
+		  <if test="pointAmount != null ">
+             AND point_amount = #{pointAmount}  <!-- 积分抵扣金额 -->
+		</if>
+        <if test="plusPoint != null ">
+             AND plus_point = #{plusPoint}  <!--  -->
+		</if>
+        <if test="subPoint != null ">
+             AND sub_point = #{subPoint}  <!-- 抵扣积分 -->
+		</if>
+        <if test="memberId != null and memberId != ''">
+             AND member_id = #{memberId}  <!-- 抵扣会员编号 -->
+		</if>
+		 <if test="deskNum != null ">
+             AND desk_num = #{deskNum}  <!-- 就餐人数 -->
+		</if>
+		 <if test="subAmount != null ">
+             AND sub_amount = #{subAmount}  <!-- 递减金额 -->
+		</if>
+        <if test="subRate != null ">
+             AND sub_rate = #{subRate}  <!-- 抵扣率 -->
+		</if>
+		 <if test="orderStatus != null and orderStatus != ''">
+             AND order_status = #{orderStatus}  <!-- 订单状态 0待处理1准备中2配送中3待提货4完成 -->
+		</if>
+        <if test="addressId != null and addressId != ''">
+             AND address_id = #{addressId}  <!-- 配送地址编号 -->
+		</if>
+		<if test="orderAddress != null and orderAddress != ''">
+		      AND order_address LIKE '%${orderAddress}%'  <!-- 订单地址 -->
+		</if>
+        <if test="appendAddress != null and appendAddress != ''">
+		      AND append_address LIKE '%${appendAddress}%'  <!-- 附件地址 -->
+		</if>
+        <if test="orderStaff != null and orderStaff != ''">
+             AND order_staff = #{orderStaff}  <!-- 下单员工 -->
+		</if>
+        <if test="updateStaff != null and updateStaff != ''">
+             AND update_staff = #{updateStaff}  <!-- 最后操作员工 -->
+		</if>
+		 <if test="orderCategory != null and orderCategory != ''">
+             AND order_category = #{orderCategory}  <!-- 订单类别1配送2外带 -->
+		</if>
+		 <if test="mobile != null and mobile != ''">
+             AND mobile = #{mobile}  <!-- 外卖电话 -->
+		</if>
+        <if test="username != null and username != ''">
+             AND username = #{username}  <!-- 外卖用户名 -->
+		</if>
+        <if test="pickUpTime != null ">
+             AND pick_up_time = #{pickUpTime}  <!-- 拿货时间 -->
+		</if>
+         <if test="whetherReceipt != null and whetherReceipt != ''">
+             AND whether_receipt = #{whetherReceipt}  <!-- 是否需要发票0否1是 -->
+		</if>
+        <if test="receiptTitle != null and receiptTitle != ''">
+             AND receipt_title = #{receiptTitle}  <!-- 发票抬头 -->
+		</if>
+		<if test="foodNum != null and foodNum != ''">
+             AND food_num = #{foodNum}  <!-- 取餐码 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="orderId != null and orderId != ''">
+		      AND order_id LIKE '%${orderId}%'  <!-- 订单编号 -->
+		</if>
+         <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="deskId != null and deskId != ''">
+             AND desk_id = #{deskId}  <!-- 桌号编号 -->
+		</if>
+        <if test="deskName != null and deskName != ''">
+		      AND desk_name LIKE '%${deskName}%'  <!-- 桌号名称 -->
+		</if>
+       <if test="payWay != null and payWay != ''">
+             AND pay_way = #{payWay}  <!-- 支付方式 -->
+		</if>
+        <if test="billWay != null and billWay != ''">
+             AND bill_way = #{billWay}  <!--  -->
+		</if>
+        <if test="whetherPay != null and whetherPay != ''">
+             AND whether_pay = #{whetherPay}  <!-- 是否结算 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+         <if test="whetherRemove != null and whetherRemove != ''">
+             AND whether_remove = #{whetherRemove}  <!-- 是否删除0否1是 -->
+		</if>
+        <if test="orderRemark != null and orderRemark != ''">
+		      AND order_remark LIKE '%${orderRemark}%'  <!-- 备注 -->
+		</if>
+		<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d")=#{queryDate}
+		 </if>
+		 <if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d %H:%i")&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d %H:%i")&lt;=#{endTime}
+			</if>
+		<if test="orderTimeStart != null and orderTimeStart != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d")
+				&gt;=#{orderTimeStart}
+			</if>
+			<if test="orderTimeEnd!= null and orderTimeEnd != ''">
+				AND DATE_FORMAT(order_time,"%Y-%m-%d")
+				&lt;=#{orderTimeEnd}
+			</if>
+	    <if test="orderType != null and orderType != ''">
+             AND order_type = #{orderType}  <!-- 订单类型1普通单2合并母单3合并子单 -->
+		</if>
+		 <if test="orderTypeList != null and orderTypeList.size()>0">
+             AND order_type IN
+         <foreach item="orderTypeItem" index="index" collection="orderTypeList" separator="," open="(" close=")">
+		 #{orderTypeItem}
+	    </foreach>
+		</if>
+		 <if test="parentOrderNo != null and parentOrderNo != ''">
+             AND EXISTS (SELECT 1 FROM t_order_link  WHERE child_order_no=order_id AND parent_order_no=#{parentOrderNo})  <!-- 是否外卖 -->
+		 </if>
+		  <if test="pointAmount != null ">
+             AND point_amount = #{pointAmount}  <!-- 积分抵扣金额 -->
+		</if>
+        <if test="plusPoint != null ">
+             AND plus_point = #{plusPoint}  <!--  -->
+		</if>
+        <if test="subPoint != null ">
+             AND sub_point = #{subPoint}  <!-- 抵扣积分 -->
+		</if>
+        <if test="memberId != null and memberId != ''">
+             AND member_id = #{memberId}  <!-- 抵扣会员编号 -->
+		</if>
+		 <if test="deskNum != null ">
+             AND desk_num = #{deskNum}  <!-- 就餐人数 -->
+		</if>
+		 <if test="subAmount != null ">
+             AND sub_amount = #{subAmount}  <!-- 递减金额 -->
+		</if>
+        <if test="subRate != null ">
+             AND sub_rate = #{subRate}  <!-- 抵扣率 -->
+		</if>
+		 <if test="orderStatus != null and orderStatus != ''">
+             AND order_status = #{orderStatus}  <!-- 订单状态 0待处理1准备中2配送中3待提货4完成 -->
+		</if>
+        <if test="addressId != null and addressId != ''">
+             AND address_id = #{addressId}  <!-- 配送地址编号 -->
+		</if>
+		<if test="orderAddress != null and orderAddress != ''">
+		      AND order_address LIKE '%${orderAddress}%'  <!-- 订单地址 -->
+		</if>
+        <if test="appendAddress != null and appendAddress != ''">
+		      AND append_address LIKE '%${appendAddress}%'  <!-- 附件地址 -->
+		</if>
+        <if test="orderStaff != null and orderStaff != ''">
+             AND order_staff = #{orderStaff}  <!-- 下单员工 -->
+		</if>
+        <if test="updateStaff != null and updateStaff != ''">
+             AND update_staff = #{updateStaff}  <!-- 最后操作员工 -->
+		</if>
+		 <if test="orderCategory != null and orderCategory != ''">
+             AND order_category = #{orderCategory}  <!-- 订单类别1配送2外带 -->
+		</if>
+		   <if test="whetherReceipt != null and whetherReceipt != ''">
+             AND whether_receipt = #{whetherReceipt}  <!-- 是否需要发票0否1是 -->
+		</if>
+		<if test="mobile != null and mobile != ''">
+		      AND mobile LIKE '%${mobile}%'  <!-- 外卖电话 -->
+		</if>
+        <if test="username != null and username != ''">
+		      AND username LIKE '%${username}%'  <!-- 外卖用户名 -->
+		</if>
+		 <if test="receiptTitle != null and receiptTitle != ''">
+		      AND receipt_title LIKE '%${receiptTitle}%'  <!-- 发票抬头 -->
+		</if>
+		<if test="foodNum != null and foodNum != ''">
+             AND food_num = #{foodNum}  <!-- 取餐码 -->
+		</if>
+    </sql>
+    <!-- 外卖订单查询 -->
+    <select  id="listMemberOrderPage" parameterType="Map"
+		resultType="com.ims.buss.model.Order" useCache="false">
+		SELECT <include refid="Common_Column_List" /> ,b.shop_name as shopName,b.shop_first_image as shopFirstImage
+		
+		FROM t_order a INNER JOIN t_shop b ON a.shop_id=b.shop_id
+		<where>
+		 <if test="orderId != null and orderId != ''">
+		      AND a.order_id LIKE '%${orderId}%'  <!-- 订单编号 -->
+		</if>
+         <if test="shopId != null and shopId != ''">
+             AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="deskId != null and deskId != ''">
+             AND a.desk_id = #{deskId}  <!-- 桌号编号 -->
+		</if>
+        <if test="deskName != null and deskName != ''">
+		      AND a.desk_name LIKE '%${deskName}%'  <!-- 桌号名称 -->
+		</if>
+       <if test="payWay != null and payWay != ''">
+             AND pay_way = #{payWay}  <!-- 支付方式 -->
+		</if>
+        <if test="billWay != null and billWay != ''">
+             AND bill_way = #{billWay}  <!--  -->
+		</if>
+        <if test="whetherPay != null and whetherPay != ''">
+             AND whether_pay = #{whetherPay}  <!-- 是否结算 -->
+		</if>
+		 <if test="orderType != null and orderType != ''">
+             AND a.order_type = #{orderType}  <!-- 订单类型1普通单2合并母单3合并子单 -->
+		</if>
+		<if test="orderTypeList != null and orderTypeList.size()>0">
+             AND a.order_type IN
+         <foreach item="orderTypeItem" index="index" collection="orderTypeList" separator="," open="(" close=")">
+		 #{orderTypeItem}
+	    </foreach>
+		</if>
+		 <if test="orderStatus != null and orderStatus != ''">
+             AND a.order_status = #{orderStatus}  <!-- 订单状态 0待处理1准备中2配送中3待提货4完成 -->
+		</if>
+        <if test="addressId != null and addressId != ''">
+             AND a.address_id = #{addressId}  <!-- 配送地址编号 -->
+		</if>
+		<if test="addressId != null and addressId != ''">
+             AND a.address_id = #{addressId}  <!-- 配送地址编号 -->
+		</if>
+		 <if test="orderCategory != null and orderCategory != ''">
+             AND a.order_category = #{orderCategory}  <!-- 订单类别1配送2外带 -->
+		</if>
+		<if test="mobile != null and mobile != ''">
+             AND a.mobile LIKE '%${mobile}%'  
+		</if>
+		<if test="username != null and username != ''">
+             AND a.username LIKE '%${username}%'  
+		</if>
+		  <if test="memberId != null and memberId != ''">
+             AND a.member_id = #{memberId}  <!-- 抵扣会员编号 -->
+		</if>
+		<if test="foodNum != null and foodNum != ''">
+             AND food_num = #{foodNum}  <!-- 取餐码 -->
+		</if>
+		</where>
+       <if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>	
+    </select>
+</mapper>

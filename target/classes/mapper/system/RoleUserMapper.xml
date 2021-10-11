@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.RoleUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.system.model.RoleUser">
+        <id column="role_user_id" property="roleUserId" />
+        <result column="role_id" property="roleId" />
+        <result column="user_id" property="userId" />
+        <result column="create_by" property="createBy" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        role_user_id AS roleUserId, role_id AS roleId, user_id AS userId, create_by AS createBy, create_time AS createTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.system.model.RoleUser">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role_user
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.system.model.RoleUser" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role_user
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.system.model.RoleUser">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role_user
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.system.model.RoleUser" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role_user
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM sys_role_user
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="roleUserId != null and roleUserId != ''">
+             AND role_user_id = #{roleUserId}  <!-- 角色与用户编号 -->
+		</if>
+        <if test="roleId != null and roleId != ''">
+             AND role_id = #{roleId}  <!-- 角色编号 -->
+		</if>
+        <if test="userId != null and userId != ''">
+             AND user_id = #{userId}  <!-- 用户编号 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建用户编号 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="roleUserId != null and roleUserId != ''">
+		      AND role_user_id LIKE '%${roleUserId}%'  <!-- 角色与用户编号 -->
+		</if>
+        <if test="roleId != null and roleId != ''">
+		      AND role_id LIKE '%${roleId}%'  <!-- 角色编号 -->
+		</if>
+        <if test="userId != null and userId != ''">
+		      AND user_id LIKE '%${userId}%'  <!-- 用户编号 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建用户编号 -->
+		</if>
+    </sql>
+
+</mapper>

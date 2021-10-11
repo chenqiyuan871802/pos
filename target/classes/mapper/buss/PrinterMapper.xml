@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.PrinterMapper">
+
+  
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.Printer">
+        <id column="print_id" property="printId" />
+        <result column="print_num" property="printNum" />
+        <result column="print_remark" property="printRemark" />
+        <result column="shop_id" property="shopId" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="whether_grant" property="whetherGrant" />
+        <result column="print_type" property="printType" />
+        <result column="print_status" property="printStatus" />
+        <result column="print_model" property="printModel" />
+        <result column="print_secret_key" property="printSecretKey" />
+        <result column="whether_enroll" property="whetherEnroll" />
+        <result column="whether_server" property="whetherServer" />
+        <result column="gateway_type" property="gatewayType" />
+        <result column="whether_pos" property="whetherPos" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    print_id AS printId,print_num AS printNum,print_remark AS printRemark,shop_id AS shopId,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy,whether_grant AS whetherGrant,print_type AS printType,print_status AS printStatus,print_model AS printModel,print_secret_key AS printSecretKey,whether_enroll AS whetherEnroll,whether_server AS whetherServer
+    ,gateway_type AS gatewayType,whether_pos AS whetherPos
+    </sql>
+
+   <!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.Printer">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_printer
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.Printer" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_printer
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.Printer">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_printer
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.Printer" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_printer
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_printer
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="printId != null and printId != ''">
+             AND print_id = #{printId}  <!-- 打印机ID -->
+		</if>
+        <if test="printNum != null and printNum != ''">
+             AND print_num = #{printNum}  <!-- 打印机号 -->
+		</if>
+        <if test="printRemark != null and printRemark != ''">
+             AND print_remark = #{printRemark}  <!-- 打印机备注 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+        <if test="whetherGrant != null and whetherGrant != ''">
+             AND whether_grant = #{whetherGrant}  <!-- 是否授权 -->
+		</if>
+        <if test="printType != null and printType != ''">
+             AND print_type = #{printType}  <!-- 打印机类型 -->
+		</if>
+        <if test="printStatus != null and printStatus != ''">
+             AND print_status = #{printStatus}  <!-- 打印机状态，0离线 1在线 2缺纸 -->
+		</if>
+        <if test="printModel != null and printModel != ''">
+             AND print_model = #{printModel}  <!-- 打印机型号 -->
+		</if>
+        <if test="printSecretKey != null and printSecretKey != ''">
+             AND print_secret_key = #{printSecretKey}  <!-- 打印机秘钥 -->
+		</if>
+        <if test="whetherEnroll != null and whetherEnroll != ''">
+             AND whether_enroll = #{whetherEnroll}  <!-- 是否注册0否1是 -->
+		</if>
+		 <if test="whetherServer != null and whetherServer != ''">
+             AND whether_server = #{whetherServer}  <!-- 是否设置默认打印服务0否1是 -->
+		</if>
+		 <if test="gatewayType != null and gatewayType != ''">
+             AND gateway_type = #{gatewayType}  <!-- 网关类型1国内2日本 -->
+		</if>
+		<if test="whetherPos != null and whetherPos != ''">
+             AND whether_pos = #{whetherPos}  <!-- 是否POS打印0否1是 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="printId != null and printId != ''">
+		      AND print_id LIKE '%${printId}%'  <!-- 打印机ID -->
+		</if>
+        <if test="printNum != null and printNum != ''">
+		      AND print_num LIKE '%${printNum}%'  <!-- 打印机号 -->
+		</if>
+        <if test="printRemark != null and printRemark != ''">
+		      AND print_remark LIKE '%${printRemark}%'  <!-- 打印机备注 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+        <if test="whetherGrant != null and whetherGrant != ''">
+		      AND whether_grant LIKE '%${whetherGrant}%'  <!-- 是否授权 -->
+		</if>
+        <if test="printType != null and printType != ''">
+		      AND print_type LIKE '%${printType}%'  <!-- 打印机类型 -->
+		</if>
+        <if test="printStatus != null and printStatus != ''">
+		      AND print_status LIKE '%${printStatus}%'  <!-- 打印机状态，0离线 1在线 2缺纸 -->
+		</if>
+        <if test="printModel != null and printModel != ''">
+		      AND print_model LIKE '%${printModel}%'  <!-- 打印机型号 -->
+		</if>
+        <if test="printSecretKey != null and printSecretKey != ''">
+		      AND print_secret_key LIKE '%${printSecretKey}%'  <!-- 打印机秘钥 -->
+		</if>
+        <if test="whetherEnroll != null and whetherEnroll != ''">
+		      AND whether_enroll LIKE '%${whetherEnroll}%'  <!-- 是否注册0否1是 -->
+		</if>
+		 <if test="whetherServer != null and whetherServer != ''">
+             AND whether_server = #{whetherServer}  <!-- 是否设置默认打印服务0否1是 -->
+		</if>
+		 <if test="gatewayType != null and gatewayType != ''">
+             AND gateway_type = #{gatewayType}  <!-- 网关类型1国内2日本 -->
+		</if>
+		<if test="whetherPos != null and whetherPos != ''">
+             AND whether_pos = #{whetherPos}  <!-- 是否POS打印0否1是 -->
+		</if>
+    </sql>
+
+</mapper>

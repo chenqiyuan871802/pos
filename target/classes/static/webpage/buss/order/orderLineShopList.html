@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<style>
+	#orderTimeStart{margin-right:5px;}
+	#orderTimeEnd{margin-left:5px;}
+	#orderTimeStart,#orderTimeEnd{display: inline-block;position: relative;top:-3px;}
+</style>
+<body>
+
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+				id="searchForm">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">集計対象</label>
+						<div class="layui-input-block">
+							<select name="timeWay" id="timeWay" lay-filter="timeWay">
+								<option value="1">月</option>
+								<option value="2">日</option>
+
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<div class="layui-input-block" id="queryTimeDiv"
+							style="margin-left: 5px;">
+							<input type="text" name="queryTime" id="queryTime"
+								autocomplete="off" class="layui-input">
+						</div>
+
+					</div>
+
+					<div class="layui-inline">
+						<label class="layui-form-label">集計対象</label>
+						<div class="layui-input-block">
+							<select name="catalogWay" id="catalogWay" lay-filter="catalogWay">
+								<option value="1">部門</option>
+								<option value="2">カテゴリ</option>
+								<option value="3">料理</option>
+								<option value="4">放題</option>
+
+							</select>
+						</div>
+
+					</div>
+					<div class="layui-inline">
+						<div class="layui-input-block" style="margin-left: 5px;">
+							<select name="catalogId"  style="width: 200px" id="catalogId">
+
+
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit">検索</button>
+					</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList"></table>
+
+
+			</div>
+		</div>
+	</div>
+
+
+	<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="buss:orderLineShop:export"   class="layui-btn layui-btn-sm" lay-event="export"> <i class="layui-icon layui-icon-download-circle"></i>ダウロード</button>
+</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'element','table','form','laydate', 'webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			laydate = layui.laydate, 
+			element = layui.element,
+			table = layui.table;
+			var date = new Date();
+			var curMonth=date .getFullYear()+'-'+(date.getMonth()+1)
+			var curDate=date .getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+			 webplus.createCustomSelect('catalogId','buss/order/listCatalog',{catalogWay:'1'},'itemCode','itemName','','選択')
+			form.on('select(catalogWay)', function(data){
+				webplus.createCustomSelect('catalogId','buss/order/listCatalog',{catalogWay:data.value},'itemCode','itemName','','選択')
+			 });
+			 laydate.render({ 
+				  elem: '#queryTime'
+				  ,type: 'month'
+				  ,value:curMonth
+			  });
+			 form.on('select(timeWay)', function(data){
+				 $("#queryTime").remove();
+				 $("#queryTimeDiv").html('<input type="text" name="queryTime" id="queryTime" autocomplete="off" class="layui-input">')
+				if(data.value=='2'){
+					 laydate.render({ 
+						  elem: '#queryTime'
+						  ,value:curDate
+					  });
+				}else{
+				
+					 laydate.render({ 
+						  elem: '#queryTime'
+						  ,type: 'month'
+						  ,value:curMonth
+					  });
+				}
+			 });
+			   var cols= [ [ {
+					type : 'numbers',
+					title : '番号'
+				}, {
+					field : 'largeName',
+					title : '部門',
+					width:150
+				}, {
+					field : 'catalogName',
+					title : 'カテゴリ',
+					width:150
+				},
+	            {
+				 field : 'menuName',
+				 title : '料理',
+				 width:150
+				
+				},
+				 {
+					 field : 'menuPrice',
+					 title : '価格',
+					 width:90,
+                     templet:function(d){
+						 
+						 return webplus.number_format(d.menuPrice,0,"",",");
+					 }
+				 },	
+				 {
+					 field : 'costPrice',
+					 title : 'コスト',
+					 width:90,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.costPrice,0,"",",");
+					 }
+				 },	
+	            {
+				 field : 'buyNum',
+				 title : '販売数',
+				 width:90
+				 
+				},
+	            {
+				 field : 'salesAmount',
+				 title : '売上合計',
+				 width:100,
+				 templet:function(d){
+					 
+					 return webplus.number_format(d.salesAmount,0,"",",");
+				 }
+				},
+				 {
+					 field : 'costAmount',
+					 title : 'コスト合計',
+					 width:100,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.costAmount,0,"",",");
+					 }
+				},
+				 {
+					 field : 'profitAmount',
+					 title : '利益合計',
+					 width:100,
+					 templet:function(d){
+						 
+						 return webplus.number_format(d.profitAmount,0,"",",");
+					 }
+				}] ];
+		   webplus.init('buss/order/listOrderLineSumPage',cols,'','','','','',{queryMonth:curMonth})
+			 //监听行工具事件
+		  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			 
+			    case 'export':
+			    	var params={};
+			    	params.timeWay=$("#timeWay").val();
+			    	params.queryTime=$("#queryTime").val();
+			    	params.catalogWay=$("#catalogWay").val();
+			    	params.catalogId=$("#catalogId").val();
+			    	params.exportWay=1;
+			    	webplus.doAjax("/buss/order/exportOrderLineSum",params,"","","3",function(data){
+		        		 window.location.href=webplus.cxt()+"/file/downloadExcelFile?fid="+data.fid+"&fileName=商品統計.xlsx&token="+webplus.getToken();
+			    	   
+		        	 }); 
+		      		 
+		     	     break;
+		    	
+			    }
+			  });
+		 
+
+		});
+	</script>
+
+</body>
+</html>

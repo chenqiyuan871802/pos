@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html >
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<style>
+	html{
+		background-color:#fff;
+		height: 100%;
+		border-bottom: 2px solid #f2f2f2;
+		box-sizing: border-box;
+	}
+	.layui-input-block>p{line-height: 34px;}
+	.table-box{margin-left:0;min-height:0;}
+	.layui-table{display: none;}
+</style>
+<body>
+<form class="layui-form">
+ 
+  <div class="layui-form-item">
+  
+  	<div class="layui-input-block table-box">
+  		<table  cellspacing="0" cellpadding="0" border="0" class="layui-table" id="tableList">
+  			<thead><tr><th>メニュー</th><th>数量</th><th>金額</th></tr></thead>
+  			<tbody></tbody>
+  		</table>
+  	</div>
+  </div>
+</form>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+<script>
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form','webplus' ], function() {
+		var webplus=layui.webplus;
+		var queryDate = webplus.getUrlType().queryDate;
+		var queryMonth = webplus.getUrlType().queryMonth;
+		// 根据id拿到最新数据
+		webplus.doAjax('buss/order/showSumTakeOutOrder',{queryDate:queryDate,queryMonth:queryMonth},'','',3,function(res){
+				if(webplus.isEmpty(res.dataList)) return false;
+				
+				var trHtml = '';
+				// 遍历数据
+				for(var i=0;i<res.dataList.length;i++){
+					var data= res.dataList[i];
+				 trHtml += '<tr><td>'+data.menuName+'</td><td>'+data.buyNum+'</td><td style="width:120px">'+ webplus.number_format(data.menuSumPrice,0,"",",")+'</td></tr>';
+					
+				}
+				$("#tableList>tbody").html(trHtml);
+				$(".layui-table").show();
+		});
+		
+		
+	});
+</script>
+</body>
+</html>

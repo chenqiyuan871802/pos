@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.PrintLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.PrintLog">
+        <id column="log_id" property="logId" />
+        <result column="shop_id" property="shopId" />
+        <result column="order_id" property="orderId" />
+        <result column="print_num" property="printNum" />
+        <result column="desk_name" property="deskName" />
+        <result column="print_menu_name" property="printMenuName" />
+        <result column="buy_num" property="buyNum" />
+        <result column="log_status" property="logStatus" />
+        <result column="log_time" property="logTime" />
+        <result column="print_id" property="printId" />
+        <result column="error_message" property="errorMessage" />
+        <result column="error_count" property="errorCount" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    log_id AS logId,shop_id AS shopId,order_id AS orderId,print_num AS printNum,desk_name AS deskName,print_menu_name AS printMenuName,buy_num AS buyNum,log_status AS logStatus,log_time AS logTime,print_id AS printId,error_message AS errorMessage,error_count AS errorCount,update_time AS updateTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.PrintLog">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_print_log
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.PrintLog" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_print_log
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.PrintLog">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_print_log
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.PrintLog" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_print_log
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_print_log
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="logId != null and logId != ''">
+             AND log_id = #{logId}  <!-- 日志编号（主键） -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="orderId != null and orderId != ''">
+             AND order_id = #{orderId}  <!-- 订单编号 -->
+		</if>
+        <if test="printNum != null and printNum != ''">
+             AND print_num = #{printNum}  <!-- 打印机 -->
+		</if>
+        <if test="deskName != null and deskName != ''">
+             AND desk_name = #{deskName}  <!-- 桌号 -->
+		</if>
+        <if test="printMenuName != null and printMenuName != ''">
+             AND print_menu_name = #{printMenuName}  <!-- 菜单名称 -->
+		</if>
+        <if test="buyNum != null ">
+             AND buy_num = #{buyNum}  <!-- 购买数量 -->
+		</if>
+        <if test="logStatus != null and logStatus != ''">
+             AND log_status = #{logStatus}  <!-- 日志状态-1失败1成功 -->
+		</if>
+        <if test="logTime != null ">
+             AND log_time = #{logTime}  <!-- 日志记录时间 -->
+		</if>
+        <if test="printId != null and printId != ''">
+             AND print_id = #{printId}  <!-- 打印返回日志编号 -->
+		</if>
+        <if test="errorMessage != null and errorMessage != ''">
+             AND error_message = #{errorMessage}  <!-- 日志错误信息 -->
+		</if>
+        <if test="errorCount != null ">
+             AND error_count = #{errorCount}  <!-- 错误次数 -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 更新时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="logId != null and logId != ''">
+		      AND log_id LIKE '%${logId}%'  <!-- 日志编号（主键） -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="orderId != null and orderId != ''">
+		      AND order_id LIKE '%${orderId}%'  <!-- 订单编号 -->
+		</if>
+        <if test="printNum != null and printNum != ''">
+		      AND print_num LIKE '%${printNum}%'  <!-- 打印机 -->
+		</if>
+        <if test="deskName != null and deskName != ''">
+		      AND desk_name LIKE '%${deskName}%'  <!-- 桌号 -->
+		</if>
+        <if test="printMenuName != null and printMenuName != ''">
+		      AND print_menu_name LIKE '%${printMenuName}%'  <!-- 菜单名称 -->
+		</if>
+        <if test="logStatus != null and logStatus != ''">
+		      AND log_status LIKE '%${logStatus}%'  <!-- 日志状态-1失败1成功 -->
+		</if>
+        <if test="printId != null and printId != ''">
+		      AND print_id LIKE '%${printId}%'  <!-- 打印返回日志编号 -->
+		</if>
+        <if test="errorMessage != null and errorMessage != ''">
+		      AND error_message LIKE '%${errorMessage}%'  <!-- 日志错误信息 -->
+		</if>
+    </sql>
+
+</mapper>

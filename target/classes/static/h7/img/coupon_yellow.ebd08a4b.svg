@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="690px" height="230px" viewBox="0 0 690 230" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>编组 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="56.3841712%" x2="100%" y2="56.3841712%" id="linearGradient-1">
+            <stop stop-color="#F6C328" offset="0%"></stop>
+            <stop stop-color="#FFD44C" offset="100%"></stop>
+        </linearGradient>
+        <path d="M588,0 C588,8.28427125 594.715729,15 603,15 C611.284271,15 618,8.28427125 618,0 L680,0 C685.522847,-1.01453063e-15 690,4.4771525 690,10 L690,220 C690,225.522847 685.522847,230 680,230 L618,230 L618,230 C618,221.715729 611.284271,215 603,215 C594.715729,215 588,221.715729 588,230 L10,230 C4.4771525,230 6.76353751e-16,225.522847 0,220 L0,10 C-6.76353751e-16,4.4771525 4.4771525,1.01453063e-15 10,0 L588,0 L588,0 Z" id="path-2"></path>
+    </defs>
+    <g id="整合" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="优惠券详情" transform="translate(-30.000000, -547.000000)">
+            <g id="编组-3" transform="translate(10.000000, 172.000000)">
+                <g id="编组-7" transform="translate(0.000000, 375.000000)">
+                    <g id="编组-2" transform="translate(20.000000, 0.000000)">
+                        <mask id="mask-3" fill="white">
+                            <use xlink:href="#path-2"></use>
+                        </mask>
+                        <use id="形状结合" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                        <rect id="矩形" fill-opacity="0.30192854" fill="#FFFFFF" mask="url(#mask-3)" transform="translate(39.000000, 25.000000) rotate(45.000000) translate(-39.000000, -25.000000) " x="29" y="-102" width="20" height="254"></rect>
+                        <rect id="矩形" fill-opacity="0.300180288" fill="#FFFFFF" mask="url(#mask-3)" transform="translate(672.000000, 204.000000) rotate(45.000000) translate(-672.000000, -204.000000) " x="662" y="77" width="20" height="254"></rect>
+                        <text id="SPECIAL-COUPON" mask="url(#mask-3)" transform="translate(645.500000, 115.000000) rotate(-90.000000) translate(-645.500000, -115.000000) " font-family="PingFangSC-Medium, PingFang SC" font-size="20" font-weight="400" fill="#FFFFFF" fill-opacity="0.701294799">
+                            <tspan x="556" y="122">SPECIAL COUPON</tspan>
+                        </text>
+                        <line x1="602.5" y1="14.5" x2="602.5" y2="214.5" id="直线-2" stroke-opacity="0.289526879" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-dasharray="2,7" mask="url(#mask-3)"></line>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

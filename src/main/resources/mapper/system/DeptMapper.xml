@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.DeptMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.system.model.Dept">
+        <id column="dept_id" property="deptId" />
+        <result column="cascade_id" property="cascadeId" />
+        <result column="dept_name" property="deptName" />
+        <result column="parent_id" property="parentId" />
+        <result column="dept_code" property="deptCode" />
+        <result column="manager" property="manager" />
+        <result column="phone" property="phone" />
+        <result column="fax" property="fax" />
+        <result column="address" property="address" />
+        <result column="is_auto_expand" property="isAutoExpand" />
+        <result column="icon_name" property="iconName" />
+        <result column="sort_no" property="sortNo" />
+        <result column="remark" property="remark" />
+        <result column="is_del" property="isDel" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        dept_id AS deptId, cascade_id AS cascadeId, dept_name AS deptName, parent_id AS parentId, dept_code AS deptCode, manager, phone, fax, address, is_auto_expand AS isAutoExpand, icon_name AS iconName, sort_no AS sortNo, remark, is_del AS isDel, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.system.model.Dept">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_dept
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.system.model.Dept" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_dept
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.system.model.Dept">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_dept
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.system.model.Dept" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_dept
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM sys_dept
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="deptId != null and deptId != ''">
+             AND dept_id = #{deptId}  <!-- 流水号 -->
+		</if>
+        <if test="cascadeId != null and cascadeId != ''">
+             AND cascade_id = #{cascadeId}  <!-- 节点语义ID -->
+		</if>
+        <if test="deptName != null and deptName != ''">
+             AND dept_name = #{deptName}  <!-- 组织名称 -->
+		</if>
+        <if test="parentId != null and parentId != ''">
+             AND parent_id = #{parentId}  <!-- 父节点流水号 -->
+		</if>
+        <if test="deptCode != null and deptCode != ''">
+             AND dept_code = #{deptCode}  <!-- 机构代码 -->
+		</if>
+        <if test="manager != null and manager != ''">
+             AND manager = #{manager}  <!-- 主要负责人 -->
+		</if>
+        <if test="phone != null and phone != ''">
+             AND phone = #{phone}  <!-- 部门电话 -->
+		</if>
+        <if test="fax != null and fax != ''">
+             AND fax = #{fax}  <!-- 传真 -->
+		</if>
+        <if test="address != null and address != ''">
+             AND address = #{address}  <!-- 地址 -->
+		</if>
+        <if test="isAutoExpand != null and isAutoExpand != ''">
+             AND is_auto_expand = #{isAutoExpand}  <!-- 是否自动展开 -->
+		</if>
+        <if test="iconName != null and iconName != ''">
+             AND icon_name = #{iconName}  <!-- 节点图标文件名称 -->
+		</if>
+        <if test="sortNo != null ">
+             AND sort_no = #{sortNo}  <!-- 排序号 -->
+		</if>
+        <if test="remark != null and remark != ''">
+             AND remark = #{remark}  <!-- 备注 -->
+		</if>
+        <if test="isDel != null and isDel != ''">
+             AND is_del = #{isDel}  <!-- 是否已删除 0有效 1删除 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户ID -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="deptId != null and deptId != ''">
+		      AND dept_id LIKE '%${deptId}%'  <!-- 流水号 -->
+		</if>
+        <if test="cascadeId != null and cascadeId != ''">
+		      AND cascade_id LIKE '%${cascadeId}%'  <!-- 节点语义ID -->
+		</if>
+        <if test="deptName != null and deptName != ''">
+		      AND dept_name LIKE '%${deptName}%'  <!-- 组织名称 -->
+		</if>
+        <if test="parentId != null and parentId != ''">
+		      AND parent_id LIKE '%${parentId}%'  <!-- 父节点流水号 -->
+		</if>
+        <if test="deptCode != null and deptCode != ''">
+		      AND dept_code LIKE '%${deptCode}%'  <!-- 机构代码 -->
+		</if>
+        <if test="manager != null and manager != ''">
+		      AND manager LIKE '%${manager}%'  <!-- 主要负责人 -->
+		</if>
+        <if test="phone != null and phone != ''">
+		      AND phone LIKE '%${phone}%'  <!-- 部门电话 -->
+		</if>
+        <if test="fax != null and fax != ''">
+		      AND fax LIKE '%${fax}%'  <!-- 传真 -->
+		</if>
+        <if test="address != null and address != ''">
+		      AND address LIKE '%${address}%'  <!-- 地址 -->
+		</if>
+        <if test="isAutoExpand != null and isAutoExpand != ''">
+		      AND is_auto_expand LIKE '%${isAutoExpand}%'  <!-- 是否自动展开 -->
+		</if>
+        <if test="iconName != null and iconName != ''">
+		      AND icon_name LIKE '%${iconName}%'  <!-- 节点图标文件名称 -->
+		</if>
+        <if test="remark != null and remark != ''">
+		      AND remark LIKE '%${remark}%'  <!-- 备注 -->
+		</if>
+        <if test="isDel != null and isDel != ''">
+		      AND is_del LIKE '%${isDel}%'  <!-- 是否已删除 0有效 1删除 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户ID -->
+		</if>
+    </sql>
+
+</mapper>

@@ -1,0 +1,33 @@
+html,body,#LAY_app{
+	height:100%;    
+	background: url('../img/login/home_bg.jpg');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+#logos{width:200px;}
+.layui-layout-body{overflow: auto;}
+ 
+#LAY-user-login,
+.layadmin-user-display-show{display: block !important;} 
+.layadmin-user-login{position: absolute; left: 0; top: 0;right: 0;bottom: 0;margin: auto;width: 400px;height: 500px;}
+.layadmin-user-login-main{width: 375px; margin: 0 auto; box-sizing: border-box;}
+.layadmin-user-login-box{padding: 20px;}
+.layadmin-user-login-header{text-align: center;}
+.layadmin-user-login-header h2{margin-bottom: 10px; font-weight: 300; font-size: 30px; color: #000;}
+.layadmin-user-login-header p{font-weight: 300; color: #999;}
+
+.layadmin-user-login-body .layui-form-item{position: relative;}
+.layadmin-user-login-icon{position: absolute; left: 1px; top: 1px; width: 38px; line-height: 36px; text-align: center; color: #d2d2d2;}
+.layadmin-user-login-body .layui-form-item .layui-input{padding-left: 38px;}
+.layadmin-user-login-codeimg{max-height: 38px; width: 100%; cursor: pointer; box-sizing: border-box;}
+
+.layadmin-user-login-other{position: relative; font-size: 0; line-height: 38px; padding-top: 20px;}
+.layadmin-user-login-other>*{display: inline-block; vertical-align: middle; margin-right: 10px; font-size: 14px;}
+.layadmin-user-login-other .layui-icon{position: relative; top: 2px; font-size: 26px;}
+.layadmin-user-login-other a:hover{opacity: 0.8;}
+
+.layadmin-user-jump-change{float: right;}
+
+/* 有背景图时 */
+.layadmin-user-login-main[bgimg]{background-color: #fff; box-shadow: 0 0 5px rgba(0,0,0,0.05);}
+

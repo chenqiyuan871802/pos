@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="101px" viewBox="0 0 100 101" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>椭圆形 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="50" cy="45" r="45"></circle>
+        <filter x="-11.7%" y="-6.1%" width="123.3%" height="124.4%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="6" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.155375874 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="整合" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="优惠券详情" transform="translate(-625.000000, -1089.000000)">
+            <g id="椭圆形-2" transform="translate(625.000000, 1089.000000)">
+                <g id="椭圆形">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                </g>
+                <g id="收藏" transform="translate(28.000000, 23.000000)">
+                    <rect id="矩形" stroke="#979797" stroke-width="0.846153846" fill="#D8D8D8" opacity="0" x="0" y="0" width="44" height="44"></rect>
+                    <g id="收-藏" transform="translate(0.000000, 2.000000)" fill-rule="nonzero" stroke="#959697" stroke-width="3">
+                        <path d="M31.5122006,0.0257446108 C27.7308353,0.0257446108 24.223482,1.94382844 21.9217814,5.06756497 C19.6200808,1.94382844 16.1127275,0.0257446108 12.3313623,0.0257446108 C5.53586527,0.0257446108 0.000823353293,6.05400808 0.000823353293,13.5071338 C0.000823353293,17.9461278 1.97370958,21.0698644 3.56297904,23.5359722 C8.16638024,30.8246907 19.8392904,39.8122835 20.332512,40.1959003 C20.8257335,40.5795171 21.3737575,40.7439243 21.9217814,40.7439243 C22.4698054,40.7439243 23.0178293,40.5795171 23.5110509,40.1959003 C24.0042725,39.8122835 35.6223802,30.7698883 40.2805838,23.5359722 C41.8698533,21.015062 43.8427395,17.8913254 43.8427395,13.5071338 C43.8427395,6.10881048 38.3076976,0.0257446108 31.5122006,0.0257446108 Z" id="路径"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

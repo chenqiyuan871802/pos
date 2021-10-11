@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html >
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+<link rel="stylesheet" href="../../../css/common/formSelects-v4.css" media="all" />
+</head>
+<style>
+	html{
+		background-color:#fff;
+		height: 100%;
+    border-bottom: 2px solid #f2f2f2;
+    box-sizing: border-box;
+	}
+</style>
+<body>
+<div class="layui-fluid">
+		<div class="layui-card">
+		<form class="layui-form layui-form-pane" id="saveForm" lay-filter="saveForm">
+			<input type="hidden" name="languageType" value="1" id="languageType">
+			<input type="hidden" name="whetherBuffet" value="0">
+			<input type="hidden" name="catalogId" value="" id="catalogId">
+			<input type="hidden" name="catalogIndexId" value="" id="catalogIndexId">
+			<input type="hidden" name="catalogType" value="" id="catalogType">
+			<input type="hidden" name="sortNo" value="" id="sortNo">
+			<div class="layui-form-item" >
+			    <label class="layui-form-label" style="width: 130px;" >言語</label>
+					<div class="layui-btn-group" id="languageDiv"></div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width: 130px;" >カテゴリー</label>
+				<div class="layui-input-block" style="margin-left: 130px;">
+					<input type="text" name="catalogName" placeholder="カテゴリー名を入力してください" lay-verify="required|max:50" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item" id="catalogTypeBox">
+				<label class="layui-form-label" style="width: 130px;" >食事区分</label>
+				<div class="layui-input-block" style="margin-left: 130px;">
+					<select name="catalogType" lay-select-dict="catalog_type" lay-select-title="NONE" lay-select-code="0"   class="price-input">
+								
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item" id="largeBox">
+				<label class="layui-form-label" style="width: 130px;" >部門</label>
+				<div class="layui-input-block" style="margin-left: 130px;">
+					<select name="largeId"  id="largeId"></select>
+				</div>
+			</div>
+			<div class="layui-form-item" id="printBox">
+				<label class="layui-form-label" style="width: 130px;" >プリンターID</label>
+				<div class="layui-input-block" style="margin-left: 130px;">
+					<select name="printNum"  xm-select="printNum"></select>
+				</div>
+			</div>
+				
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label layui-textarea-label">备注</label>
+				<div class="layui-input-block">
+					<textarea  lay-verify="max:200" class="layui-textarea" name="catalogRemark"></textarea>
+				</div>
+			</div> -->
+			<!-- 隐藏域 -->
+			<div class="layui-form-item" style="display:none;">
+			  <button class="layui-btn"  lay-submit="" lay-filter="saveSubmit">提交</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+	layui.config({
+		base: '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		cascadeSelect: 'lib/cascadeSelect',
+		formSelects: 'lib/formSelects-v4'
+	}).use([ 'form','cascadeSelect','formSelects' ], function() {
+		    var $ = layui.$, 
+		    form = layui.form, 
+		    webplus=layui.webplus,
+		    cascadeSelect = layui.cascadeSelect,
+			formSelects = layui.formSelects;
+			var $catalogIndexId = $('#catalogIndexId'),
+					$sortNo = $('#sortNo'),
+					$catalogId = $('#catalogId');
+			 webplus.createCustomSelect('largeId','buss/menuLarge/listMenuLarge',{},'largeId','largeName','','選択')
+			 webplus.initSelect('saveForm');
+			// 初始化语言 	
+			webplus.doAjax('buss/menuCatalog/listLanguage','','','',3,function(data){
+				var htmlStr='';
+				for(var i=0;i<data.dataList.length;i++){
+					var dict=data.dataList[i];
+					if("1"==dict.itemCode){
+						htmlStr+='<button type="button" data-code="'+dict.itemCode+'" class="layui-btn">'+dict.itemName+'</button>';
+					}else{
+						htmlStr+='<button type="button" data-code="'+dict.itemCode+'" class="layui-btn layui-btn-primary">'+dict.itemName+'</button>';
+					}
+				}
+				$("#languageDiv").html(htmlStr);
+				// 切换语言 
+				$("#languageDiv>button").click(function(){
+					var _this = $(this),
+					$catalogType=$("#catalogTypeBox"),
+					$large=$("#largeBox"),
+					$pb = $("#printBox");;
+					
+					var languageType = _this.data('code');
+					//如果catalogIndexId为空,说明没有添加过日本语,禁用其他语言
+					if(webplus.isEmpty($catalogIndexId.val())){
+						$("#languageDiv>button:gt(0)").prop("disabled",true).addClass("layui-btn-disabled");
+						return false;
+					}
+					// 如果当前按钮被选中
+					if(_this.attr("class").indexOf('layui-btn-primary')<0) return false;
+					
+					if(languageType == "1"){
+						$pb.show();
+						$large.show();
+						$catalogType.show();
+					}else{
+						$pb.hide();
+						$large.hide();
+						$catalogType.hide();
+					}
+					$("#languageType").val(languageType);
+					_this.removeClass('layui-btn-primary').siblings("button").attr('class','layui-btn layui-btn-primary');
+					// 切换语言请求数据
+					ajaxResultData(languageType);
+				});
+			});
+			
+			function ajaxResultData(languageType){
+				var data = {
+					languageType:languageType,
+					catalogIndexId:$catalogIndexId.val(),
+					sortNo:$sortNo.val()
+				};
+				webplus.doAjax('buss/menuCatalog/show',data,'','',3,function(res){
+					if(!webplus.isEmpty(res.data)){
+						delete res.data['catalogIndexId'];
+						delete res.data['sortNo'];
+						delete res.data['languageType'];
+						// 处理后的数据赋值
+						webplus.setFormData("saveForm",res.data);
+					}else{
+						webplus.setFormData("saveForm",{
+							catalogId:'',
+							catalogName:'',
+							printNum:'',
+							catalogRemark:''
+						});
+					}
+				});
+			}
+			
+			/* // 初始化请求打印机数据
+			webplus.doAjax('buss/menuCatalog/listPrinter','','','',3,function(res){
+				if(!webplus.isEmpty(res.dataList)){
+					var html = '<option value="">プリンターを選んでください</option>';
+					for(var i=0;i<res.dataList.length;i++){
+						var printNum = res.dataList[i]['printNum'];
+						html += '<option value="'+printNum+'">'+printNum+'</option>';
+					}
+					$("#printNum").html(html);
+					form.render('select');
+				}
+			}); */
+			
+			 formSelects.config('printNum', {
+			        type: 'POST',
+			        searchUrl:webplus.cxt() + 'buss/menuCatalog/listPrinterNew?token=' + webplus.getToken(),
+			        keyName: 'printNum',
+			        keyVal: 'printNum',
+			      });
+			
+			//提交表单
+			form.on('submit(saveSubmit)', function(data) {
+				var paramData = data.field;
+				webplus.doAjax('buss/menuCatalog/save', paramData,'', '', '1',function(res){
+					var data = res.data;
+					// 如果是日本语
+					if(data.languageType == "1"){
+						parent.$("body").find('[lay-submit]').click();
+						// 此catalogIndexId用于对有没有添加日本语的判断
+						$catalogIndexId.val(data.catalogIndexId);
+						$("#catalogType").val(data.catalogType);
+						$sortNo.val(data.sortNo);
+						$("#languageDiv>button:gt(0)").prop("disabled",false).removeClass("layui-btn-disabled");
+					}
+					$catalogId.val(data.catalogId);
+				});
+				return false;
+			});
+			
+			
+		});
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.ParamMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.system.model.Param">
+        <id column="param_id" property="paramId" />
+        <result column="param_name" property="paramName" />
+        <result column="param_key" property="paramKey" />
+        <result column="param_value" property="paramValue" />
+        <result column="param_remark" property="paramRemark" />
+        <result column="param_type" property="paramType" />
+        <result column="status" property="status" />
+        <result column="edit_mode" property="editMode" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        param_id AS paramId, param_name AS paramName, param_key AS paramKey, param_value AS paramValue, param_remark AS paramRemark, param_type AS paramType, status, edit_mode AS editMode, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.system.model.Param">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_param
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.system.model.Param" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_param
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.system.model.Param">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_param
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.system.model.Param" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_param
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="paramId != null and paramId != ''">
+             AND param_id = #{paramId}  <!-- 参数编号 -->
+		</if>
+        <if test="paramName != null and paramName != ''">
+             AND param_name = #{paramName}  <!-- 参数名称 -->
+		</if>
+        <if test="paramKey != null and paramKey != ''">
+             AND param_key = #{paramKey}  <!-- 参数键名 -->
+		</if>
+        <if test="paramValue != null and paramValue != ''">
+             AND param_value = #{paramValue}  <!-- 参数键值 -->
+		</if>
+        <if test="paramRemark != null and paramRemark != ''">
+             AND param_remark = #{paramRemark}  <!-- 参数备注 -->
+		</if>
+        <if test="paramType != null and paramType != ''">
+             AND param_type = #{paramType}  <!-- 参数类型0:缺省;1:系统2:业务 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 当前状态(0:停用;1:启用) -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+             AND edit_mode = #{editMode}  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建用户 -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="paramId != null and paramId != ''">
+		      AND param_id LIKE '%${paramId}%'  <!-- 参数编号 -->
+		</if>
+        <if test="paramName != null and paramName != ''">
+		      AND param_name LIKE '%${paramName}%'  <!-- 参数名称 -->
+		</if>
+        <if test="paramKey != null and paramKey != ''">
+		      AND param_key LIKE '%${paramKey}%'  <!-- 参数键名 -->
+		</if>
+        <if test="paramValue != null and paramValue != ''">
+		      AND param_value LIKE '%${paramValue}%'  <!-- 参数键值 -->
+		</if>
+        <if test="paramRemark != null and paramRemark != ''">
+		      AND param_remark LIKE '%${paramRemark}%'  <!-- 参数备注 -->
+		</if>
+        <if test="paramType != null and paramType != ''">
+		      AND param_type LIKE '%${paramType}%'  <!-- 参数类型0:缺省;1:系统2:业务 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 当前状态(0:停用;1:启用) -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+		      AND edit_mode LIKE '%${editMode}%'  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建用户 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户 -->
+		</if>
+    </sql>
+
+</mapper>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head >
+	<meta charset="utf-8"/>
+	<title>字典管理</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+	<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+	<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+	<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<body>
+<div class="layui-fluid"> 
+<div class="layui-row parent-item" >
+<div class="childLeft-item">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="dictIndexForm">
+				<div class="layui-form-item">
+				<div class="layui-inline">
+						<label class="layui-form-label">字典标识</label>
+						<div class="layui-input-block">
+							<input type="text" name="dictKey" placeholder="请输入"
+								autocomplete="off" class="layui-input" >
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">字典名称</label>
+						<div class="layui-input-block">
+							<input type="text" name="dictName" placeholder="请输入"
+								autocomplete="off" class="layui-input" >
+						</div>
+					</div>
+					<!-- <div class="layui-inline">
+						<label class="layui-form-label">字典分类</label>
+						<div class="layui-input-block">
+							<select name="dictType" select-code="dict_type"  >
+								
+							</select>
+						</div>
+					</div> -->
+					<div class="layui-inline">
+						<button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="submitDictIndex" >查询</button>
+					</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dictIndexList" lay-filter="dictIndexList" ></table>
+			</div>
+	</div>
+    </div>
+    <div class="childRight-item">
+       <div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="dictForm">
+				<div class="layui-form-item">
+				<input type="hidden" id="dictIndexId"/>
+				<div class="layui-inline">
+						<label class="layui-form-label">字典对照码</label>
+						<div class="layui-input-block">
+							<input type="text" name="dictCode" placeholder="请输入"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">字典对照值</label>
+						<div class="layui-input-block">
+							<input type="text" name="dictValue" placeholder="请输入"
+								autocomplete="off" class="layui-input"  >
+						</div>
+					</div>
+					
+					<div class="layui-inline">
+						<button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="submitDict" >查询</button>
+					</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dictList" lay-filter="dictList" ></table>
+			</div>
+	</div>
+    </div>
+  </div>
+</div>
+<div type="text/html" id="trTool" style="display:none">
+    <a  data-grant="system:dict:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a  data-grant="system:dict:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+<div type="text/html" id="dictTool" style="display:none">
+    <a data-grant="system:dict:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a data-grant="system:dict:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+<div type="text/html" id="toolbar" style="display:none">
+  <div class="layui-btn-container">
+    <button data-grant="system:dict:add" class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon">&#xe654;</i>新增</button>
+    <button data-grant="system:dict:refreshDict" class="layui-btn layui-btn-danger layui-btn-sm" lay-event="refreshDict"> <i class="layui-icon">&#xe669;</i>刷新缓存</button>
+  </div>
+</div>
+<div type="text/html" id="dictToolbar" style="display:none">
+  <div class="layui-btn-container">
+    <button data-grant="system:dict:add" class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon">&#xe654;</i>新增</button>
+    <button data-grant="system:dict:remove"   class="layui-btn layui-btn-danger layui-btn-sm" lay-event="batchRemove"> <i class="layui-icon layui-icon-delete"></i>批量删除</button>
+  </div>
+</div>
+<script type="text/html" id="statusTpl">
+  <input type="checkbox" name="status"  value="{{d.dictId}}" title="启用" lay-filter="status" {{ d.status == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="editModeTpl">
+  <input type="checkbox" name="editMode" value="{{d.dictId}}"  lay-skin="switch" lay-text="可编辑|只读" lay-filter="editMode" {{ d.editMode == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus' //主入口模块
+		}).use([  'table', 'form','webplus' ], function() {
+			var $ = layui.$, 
+			form = layui.form, 
+			table = layui.table,
+			webplus=layui.webplus;
+			// 定义表头字段列及配置参数
+			var dictIndexCols= [ [ 
+				{type : 'numbers',title : '序号'}, 
+				{field : 'dictIndexId',title : '字典索引编号',hide : true },
+				{field : 'dictKey',title : '字典标识',minWidth : 120}, 
+				{field : 'dictName',title : '字典名称',minWidth : 120}, 
+				{field : 'dictType_dict',title : '字典类型',width : 90}, 
+				{title : '操作',toolbar : '#trTool',width : 150,fixed: 'right'}
+			] ];
+			//初始化 
+			webplus.init('system/dict/listDictIndex',dictIndexCols,'dictIndexForm','submitDictIndex','dictIndexList','','','','full-67')
+			
+			//监听行工具事件
+			table.on('tool(dictIndexList)', function(rowObj){
+				var layEvent = rowObj.event;
+				switch(layEvent){
+					case 'edit':
+						//打开编辑弹出框
+						var data=rowObj.data;
+						var dictKey=data.dictKey;
+						var dictName=data.dictName;
+						webplus.openEditWindow('editDictIndex.html','编辑字典类型',rowObj,'dictIndexId','dictIndexId','700','400');
+						break;
+					case 'del':
+						webplus.removeRow('system/dict/removeDictIndex',rowObj,'dictIndexId');
+						break;
+				}
+				return false;
+			});
+			 
+			//监听表头按钮事件
+			table.on('toolbar(dictIndexList)', function(obj){
+				switch(obj.event){
+					case 'add':
+						//打开添加弹出框
+						webplus.openWindow('addDictIndex.html','新增字典类型','700','400');
+						break;
+					case 'refreshDict':
+						webplus.doAjax('system/dict/refreshDict',{},'你确定刷新字典缓存吗？')
+						break;
+				}
+			});
+			  //行单击事件
+			  table.on('row(dictIndexList)', function(obj){
+				  obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+				  var dictIndexId=obj.data.dictIndexId;
+					$("#dictIndexId").val(dictIndexId);
+					var params={};
+					params.dictIndexId=dictIndexId;
+					webplus.loadTable(params,'dictList');
+			  });
+			  var dictCols=[ [ 
+					{type : 'numbers',title : '序号'},
+					{checkbox: true}, 
+					{field : 'dictId',title : '字典编号',hide : true }, 
+					{field : 'dictCode',title : '字典对照码',width : 100}, 
+					{field : 'dictValue',title : '字典对照值',minWidth : 100},
+					{field : 'sortNo',title : '排序号',width : 75}, 
+					{field : 'status_dict',title : '当前状态',templet: '#statusTpl',unresize: true,width : 110}, 
+					{field : 'editMode_dict',title : '编辑模式',templet: '#editModeTpl', unresize: true,width : 110}, 
+					{field : 'editMode',title : '编辑模式',hide : true },
+					{title : '操作',toolbar : '#dictTool',unresize: true,width : 150,fixed: 'right'}
+				] ];
+			  webplus.init('system/dict/listDict',dictCols,'dictForm','submitDict','dictList','dictToolbar','dictTool',{dictIndexId:'NONE'},'full-67')
+			  var rowObj;
+		     //行单击事件
+			  table.on('row(dictList)', function(obj){
+				  obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+				  rowObj=obj;
+			  });
+		    //监听启用操作
+			  form.on('checkbox(status)', function(obj){
+				  if(webplus.checkFormEditMode(obj)){
+					  var status="0";
+						if(obj.elem.checked){
+							status="1";
+						}
+						var params={};
+						params.dictId=obj.value;
+						params.status=status;
+						webplus.doAjax("system/dict/updateDict",params,"","0");
+				  }
+			  });
+			 
+			  //监听启用操作
+			  form.on('switch(editMode)', function(obj){
+				  if(webplus.checkFormEditMode(obj)){
+					  var editMode="0";
+						if(obj.elem.checked){
+							editMode="1";
+						}
+						var params={};
+						params.dictId=obj.value;
+						params.editMode=editMode;
+						webplus.doAjax("system/dict/updateDict",params,"","","3",function(data){
+							rowObj.update({editMode:editMode});
+						}); 
+				  }
+			  });
+			  //监听行工具事件
+				table.on('tool(dictList)', function(rowObj){
+					//判断操作的按钮类别  需要在标签上配置  lay-event='判断的类型值'
+					switch(rowObj.event){
+						case 'edit':
+							//打开添加弹出框
+							if(webplus.checkRowEditMode(rowObj)){
+								webplus.openEditWindow('editDict.html','编辑字典对照',rowObj,'dictId','','700','500');
+							}
+							break;
+						case 'del':
+							if(webplus.checkRowEditMode(rowObj)){
+								webplus.removeRow('system/dict/removeDict',rowObj,'dictId','',{},'',function(data){
+									webplus.loadTable({},'dictList');
+								});
+							}
+							break;
+					}
+				});
+				 
+				//监听表头按钮事件
+				table.on('toolbar(dictList)', function(obj){
+					switch(obj.event){
+							case 'add':
+								var dictIndexId=$("#dictIndexId").val();
+								if(dictIndexId==''){
+									webplus.alertError("请选择一条字典标识数据");
+									return ;
+								}
+								webplus.openWindow('addDict.html?id='+dictIndexId,'新增字典对照','700','500');
+								break;
+							case 'batchRemove':
+								webplus.batchRemoveRow('system/dict/batchRemoveDict','dictList','dictId','',{},'',function(data){
+									webplus.loadTable({},'dictList');
+								});
+								break;
+					}
+				});
+
+		});
+	</script>
+
+</body>
+</html>

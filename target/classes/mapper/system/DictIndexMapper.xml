@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.DictIndexMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.system.model.DictIndex">
+        <id column="dict_index_id" property="dictIndexId" />
+        <result column="dict_key" property="dictKey" />
+        <result column="dict_name" property="dictName" />
+        <result column="dict_type" property="dictType" />
+        <result column="dict_remark" property="dictRemark" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        dict_index_id AS dictIndexId, dict_key AS dictKey, dict_name AS dictName, dict_type AS dictType, dict_remark AS dictRemark, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.system.model.DictIndex">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_dict_index
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.system.model.DictIndex" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_dict_index
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.system.model.DictIndex">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_dict_index
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.system.model.DictIndex" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_dict_index
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="dictIndexId != null and dictIndexId != ''">
+             AND dict_index_id = #{dictIndexId}  <!-- 流水号 -->
+		</if>
+        <if test="dictKey != null and dictKey != ''">
+             AND dict_key = #{dictKey}  <!-- 字典标识 -->
+		</if>
+        <if test="dictName != null and dictName != ''">
+             AND dict_name = #{dictName}  <!-- 字典名称 -->
+		</if>
+        <if test="dictType != null and dictType != ''">
+             AND dict_type = #{dictType}  <!-- 字典分类 1系统2业务 -->
+		</if>
+        <if test="dictRemark != null and dictRemark != ''">
+             AND dict_remark = #{dictRemark}  <!-- 备注 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建用户编号 -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户ID -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="dictIndexId != null and dictIndexId != ''">
+		      AND dict_index_id LIKE '%${dictIndexId}%'  <!-- 流水号 -->
+		</if>
+        <if test="dictKey != null and dictKey != ''">
+		      AND dict_key LIKE '%${dictKey}%'  <!-- 字典标识 -->
+		</if>
+        <if test="dictName != null and dictName != ''">
+		      AND dict_name LIKE '%${dictName}%'  <!-- 字典名称 -->
+		</if>
+        <if test="dictType != null and dictType != ''">
+		      AND dict_type LIKE '%${dictType}%'  <!-- 字典分类 1系统2业务 -->
+		</if>
+        <if test="dictRemark != null and dictRemark != ''">
+		      AND dict_remark LIKE '%${dictRemark}%'  <!-- 备注 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建用户编号 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户ID -->
+		</if>
+    </sql>
+
+</mapper>

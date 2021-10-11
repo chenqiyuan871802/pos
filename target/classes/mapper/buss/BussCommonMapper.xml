@@ -1,0 +1,1293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.BussCommonMapper">
+	<!-- 查询菜品 -->
+	<select id="listMenuDictPage" parameterType="Map"
+		resultType="com.ims.buss.model.MenuDict" useCache="false">
+		SELECT a.menu_id AS menuId,menu_index_id AS menuIndexId,a.menu_name AS
+		menuName,a.menu_price AS menuPrice,a.short_name AS
+		shortName,a.catalog_index_id AS catalogIndexId,a.menu_image AS
+		menuImage,a.menu_introduce AS menuIntroduce,a.shop_id AS
+		shopId,a.language_type AS languageType,a.sort_no AS
+		sortNo,a.whether_spec AS whetherSpec,a.create_time AS
+		createTime,a.create_by AS createBy,a.update_time AS
+		updateTime,a.update_by AS updateBy,a.menu_type AS menuType,a.meal_type
+		AS mealType,a.menu_status AS menuStatus,a.menu_num as
+		menuNum,a.cost_price AS costPrice,
+		b.catalog_name as catalogName
+		FROM
+		t_menu_dict a INNER JOIN
+		t_menu_catalog b ON
+		a.catalog_index_id=b.catalog_index_id AND
+		a.language_type=b.language_type
+		<where>
+			<if test="menuId != null and menuId != ''">
+				AND a.menu_id = #{menuId}  <!-- -->
+			</if>
+			<if test="menuIndexId != null and menuIndexId != ''">
+				AND a.menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="menuName != null and menuName != ''">
+				AND a.menu_name LIKE '%${menuName}%'  <!-- 菜品名 -->
+			</if>
+			<if test="shortName != null and shortName != ''">
+				AND a.short_name LIKE '%${shortName}%'  <!-- 简称 -->
+			</if>
+
+			<if test="catalogIndexId != null and catalogIndexId != ''">
+				AND a.catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+			</if>
+
+			<if test="menuIntroduce != null and menuIntroduce != ''">
+				AND a.menu_introduce LIKE '%${menuIntroduce}%'  <!-- 介绍 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="languageType != null and languageType != ''">
+				AND a.language_type = #{languageType}  <!-- 语言 -->
+			</if>
+
+			<if test="whetherSpec != null and whetherSpec != ''">
+				AND a.whether_spec = #{whetherSpec}  <!-- 是否存在规格0否1是 -->
+			</if>
+			<if test="whetherBuffet != null and whetherBuffet != ''">
+				AND b.whether_buffet = #{whetherBuffet}  <!-- 是否自助餐0否1是 -->
+			</if>
+			<if test="outCatalogIndexId != null and outCatalogIndexId != ''">
+				AND NOT EXISTS (SELECT 1 FROM t_buffet_menu m WHERE
+				m.menu_index_id=a.menu_index_id AND
+				m.catalog_index_id=#{outCatalogIndexId})
+			</if>
+			<if test="inCatalogIndexId != null and inCatalogIndexId != ''">
+				AND EXISTS (SELECT 1 FROM t_buffet_menu m WHERE
+				m.menu_index_id=a.menu_index_id AND
+				m.catalog_index_id=#{inCatalogIndexId})
+			</if>
+			<if test="menuTypeList != null and menuTypeList.size()>0">
+				AND menu_type IN
+				<foreach item="menuTypeItem" index="index"
+					collection="menuTypeList" separator="," open="(" close=")">
+					#{menuTypeItem}
+				</foreach>
+			</if>
+			<if test="mealTypeList != null and mealTypeList.size()>0">
+				AND meal_type IN
+				<foreach item="mealTypeItem" index="index"
+					collection="mealTypeList" separator="," open="(" close=")">
+					#{mealTypeItem}
+				</foreach>
+			</if>
+			<if test="catalogTypeList != null and catalogTypeList.size()>0">
+				AND b.catalog_type IN
+				<foreach item="catalogTypeItem" index="index"
+					collection="catalogTypeList" separator="," open="(" close=")">
+					#{catalogTypeItem}
+				</foreach>
+			</if>
+
+		</where>
+		<if test="_order != null and _order != ''">
+			ORDER BY ${_order}
+		</if>
+	</select>
+	<!-- 加载菜品 -->
+	<select id="listMenuDict" parameterType="Map"
+		resultType="com.ims.buss.model.MenuDict" useCache="false">
+		SELECT a.menu_id AS menuId,menu_index_id AS menuIndexId,a.menu_name AS
+		menuName,a.menu_price AS menuPrice,a.short_name AS
+		shortName,a.catalog_index_id AS catalogIndexId,a.menu_image AS
+		menuImage,a.menu_introduce AS menuIntroduce,a.shop_id AS
+		shopId,a.language_type AS languageType,a.sort_no AS
+		sortNo,a.whether_spec AS whetherSpec,a.create_time AS
+		createTime,a.create_by AS createBy,a.update_time AS
+		updateTime,a.update_by AS updateBy,a.menu_type AS menuType,a.meal_type
+		AS mealType,a.menu_status AS menuStatus,a.menu_num as
+		menuNum,a.cost_price AS costPrice,a.whether_custom AS whetherCustom,
+		b.catalog_name as catalogName,b.tax_type as taxType
+		FROM t_menu_dict a
+		INNER JOIN
+		t_menu_catalog b ON
+		a.catalog_index_id=b.catalog_index_id AND
+		a.language_type=b.language_type
+		<where>
+			<if test="menuId != null and menuId != ''">
+				AND a.menu_id = #{menuId}  <!-- -->
+			</if>
+			<if test="menuIndexId != null and menuIndexId != ''">
+				AND a.menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="menuName != null and menuName != ''">
+				AND a.menu_name LIKE '%${menuName}%'  <!-- 菜品名 -->
+			</if>
+			<if test="shortName != null and shortName != ''">
+				AND a.short_name LIKE '%${shortName}%'  <!-- 简称 -->
+			</if>
+
+			<if test="catalogIndexId != null and catalogIndexId != ''">
+				AND a.catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+			</if>
+
+			<if test="menuIntroduce != null and menuIntroduce != ''">
+				AND a.menu_introduce LIKE '%${menuIntroduce}%'  <!-- 介绍 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="languageType != null and languageType != ''">
+				AND a.language_type = #{languageType}  <!-- 语言 -->
+			</if>
+
+			<if test="whetherSpec != null and whetherSpec != ''">
+				AND a.whether_spec = #{whetherSpec}  <!-- 是否存在规格0否1是 -->
+			</if>
+			<if test="whetherBuffet != null and whetherBuffet != ''">
+				AND b.whether_buffet = #{whetherBuffet}  <!-- 是否自助餐0否1是 -->
+			</if>
+			<if test="catalogType != null and catalogType != ''">
+				AND b.catalog_type = #{catalogType}  <!-- 是否自助餐0否1是 -->
+			</if>
+			<if test="outCatalogIndexId != null and outCatalogIndexId != ''">
+				AND NOT EXISTS (SELECT 1 FROM t_buffet_menu m WHERE
+				m.menu_index_id=a.menu_index_id AND
+				m.catalog_index_id=#{outCatalogIndexId})
+			</if>
+			<if test="inCatalogIndexId != null and inCatalogIndexId != ''">
+				AND EXISTS (SELECT 1 FROM t_buffet_menu m WHERE
+				m.menu_index_id=a.menu_index_id AND
+				m.catalog_index_id=#{inCatalogIndexId})
+			</if>
+			<if test="menuTypeList != null and menuTypeList.size()>0">
+				AND menu_type IN
+				<foreach item="menuTypeItem" index="index"
+					collection="menuTypeList" separator="," open="(" close=")">
+					#{menuTypeItem}
+				</foreach>
+			</if>
+			<if test="mealTypeList != null and mealTypeList.size()>0">
+				AND meal_type IN
+				<foreach item="mealTypeItem" index="index"
+					collection="mealTypeList" separator="," open="(" close=")">
+					#{mealTypeItem}
+				</foreach>
+			</if>
+
+		</where>
+		<if test="_order != null and _order != ''">
+			ORDER BY ${_order}
+		</if>
+	</select>
+
+	<!-- 查询步骤规格 -->
+	<select id="listStepSpec" parameterType="Map"
+		resultType="com.ims.buss.model.StepSpec" useCache="false">
+		SELECT
+		a.catalog_name AS catalogName,
+		b.menu_name AS menuName,
+		b.meal_type AS mealType,
+		c.step_num AS stepNum,
+		c.step_name AS stepName,
+		d.spec_id AS specId,
+		d.spec_index_id AS specIndexId,
+		d.spec_name AS
+		specName,
+		d.spec_price AS specPrice,
+		d.step_index_id AS stepIndexId,
+		d.shop_id AS shopId,
+		d.language_type AS languageType,
+		d.create_time AS
+		createTime,
+		d.create_by AS createBy,
+		d.update_time AS updateTime,
+		d.update_by AS updateBy,
+		d.sort_no AS sortNo
+		FROM
+		t_menu_catalog a
+		INNER JOIN t_menu_dict b ON a.catalog_index_id = b.catalog_index_id
+		AND a.language_type = b.language_type
+		INNER JOIN t_menu_step c ON b.menu_index_id = c.menu_index_id
+		AND b.language_type = c.language_type
+		INNER JOIN t_step_spec d ON c.step_index_id = d.step_index_id
+		AND c.language_type = d.language_type
+		<where>
+
+			<if test="catalogIndexId != null and catalogIndexId != ''">
+				AND a.catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+			</if>
+			<if test="menuIndexId != null and menuIndexId != ''">
+				AND b.menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="languageType != null and languageType != ''">
+				AND a.language_type = #{languageType}  <!-- 语言 -->
+			</if>
+
+
+		</where>
+		<if test="_order != null and _order != ''">
+			ORDER BY ${_order}
+		</if>
+	</select>
+	<!-- 查询自助餐菜品 -->
+	<select id="listBuffetMenuDict" parameterType="Map"
+		resultType="com.ims.buss.model.MenuDict" useCache="false">
+		SELECT a.menu_id AS menuId,menu_index_id AS menuIndexId,a.menu_name AS
+		menuName,a.menu_price AS menuPrice,a.short_name AS
+		shortName,a.catalog_index_id AS catalogIndexId,a.menu_image AS
+		menuImage,a.menu_introduce AS menuIntroduce,a.shop_id AS
+		shopId,a.language_type AS languageType,a.sort_no AS
+		sortNo,a.whether_spec AS whetherSpec,a.create_time AS
+		createTime,a.create_by AS createBy,a.update_time AS
+		updateTime,a.update_by AS updateBy,a.menu_type AS menuType,a.meal_type
+		AS mealType,a.menu_status AS menuStatus,a.menu_num as
+		menuNum,b.catalog_name as catalogName
+		FROM t_menu_dict a INNER JOIN
+		t_menu_catalog b ON
+		a.catalog_index_id=b.catalog_index_id AND
+		a.language_type=b.language_type
+		<where>
+			<if test="menuId != null and menuId != ''">
+				AND a.menu_id = #{menuId}  <!-- -->
+			</if>
+			<if test="menuIndexId != null and menuIndexId != ''">
+				AND a.menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="menuName != null and menuName != ''">
+				AND a.menu_name LIKE '%${menuName}%'  <!-- 菜品名 -->
+			</if>
+			<if test="shortName != null and shortName != ''">
+				AND a.short_name LIKE '%${shortName}%'  <!-- 简称 -->
+			</if>
+
+			<if test="catalogIndexId != null and catalogIndexId != ''">
+				AND a.catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+			</if>
+
+			<if test="menuIntroduce != null and menuIntroduce != ''">
+				AND a.menu_introduce LIKE '%${menuIntroduce}%'  <!-- 介绍 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="languageType != null and languageType != ''">
+				AND a.language_type = #{languageType}  <!-- 语言 -->
+			</if>
+
+			<if test="whetherSpec != null and whetherSpec != ''">
+				AND a.whether_spec = #{whetherSpec}  <!-- 是否存在规格0否1是 -->
+			</if>
+			<if test="whetherBuffet != null and whetherBuffet != ''">
+				AND b.whether_buffet = #{whetherBuffet}  <!-- 是否自助餐0否1是 -->
+			</if>
+			<if test="outCatalogIndexId != null and outCatalogIndexId != ''">
+				AND NOT EXISTS (SELECT 1 FROM t_buffet_menu m WHERE
+				m.menu_index_id=a.menu_index_id AND
+				m.catalog_index_id=#{outCatalogIndexId})
+			</if>
+			<if test="inCatalogIndexId != null and inCatalogIndexId != ''">
+				AND EXISTS (SELECT 1 FROM t_buffet_menu m WHERE
+				m.menu_index_id=a.menu_index_id AND
+				m.catalog_index_id=#{inCatalogIndexId})
+			</if>
+			<if test="menuTypeList != null and menuTypeList.size()>0">
+				AND a.menu_type IN
+				<foreach item="menuTypeItem" index="index"
+					collection="menuTypeList" separator="," open="(" close=")">
+					#{menuTypeItem}
+				</foreach>
+			</if>
+			<if test="mealTypeList != null and mealTypeList.size()>0">
+				AND a.meal_type IN
+				<foreach item="mealTypeItem" index="index"
+					collection="mealTypeList" separator="," open="(" close=")">
+					#{mealTypeItem}
+				</foreach>
+			</if>
+		</where>
+		<if test="_order != null and _order != ''">
+			ORDER BY ${_order}
+		</if>
+	</select>
+	<!-- 查询打印机管理 -->
+	<select id="listPrinterPage" parameterType="Map"
+		resultType="com.ims.buss.model.Printer" useCache="false">
+		SELECT a.print_id AS printId,a.print_num AS printNum,a.print_remark AS
+		printRemark,a.shop_id AS shopId,a.create_time AS
+		createTime,a.create_by AS
+		createBy,a.update_time AS
+		updateTime,a.update_by AS updateBy,a.whether_grant
+		AS
+		whetherGrant,print_type AS printType,print_status AS
+		printStatus,print_model AS printModel,print_secret_key AS
+		printSecretKey,whether_enroll AS whetherEnroll,whether_server AS
+		whetherServer,gateway_type as gatewayType,b.shop_name as shopName
+		FROM
+		t_printer a LEFT JOIN t_shop b ON a.shop_id=b.shop_id
+		<where>
+			<if test="printNum != null and printNum != ''">
+				AND a.print_num LIKE '%${printNum}%'  <!-- 打印机号 -->
+			</if>
+
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+
+			<if test="whetherGrant != null and whetherGrant != ''">
+				AND a.whether_grant = #{whetherGrant}  <!-- 是否授权 -->
+			</if>
+			<if test="printType != null and printType != ''">
+				AND a.print_type = #{printType}  <!-- 打印机类型 -->
+			</if>
+			<if test="printStatus != null and printStatus != ''">
+				AND a.print_status = #{printStatus}  <!-- 打印机状态，0离线 1在线 2缺纸 -->
+			</if>
+			<if test="whetherEnroll != null and whetherEnroll != ''">
+				AND a.whether_enroll = #{whetherEnroll}  <!-- 是否注册0否1是 -->
+			</if>
+			<if test="shopName != null and shopName != ''">
+				AND b.shop_name LIKE '%${shopName}%'  <!-- 店铺名称 -->
+			</if>
+		</where>
+		<if test="_order != null and _order != ''">
+			ORDER BY ${_order}
+		</if>
+	</select>
+
+	<!-- 查询桌位管理 -->
+	<select id="listDeskPage" parameterType="Map"
+		resultType="com.ims.buss.model.Desk" useCache="false">
+		SELECT a.desk_id AS deskId,a.desk_name AS deskName,a.desk_remark AS
+		deskRemark,a.shop_id AS shopId,a.area_id AS areaId,a.desk_status AS
+		deskStatus,a.eat_num AS eatNum,a.sort_no AS sortNo,a.order_no AS
+		orderNo,a.order_time AS orderTime,a.create_time
+		AS
+		createTime,a.create_by AS createBy,a.update_time AS
+		updateTime,a.update_by AS updateBy,a.whether_show_price as
+		whetherShowPrice,a.display_type as displayType,b.area_name as areaName
+		FROM t_desk a LEFT JOIN t_area b ON a.area_id=b.area_id
+		<where>
+			<if test="deskId != null and deskId != ''">
+				AND a.desk_id = #{deskId}  <!-- -->
+			</if>
+			<if test="deskName != null and deskName != ''">
+				AND a.desk_name LIKE '%${deskName}%'  <!-- 桌号 -->
+			</if>
+			<if test="deskRemark != null and deskRemark != ''">
+				AND a.desk_remark LIKE '%${deskRemark}%'  <!-- 备注 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="eatNum != null ">
+				AND a.eat_num = #{eatNum}  <!-- 吃饭人数 -->
+			</if>
+			<if test="orderTime != null ">
+				AND a.order_time = #{orderTime}  <!-- 开餐时间 -->
+			</if>
+			<if test="orderNo != null and orderNo != ''">
+				AND a.order_no LIKE '%${orderNo}%'  <!-- 创建二维码 -->
+			</if>
+			<if test="deskStatus != null and deskStatus != ''">
+				AND a.desk_status = #{deskStatus}  <!-- 桌子状态0空闲1占用 -->
+			</if>
+			<if test="createBy != null and createBy != ''">
+				AND a.create_by = #{createBy}  <!-- 创建人ID -->
+			</if>
+
+			<if test="updateBy != null and updateBy != ''">
+				AND a.update_by = #{updateBy}  <!-- 修改用户编号 -->
+			</if>
+			<if test="areaId != null and areaId != ''">
+				AND a.area_id = #{areaId}  <!-- 区域编号 -->
+			</if>
+		</where>
+		<if test="_order != null and _order != ''">
+			ORDER BY ${_order}
+		</if>
+	</select>
+	<select id="queryOrderSum" parameterType="Map"
+		resultType="com.ims.buss.model.OrderSum" useCache="false">
+	SELECT
+	b.*, ROUND(b.totalAmount / eatNum, 0) avgAmount
+      FROM
+			(
+				SELECT
+					SUM(CASE WHEN t.cash_amount>0 THEN CASE WHEN t.zero_amount>0 THEN t.cash_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as cashTotalAmount,
+    SUM(CASE WHEN t.credit_amount>0  THEN CASE WHEN t.zero_amount>0 THEN t.credit_amount-t.zero_amount ELSE t.total_amount END  else 0 END ) as cardTotalAmount, 
+    SUM(CASE WHEN t.other_amount>0   THEN CASE WHEN t.zero_amount>0 THEN t.other_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as otherTotalAmount, 
+					SUM(t.total_amount) AS totalAmount,
+					sum(t.desk_num) AS eatNum,
+					SUM(t.tax_amount) AS taxAmount,
+					SUM(t.out_tax_amount) AS outTaxAmount,
+					SUM(t.desk_amount) AS deskAmount,
+					SUM(t.menu_amount) AS menuAmount
+				FROM
+					t_order t
+		<where>
+			<if test="orderTypeList != null and orderTypeList.size()>0">
+				AND t.order_type IN
+				<foreach item="orderTypeItem" index="index"
+					collection="orderTypeList" separator="," open="(" close=")">
+					#{orderTypeItem}
+				</foreach>
+			</if>
+
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(DATE_SUB(t.order_time,INTERVAL ${subMinute} MINUTE),"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(DATE_SUB(t.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(DATE_SUB(t.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="whetherPay != null and whetherPay != ''">
+				AND t.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND t.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+	    ) b
+
+	</select>
+	<!-- 查询汇总下单列表 -->
+	<select id="listSumOrderLine" parameterType="Map"
+		resultType="com.ims.buss.model.OrderLine" useCache="false">
+		SELECT
+		line_id AS lineId,order_id AS orderId,shop_id AS
+		shopId,catalog_index_id AS
+		catalogIndexId,menu_index_id AS
+		menuIndexId,spec_index_id AS
+		specIndexId,menu_name AS
+		menuName,print_menu_name AS
+		printMenuName,menu_price AS
+		menuPrice,buy_num AS buyNum,whether_print
+		AS whetherPrint,whether_add
+		AS whetherAdd,create_time AS
+		createTime,create_by AS
+		createBy,update_time AS updateTime,update_by
+		AS
+		updateBy,whether_spec AS
+		whetherSpec,whether_buffet AS
+		whetherBuffet,parent_id AS
+		parentId,choose_num AS
+		chooseNum,whether_take_out AS
+		whetherTakeOut,tax_type AS taxType
+		FROM (SELECT b.* FROM t_order a
+		INNER JOIN t_order_line b ON
+		a.order_id=b.order_id
+		<where>
+			a.order_type IN ('1','6')
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="queryMonth != null and queryMonth != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m")=#{queryMonth}
+			</if>
+			<if test="whetherPay != null and whetherPay != ''">
+				AND a.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+
+		UNION ALL SELECT b.* FROM t_order a INNER JOIN t_order_link l ON
+		a.order_id=l.parent_order_no INNER JOIN t_order_line b ON
+		l.child_order_no=b.order_id
+		<where>
+			a.order_type='2'
+
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="queryMonth != null and queryMonth != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m")=#{queryMonth}
+			</if>
+			<if test="whetherPay != null and whetherPay != ''">
+				AND a.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+
+		</where>
+		) ab
+
+	</select>
+	<!-- 按日统计报表 -->
+	<select id="listSumDateOrderPage" parameterType="Map"
+		resultType="com.ims.buss.model.OrderSum" useCache="false">
+		SELECT  b.*,ROUND(b.totalAmount/deskNum,0)
+		avgAmount,ROUND(b.outTaxAmount*100/8,0) as
+		eightMenuAmount,(b.menuAmount-ROUND(b.outTaxAmount*100/8,0)+b.deskAmount) AS
+		tenMenuAmount
+		,ROUND((b.menuAmount+b.deskAmount-ROUND(b.outTaxAmount*100/8,0))*0.1,0) AS
+		tenTaxAmount FROM (SELECT DATE_FORMAT(t.orderTime,"%Y-%m-%d") as
+		orderDate,
+      SUM(CASE WHEN t.cash_amount>0 THEN CASE WHEN t.zero_amount>0 THEN t.cash_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as cashTotalAmount,
+    SUM(CASE WHEN t.credit_amount>0  THEN CASE WHEN t.zero_amount>0 THEN t.credit_amount-t.zero_amount ELSE t.total_amount END  else 0 END ) as cardTotalAmount, 
+    SUM(CASE WHEN t.other_amount>0   THEN CASE WHEN t.zero_amount>0 THEN t.other_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as otherTotalAmount, 
+    SUM(t.total_amount) as
+		totalAmount,sum(case when t.desk_num>t.eat_num then t.desk_num else t.eat_num end) as
+		deskNum,sum(t.eat_num) as
+		eatNum,SUM(t.tax_amount) as
+		taxAmount,SUM(t.out_tax_amount) as
+		outTaxAmount,SUM(t.desk_amount) as
+		deskAmount ,SUM(t.menu_amount) as
+		menuAmount FROM (SELECT o.*,
+		DATE_SUB(o.order_time,INTERVAL ${subMinute} MINUTE) as orderTime FROM
+		t_order o
+		<where>
+			<if test="orderTypeList != null and orderTypeList.size()>0">
+				AND o.order_type IN
+				<foreach item="orderTypeItem" index="index"
+					collection="orderTypeList" separator="," open="(" close=")">
+					#{orderTypeItem}
+				</foreach>
+			</if>
+
+
+			<if test="whetherPay != null and whetherPay != ''">
+				AND o.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND o.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+		) t
+		<where>
+
+			<if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(t.orderTime,"%Y-%m-%d")&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(t.orderTime,"%Y-%m-%d")&lt;=#{endDate}
+			</if>
+
+		</where>
+
+		GROUP BY DATE_FORMAT(t.orderTime,"%Y-%m-%d")
+	    ) b ORDER BY b.orderDate DESC
+	</select>
+
+	<!-- 按月统计报表 -->
+	<select id="listSumMonthOrderPage" parameterType="Map"
+		resultType="com.ims.buss.model.OrderSum" useCache="false">
+	SELECT b.*,ROUND(b.totalAmount/deskNum,0)
+		avgAmount,ROUND(b.outTaxAmount*100/8,0) as
+		eightMenuAmount,(b.menuAmount-ROUND(b.outTaxAmount*100/8,0)+b.deskAmount) AS
+		tenMenuAmount
+		,ROUND((b.menuAmount+b.deskAmount-ROUND(b.outTaxAmount*100/8,0))*0.1,0) AS
+		tenTaxAmount FROM (SELECT DATE_FORMAT(t.orderTime,"%Y-%m") as
+		orderDate,
+       SUM(CASE WHEN t.cash_amount>0 THEN CASE WHEN t.zero_amount>0 THEN t.cash_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as cashTotalAmount,
+    SUM(CASE WHEN t.credit_amount>0  THEN CASE WHEN t.zero_amount>0 THEN t.credit_amount-t.zero_amount ELSE t.total_amount END  else 0 END ) as cardTotalAmount, 
+    SUM(CASE WHEN t.other_amount>0   THEN CASE WHEN t.zero_amount>0 THEN t.other_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as otherTotalAmount, 
+    SUM(t.total_amount) as
+		totalAmount,sum(case when t.desk_num>t.eat_num then t.desk_num else t.eat_num end) as
+		deskNum,sum(t.eat_num) as
+		eatNum,SUM(t.tax_amount) as
+		taxAmount,SUM(t.out_tax_amount) as
+		outTaxAmount,SUM(t.desk_amount) as
+		deskAmount ,SUM(t.menu_amount) as
+		menuAmount FROM
+
+		(SELECT o.*,
+		DATE_SUB(o.order_time,INTERVAL ${subMinute} MINUTE) as orderTime
+		FROM t_order o
+		<where>
+			<if test="orderTypeList != null and orderTypeList.size()>0">
+				AND o.order_type IN
+				<foreach item="orderTypeItem" index="index"
+					collection="orderTypeList" separator="," open="(" close=")">
+					#{orderTypeItem}
+				</foreach>
+			</if>
+
+
+			<if test="whetherPay != null and whetherPay != ''">
+				AND o.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND o.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+		) t
+		<where>
+
+			<if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(t.orderTime,"%Y-%m")&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(t.orderTime,"%Y-%m")&lt;=#{endDate}
+			</if>
+
+		</where>
+
+		GROUP BY DATE_FORMAT(t.orderTime,"%Y-%m")) b ORDER BY b.orderDate DESC
+	</select>
+	
+	<!-- 按日统计报表 -->
+	<select id="listSumDateOrder" parameterType="Map"
+		resultType="com.ims.buss.model.OrderSum" useCache="false">
+		SELECT  b.*,ROUND(b.totalAmount/deskNum,0)
+		avgAmount,ROUND(b.outTaxAmount*100/8,0) as
+		eightMenuAmount,(b.menuAmount-ROUND(b.outTaxAmount*100/8,0)+b.deskAmount) AS
+		tenMenuAmount
+		,ROUND((b.menuAmount+b.deskAmount-ROUND(b.outTaxAmount*100/8,0))*0.1,0) AS
+		tenTaxAmount FROM (SELECT DATE_FORMAT(t.orderTime,"%Y-%m-%d") as
+		orderDate,
+      SUM(CASE WHEN t.cash_amount>0 THEN CASE WHEN t.zero_amount>0 THEN t.cash_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as cashTotalAmount,
+    SUM(CASE WHEN t.credit_amount>0  THEN CASE WHEN t.zero_amount>0 THEN t.credit_amount-t.zero_amount ELSE t.total_amount END  else 0 END ) as cardTotalAmount, 
+    SUM(CASE WHEN t.other_amount>0   THEN CASE WHEN t.zero_amount>0 THEN t.other_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as otherTotalAmount, 
+    SUM(t.total_amount) as
+		totalAmount,sum(case when t.desk_num>t.eat_num then t.desk_num else t.eat_num end) as
+		deskNum,sum(t.eat_num) as
+		eatNum,SUM(t.tax_amount) as
+		taxAmount,SUM(t.out_tax_amount) as
+		outTaxAmount,SUM(t.desk_amount) as
+		deskAmount ,SUM(t.menu_amount) as
+		menuAmount FROM (SELECT o.*,
+		DATE_SUB(o.order_time,INTERVAL ${subMinute} MINUTE) as orderTime FROM
+		t_order o
+		<where>
+			<if test="orderTypeList != null and orderTypeList.size()>0">
+				AND o.order_type IN
+				<foreach item="orderTypeItem" index="index"
+					collection="orderTypeList" separator="," open="(" close=")">
+					#{orderTypeItem}
+				</foreach>
+			</if>
+
+
+			<if test="whetherPay != null and whetherPay != ''">
+				AND o.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND o.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+		) t
+		<where>
+
+			<if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(t.orderTime,"%Y-%m-%d")&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(t.orderTime,"%Y-%m-%d")&lt;=#{endDate}
+			</if>
+
+		</where>
+
+		GROUP BY DATE_FORMAT(t.orderTime,"%Y-%m-%d")
+	    ) b ORDER BY b.orderDate DESC
+	</select>
+
+	<!-- 按月统计报表 -->
+	<select id="listSumMonthOrder" parameterType="Map"
+		resultType="com.ims.buss.model.OrderSum" useCache="false">
+	SELECT b.*,ROUND(b.totalAmount/deskNum,0)
+		avgAmount,ROUND(b.outTaxAmount*100/8,0) as
+		eightMenuAmount,(b.menuAmount-ROUND(b.outTaxAmount*100/8,0)+b.deskAmount) AS
+		tenMenuAmount
+		,ROUND((b.menuAmount+b.deskAmount-ROUND(b.outTaxAmount*100/8,0))*0.1,0) AS
+		tenTaxAmount FROM (SELECT DATE_FORMAT(t.orderTime,"%Y-%m") as
+		orderDate,
+       SUM(CASE WHEN t.cash_amount>0 THEN CASE WHEN t.zero_amount>0 THEN t.cash_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as cashTotalAmount,
+    SUM(CASE WHEN t.credit_amount>0  THEN CASE WHEN t.zero_amount>0 THEN t.credit_amount-t.zero_amount ELSE t.total_amount END  else 0 END ) as cardTotalAmount, 
+    SUM(CASE WHEN t.other_amount>0   THEN CASE WHEN t.zero_amount>0 THEN t.other_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as otherTotalAmount, 
+    SUM(t.total_amount) as
+		totalAmount,sum(case when t.desk_num>t.eat_num then t.desk_num else t.eat_num end) as
+		deskNum,sum(t.eat_num) as
+		eatNum,SUM(t.tax_amount) as
+		taxAmount,SUM(t.out_tax_amount) as
+		outTaxAmount,SUM(t.desk_amount) as
+		deskAmount ,SUM(t.menu_amount) as
+		menuAmount FROM
+
+		(SELECT o.*,
+		DATE_SUB(o.order_time,INTERVAL ${subMinute} MINUTE) as orderTime
+		FROM t_order o
+		<where>
+			<if test="orderTypeList != null and orderTypeList.size()>0">
+				AND o.order_type IN
+				<foreach item="orderTypeItem" index="index"
+					collection="orderTypeList" separator="," open="(" close=")">
+					#{orderTypeItem}
+				</foreach>
+			</if>
+
+
+			<if test="whetherPay != null and whetherPay != ''">
+				AND o.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND o.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+		) t
+		<where>
+
+			<if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(t.orderTime,"%Y-%m")&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(t.orderTime,"%Y-%m")&lt;=#{endDate}
+			</if>
+
+		</where>
+
+		GROUP BY DATE_FORMAT(t.orderTime,"%Y-%m")) b ORDER BY b.orderDate DESC
+	</select>
+	<!-- 出入金汇总查询 -->
+	<select id="querySumCashbox" parameterType="Map"
+		resultType="com.ims.buss.model.OrderSum" useCache="false">
+		SELECT
+		SUM(
+		CASE
+		WHEN record_type = 0 THEN
+		amount
+		ELSE
+		0
+		END
+		) AS beginAmount,
+		SUM(
+		CASE
+		WHEN record_type = 1 THEN
+		amount
+		ELSE
+		0
+		END
+		) AS outAmount,
+		SUM(
+		CASE
+		WHEN record_type = 2 THEN
+		amount
+		ELSE
+		0
+		END
+		) AS inAmount
+		FROM
+		t_cashbox_record t
+		<where>
+			<if test="shopId != null and shopId != ''">
+				AND t.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(t.create_time,"%Y-%m-%d")&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(t.create_time,"%Y-%m-%d")&lt;=#{endDate}
+			</if>
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(t.create_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+		</where>
+	</select>
+	<!-- 查询订单汇总 -->
+	<!-- 查询订单汇总 -->
+	<select id="queryOrderSummary" parameterType="Map"
+		resultType="com.ims.buss.model.OrderSum" useCache="false">
+		SELECT
+		SUM(
+		CASE
+		WHEN t.whether_pay = '1' THEN
+		t.total_amount
+		ELSE
+		0
+		END
+		) AS totalAmount,
+		SUM(t.total_amount) AS predictAmount,
+		SUM(
+		CASE
+		WHEN t.whether_pay = '1' AND t.cash_amount>0 THEN 
+		t.cash_amount-t.zero_amount 
+    WHEN  t.whether_pay='1' and t.pay_way='1' THEN 
+    t.total_amount
+		ELSE
+		0
+		END
+		) AS cashTotalAmount,
+		SUM(
+		CASE
+		WHEN t.whether_pay = '1' and t.credit_amount>0 THEN
+		t.credit_amount-t.zero_amount
+    WHEN t.whether_pay = '1' and  t.pay_way='2'  THEN
+     t.total_amount
+		ELSE
+		0
+		END
+		) cardTotalAmount,
+		SUM(
+		CASE
+		WHEN t.whether_pay = '1' and t.other_amount>0  THEN
+		t.other_amount-t.zero_amount
+		ELSE
+		0
+		END
+		) AS otherTotalAmount,
+		COUNT(
+		CASE
+		WHEN t.whether_pay = '1' THEN
+		1
+		END
+		) AS payOrderCount,
+		COUNT(1) AS orderCount,
+		SUM(
+		CASE
+		WHEN t.whether_pay = '1' THEN
+		t.consume_tax
+		ELSE
+		0
+		END
+		) AS consumeTax,
+		SUM(t.eat_num) AS eatNum
+		FROM
+		t_order t
+		<where>
+			<if test="orderTypeList != null and orderTypeList.size()>0">
+				AND t.order_type IN
+				<foreach item="orderTypeItem" index="index"
+					collection="orderTypeList" separator="," open="(" close=")">
+					#{orderTypeItem}
+				</foreach>
+			</if>
+
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(t.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(t.order_time,'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(t.order_time,'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(t.order_time,'%Y-%m-%d')&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(t.order_time,'%Y-%m-%d')&lt;=#{endDate}
+			</if>
+			<if test="whetherPay != null and whetherPay != ''">
+				AND t.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND t.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+	</select>
+	<!-- 菜品统计 -->
+	<select id="listOrderLineSumPage" parameterType="Map"
+		resultType="com.ims.buss.model.OrderLineSum" useCache="false">
+		SELECT
+    
+		(CASE WHEN b.whether_buffet='1' THEN '放題' ELSE IFNULL(d.large_name,'その他') END )as largeName,
+		b.catalog_name AS catalogName,
+		(CASE WHEN b.whether_buffet='1' THEN b.catalog_name ELSE c.menu_name END )  AS menuName,
+		(CASE WHEN b.whether_buffet='1' THEN b.buffet_price ELSE c.menu_price  END ) AS menuPrice,
+		a.catalog_index_id AS catalogIndexId,
+		a.menu_index_id as menuIndexId,
+		IFNULL(c.cost_price,0) as costPrice,
+		a.buy_num as buyNum,
+	    (CASE WHEN b.whether_buffet='1' THEN a.buy_num * b.buffet_price ELSE a.buy_num * c.menu_price  END ) 	 AS salesAmount,
+		IFNULL(c.cost_price,0) * a.buy_num AS costAmount,
+      (CASE WHEN b.whether_buffet='1' THEN a.buy_num * b.buffet_price ELSE  (c.menu_price-IFNULL(c.cost_price, 0)) * a.buy_num   END ) as profitAmount
+
+		FROM (
+		SELECT
+		o.catalog_index_id,
+		o.menu_index_id,
+		SUM(o.buy_num) buy_num
+		FROM
+		(SELECT b.* FROM t_order a
+		INNER JOIN t_order_line b ON
+		a.order_id=b.order_id 
+		<where>
+		 a.order_type IN ('1','6') AND a.whether_pay='1'  AND ( b.whether_buffet = '0' OR ( b.whether_buffet='1' AND b.menu_index_id IS NULL))
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="whetherBuffet != null and whetherBuffet != ''">
+				AND b.whether_buffet= #{whetherBuffet}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="menuIndexId != null and menuIndexId != ''">
+				AND b.menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="catalogIndexId != null and catalogIndexId != ''">
+				AND b.catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+			</if>
+			<if test="beginMonth != null and beginMonth != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m')&gt;=#{beginMonth}
+			</if>
+			<if test="endMonth != null and endMonth != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m')&lt;=#{endMonth}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				AND
+				DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d')&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d')&lt;=#{endDate}
+			</if>
+			<if test="beginMinute != null and beginMinute != ''">
+				AND DATE_FORMAT(a.order_time,'%H:%i')&gt;=#{beginMinute}
+			</if>
+			<if test="endMinute != null and endMinute != ''">
+				AND DATE_FORMAT(a.order_time,'%H:%i')&lt;=#{endMinute}
+			</if>
+			<if test="queryMonth != null and queryMonth != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m")=#{queryMonth}
+			</if>
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="queryWeek != null and queryWeek != ''">
+				AND WEEKDAY(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE))+1=#{queryWeek}
+			</if>
+		
+		</where>
+		
+		UNION ALL SELECT b.* FROM t_order a INNER JOIN t_order_link l ON
+		a.order_id=l.parent_order_no INNER JOIN t_order_line b ON
+		l.child_order_no=b.order_id  
+		<where>
+		  a.order_type='2' and a.whether_pay='1'  AND ( b.whether_buffet = '0' OR ( b.whether_buffet='1' AND b.menu_index_id IS NULL))
+		  <if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="whetherBuffet != null and whetherBuffet != ''">
+				AND b.whether_buffet= #{whetherBuffet}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="menuIndexId != null and menuIndexId != ''">
+				AND b.menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="catalogIndexId != null and catalogIndexId != ''">
+				AND b.catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+			</if>
+			<if test="beginMonth != null and beginMonth != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m')&gt;=#{beginMonth}
+			</if>
+			<if test="endMonth != null and endMonth != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m')&lt;=#{endMonth}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				AND
+				DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d')&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d')&lt;=#{endDate}
+			</if>
+			<if test="beginMinute != null and beginMinute != ''">
+				AND DATE_FORMAT(a.order_time,'%H:%i')&gt;=#{beginMinute}
+			</if>
+			<if test="endMinute != null and endMinute != ''">
+				AND DATE_FORMAT(a.order_time,'%H:%i')&lt;=#{endMinute}
+			</if>
+			<if test="queryMonth != null and queryMonth != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m")=#{queryMonth}
+			</if>
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="queryWeek != null and queryWeek != ''">
+				AND WEEKDAY(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE))+1=#{queryWeek}
+			</if>
+		</where> 
+		) o
+
+		GROUP BY
+		o.catalog_index_id,
+		o.menu_index_id
+		)  a INNER JOIN t_menu_catalog b ON a.catalog_index_id=b.catalog_id AND b.language_type='1' LEFT JOIN
+	   t_menu_dict c ON a.menu_index_id=c.menu_id 
+		LEFT JOIN t_menu_large d ON b.large_id = d.large_id 
+		<where>
+			<if test="largeId != null and largeId != ''">
+				AND d.large_id=#{largeId}
+			</if>
+		</where>
+
+		 ORDER BY d.sort_no ASC ,b.sort_no ASC,c.sort_no ASC
+
+	</select>
+	
+	<select id="listOrderLineSum" parameterType="Map"
+		resultType="com.ims.buss.model.OrderLineSum" useCache="false">
+		SELECT
+    
+		(CASE WHEN b.whether_buffet='1' THEN '放題' ELSE IFNULL(d.large_name,'その他') END )as largeName,
+		b.catalog_name AS catalogName,
+		(CASE WHEN b.whether_buffet='1' THEN b.catalog_name ELSE c.menu_name END )  AS menuName,
+		(CASE WHEN b.whether_buffet='1' THEN b.buffet_price ELSE c.menu_price  END ) AS menuPrice,
+		a.catalog_index_id AS catalogIndexId,
+		a.menu_index_id as menuIndexId,
+		IFNULL(c.cost_price,0) as costPrice,
+		a.buy_num as buyNum,
+	    (CASE WHEN b.whether_buffet='1' THEN a.buy_num * b.buffet_price ELSE a.buy_num * c.menu_price  END ) 	 AS salesAmount,
+		IFNULL(c.cost_price,0) * a.buy_num AS costAmount,
+      (CASE WHEN b.whether_buffet='1' THEN a.buy_num * b.buffet_price ELSE  (c.menu_price-IFNULL(c.cost_price, 0)) * a.buy_num   END ) as profitAmount
+
+		FROM (
+		SELECT
+		o.catalog_index_id,
+		o.menu_index_id,
+		SUM(o.buy_num) buy_num
+		FROM
+		(SELECT b.* FROM t_order a
+		INNER JOIN t_order_line b ON
+		a.order_id=b.order_id 
+		<where>
+		 a.order_type IN ('1','6') AND a.whether_pay='1'  AND ( b.whether_buffet = '0' OR ( b.whether_buffet='1' AND b.menu_index_id IS NULL))
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="whetherBuffet != null and whetherBuffet != ''">
+				AND b.whether_buffet= #{whetherBuffet}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="whetherBuffet != null and menuIndexId != ''">
+				AND b.menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="catalogIndexId != null and catalogIndexId != ''">
+				AND b.catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+			</if>
+			<if test="beginMonth != null and beginMonth != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m')&gt;=#{beginMonth}
+			</if>
+			<if test="endMonth != null and endMonth != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m')&lt;=#{endMonth}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				AND
+				DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d')&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d')&lt;=#{endDate}
+			</if>
+			<if test="beginMinute != null and beginMinute != ''">
+				AND DATE_FORMAT(a.order_time,'%H:%i')&gt;=#{beginMinute}
+			</if>
+			<if test="endMinute != null and endMinute != ''">
+				AND DATE_FORMAT(a.order_time,'%H:%i')&lt;=#{endMinute}
+			</if>
+			<if test="queryMonth != null and queryMonth != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m")=#{queryMonth}
+			</if>
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="queryWeek != null and queryWeek != ''">
+				AND WEEKDAY(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE))+1=#{queryWeek}
+			</if>
+		
+		</where>
+		
+		UNION ALL SELECT b.* FROM t_order a INNER JOIN t_order_link l ON
+		a.order_id=l.parent_order_no INNER JOIN t_order_line b ON
+		l.child_order_no=b.order_id  
+		<where>
+		  a.order_type='2' and a.whether_pay='1'  AND ( b.whether_buffet = '0' OR ( b.whether_buffet='1' AND b.menu_index_id IS NULL))
+		  <if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+			<if test="menuIndexId != null and menuIndexId != ''">
+				AND b.menu_index_id = #{menuIndexId}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="whetherBuffet != null and whetherBuffet != ''">
+				AND b.whether_buffet= #{whetherBuffet}  <!-- 菜单索引编号 -->
+			</if>
+			<if test="catalogIndexId != null and catalogIndexId != ''">
+				AND b.catalog_index_id = #{catalogIndexId}  <!-- 类目索引编号 -->
+			</if>
+			<if test="beginMonth != null and beginMonth != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m')&gt;=#{beginMonth}
+			</if>
+			<if test="endMonth != null and endMonth != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m')&lt;=#{endMonth}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				AND
+				DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d')&gt;=#{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE),'%Y-%m-%d')&lt;=#{endDate}
+			</if>
+			<if test="beginMinute != null and beginMinute != ''">
+				AND DATE_FORMAT(a.order_time,'%H:%i')&gt;=#{beginMinute}
+			</if>
+			<if test="endMinute != null and endMinute != ''">
+				AND DATE_FORMAT(a.order_time,'%H:%i')&lt;=#{endMinute}
+			</if>
+			<if test="queryMonth != null and queryMonth != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m")=#{queryMonth}
+			</if>
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="queryWeek != null and queryWeek != ''">
+				AND WEEKDAY(DATE_SUB(a.order_time,INTERVAL ${subMinute} MINUTE))+1=#{queryWeek}
+			</if>
+		</where> 
+		) o
+
+		GROUP BY
+		o.catalog_index_id,
+		o.menu_index_id
+		)  a INNER JOIN t_menu_catalog b ON a.catalog_index_id=b.catalog_id AND b.language_type='1' LEFT JOIN
+	   t_menu_dict c ON a.menu_index_id=c.menu_id 
+		LEFT JOIN t_menu_large d ON b.large_id = d.large_id 
+		<where>
+			<if test="largeId != null and largeId != ''">
+				AND d.large_id=#{largeId}
+			</if>
+		</where>
+
+		 ORDER BY d.sort_no ASC ,b.sort_no ASC,c.sort_no ASC
+
+	</select>
+	<!-- 查询汇总外卖下单列表 -->
+	<select id="listSumTakeOutOrderLine" parameterType="Map"
+		resultType="com.ims.buss.model.OrderLine" useCache="false">
+		SELECT
+		line_id AS lineId,order_id AS orderId,shop_id AS
+		shopId,catalog_index_id AS
+		catalogIndexId,menu_index_id AS
+		menuIndexId,spec_index_id AS
+		specIndexId,menu_name AS
+		menuName,print_menu_name AS
+		printMenuName,menu_price AS
+		menuPrice,buy_num AS buyNum,whether_print
+		AS whetherPrint,whether_add
+		AS whetherAdd,create_time AS
+		createTime,create_by AS
+		createBy,update_time AS updateTime,update_by
+		AS
+		updateBy,whether_spec AS
+		whetherSpec,whether_buffet AS
+		whetherBuffet,parent_id AS
+		parentId,choose_num AS
+		chooseNum,whether_take_out AS
+		whetherTakeOut,tax_type AS taxType
+		FROM (SELECT b.* FROM t_order a
+		INNER JOIN t_order_line b ON
+		a.order_id=b.order_id
+		<where>
+			a.order_type IN ('4','5')
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(a.order_time,'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="queryMonth != null and queryMonth != ''">
+				AND DATE_FORMAT(a.order_time,"%Y-%m")=#{queryMonth}
+			</if>
+			<if test="whetherPay != null and whetherPay != ''">
+				AND a.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND a.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+		) ab
+
+	</select>
+
+	<select id="queryOrderSumNew" parameterType="Map"
+		resultType="com.ims.buss.model.OrderSum" useCache="false">
+		SELECT
+		ROUND(SUM(t.total_amount)/SUM(t.desk_num),0) avgAmount,
+		SUM(t.total_amount) AS totalAmount,
+		sum(case when t.desk_num>t.eat_num then t.desk_num else t.eat_num end) as
+		deskNum,
+		SUM(t.eat_num) AS
+		eatNum,
+		SUM(t.tax_amount) AS taxAmount,
+		SUM(t.out_tax_amount) AS
+		outTaxAmount,
+		SUM(t.desk_amount) AS deskAmount,
+		SUM(t.menu_amount) AS
+		menuAmount,
+		SUM(t.consume_tax) AS consumeTax,
+	    SUM(CASE WHEN t.cash_amount>0 THEN CASE WHEN t.zero_amount>0 THEN t.cash_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as cashTotalAmount,
+    SUM(CASE WHEN t.credit_amount>0  THEN CASE WHEN t.zero_amount>0 THEN t.credit_amount-t.zero_amount ELSE t.total_amount END  else 0 END ) as cardTotalAmount, 
+    SUM(CASE WHEN t.other_amount>0   THEN CASE WHEN t.zero_amount>0 THEN t.other_amount-t.zero_amount  ELSE t.total_amount END  else 0 END ) as otherTotalAmount, 
+		COUNT(1) AS orderCount
+		FROM
+		t_order t
+		<where>
+			<if test="orderTypeList != null and orderTypeList.size()>0">
+				AND t.order_type IN
+				<foreach item="orderTypeItem" index="index"
+					collection="orderTypeList" separator="," open="(" close=")">
+					#{orderTypeItem}
+				</foreach>
+			</if>
+
+			<if test="queryDate != null and queryDate != ''">
+				AND DATE_FORMAT(t.order_time,"%Y-%m-%d")=#{queryDate}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				AND DATE_FORMAT(t.order_time,'%Y-%m-%d %H:%i')&gt;=#{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(t.order_time,'%Y-%m-%d %H:%i')&lt;=#{endTime}
+			</if>
+			<if test="whetherPay != null and whetherPay != ''">
+				AND t.whether_pay = #{whetherPay}  <!-- 是否结算 -->
+			</if>
+			<if test="shopId != null and shopId != ''">
+				AND t.shop_id = #{shopId}  <!-- 店铺编号 -->
+			</if>
+		</where>
+
+	</select>
+</mapper>

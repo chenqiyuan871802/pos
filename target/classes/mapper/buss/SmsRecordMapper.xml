@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.SmsRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.SmsRecord">
+        <id column="record_id" property="recordId" />
+        <result column="mobile" property="mobile" />
+        <result column="msg" property="msg" />
+        <result column="send_time" property="sendTime" />
+        <result column="msg_id" property="msgId" />
+        <result column="msg_status" property="msgStatus" />
+        <result column="msg_type" property="msgType" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    record_id AS recordId,mobile AS mobile,msg AS msg,send_time AS sendTime,msg_id AS msgId,msg_status AS msgStatus,msg_type AS msgType
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.SmsRecord">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_sms_record
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.SmsRecord" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_sms_record
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.SmsRecord">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_sms_record
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.SmsRecord" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_sms_record
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_sms_record
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="recordId != null and recordId != ''">
+             AND record_id = #{recordId}  <!-- 短信记录编号 -->
+		</if>
+        <if test="mobile != null and mobile != ''">
+             AND mobile = #{mobile}  <!-- 手机号码 -->
+		</if>
+        <if test="msg != null and msg != ''">
+             AND msg = #{msg}  <!-- 短信内容 -->
+		</if>
+        <if test="sendTime != null ">
+             AND send_time = #{sendTime}  <!-- 发送时间 -->
+		</if>
+        <if test="msgId != null and msgId != ''">
+             AND msg_id = #{msgId}  <!-- 短信平台信息编号 -->
+		</if>
+        <if test="msgStatus != null and msgStatus != ''">
+             AND msg_status = #{msgStatus}  <!-- 0提交成功 1发送成功2发送失败 -->
+		</if>
+        <if test="msgType != null and msgType != ''">
+             AND msg_type = #{msgType}  <!-- 短信类型1普通短信2验证码短信 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="recordId != null and recordId != ''">
+		      AND record_id LIKE '%${recordId}%'  <!-- 短信记录编号 -->
+		</if>
+        <if test="mobile != null and mobile != ''">
+		      AND mobile LIKE '%${mobile}%'  <!-- 手机号码 -->
+		</if>
+        <if test="msg != null and msg != ''">
+		      AND msg LIKE '%${msg}%'  <!-- 短信内容 -->
+		</if>
+        <if test="msgId != null and msgId != ''">
+		      AND msg_id LIKE '%${msgId}%'  <!-- 短信平台信息编号 -->
+		</if>
+        <if test="msgStatus != null and msgStatus != ''">
+		      AND msg_status LIKE '%${msgStatus}%'  <!-- 0提交成功 1发送成功2发送失败 -->
+		</if>
+        <if test="msgType != null and msgType != ''">
+		      AND msg_type LIKE '%${msgType}%'  <!-- 短信类型1普通短信2验证码短信 -->
+		</if>
+    </sql>
+
+</mapper>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html >
+<head >
+<title>菜品管理---添加规格</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<style>
+	html{
+		background-color:#fff;
+		height: 100%;
+		border-bottom: 2px solid #f2f2f2;
+		box-sizing: border-box;
+	}
+</style>
+<body>
+<div class="layui-fluid">
+		<div class="layui-card">
+		<form class="layui-form layui-form-pane" id="saveForm" lay-filter="saveForm">
+			<div class="layui-form-item">
+				<label class="layui-form-label">名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuDictName" placeholder="オプション名を入力してください" lay-verify="required|max:50" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">価格</label>
+				<div class="layui-input-block">
+					<input type="text" name="price" placeholder="価格（税抜き）を入力してください" lay-verify="required|integer|minInt:1|maxInt:10000000" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<!-- 隐藏域 -->
+			<div class="layui-form-item" style="display:none;">
+			  <button class="layui-btn"  lay-submit="" lay-filter="saveSubmit">提交</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus', //主入口模块
+		}).use([ 'form','webplus', 'upload' ], function() {
+		    var $ = layui.$, form = layui.form, webplus=layui.webplus;
+			
+			// +-----------------------------
+			// 提交表单
+			// +-----------------------------
+			form.on('submit(saveSubmit)', function(data) {
+				var paramData = data.field;
+				var trHtml = '<tr><td data-specid="">'+paramData.menuDictName+'</td><td  data-specindexid="">'+webplus.number_format(paramData.price,0,"",",")+'</td><td style="width:120px">'+
+								'<a class="layui-btn layui-btn-xs edit-btn" ><i class="layui-icon layui-icon-edit"></i>編集</a>'+
+								'<a class="layui-btn layui-btn-danger layui-btn-xs del-btn" lay-event="del"><i class="layui-icon layui-icon-delete"></i>追加</a>'+
+							'</td></tr>';
+				parent.layui.$("#tableList>tbody").append(trHtml);
+				parent.layui.$(".layui-table").show();
+				webplus.closeCurrentWindow();
+				return false;
+			});
+			
+			
+		});
+
+	</script>
+</body>
+</html>

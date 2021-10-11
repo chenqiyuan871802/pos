@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MemberCouponMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.MemberCoupon">
+        <id column="member_coupon_id" property="memberCouponId" />
+        <result column="coupon_id" property="couponId" />
+        <result column="member_id" property="memberId" />
+        <result column="collect_time" property="collectTime" />
+        <result column="status" property="status" />
+        <result column="use_time" property="useTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    member_coupon_id AS memberCouponId,coupon_id AS couponId,member_id AS memberId,collect_time AS collectTime,status AS status,use_time AS useTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.MemberCoupon">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_coupon
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.MemberCoupon" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_coupon
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.MemberCoupon">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_coupon
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.MemberCoupon" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member_coupon
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_member_coupon
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="memberCouponId != null and memberCouponId != ''">
+             AND member_coupon_id = #{memberCouponId}  <!-- 会员优惠卷编号 -->
+		</if>
+        <if test="couponId != null and couponId != ''">
+             AND coupon_id = #{couponId}  <!-- 优惠券编号 -->
+		</if>
+        <if test="memberId != null and memberId != ''">
+             AND member_id = #{memberId}  <!-- 会员编号 -->
+		</if>
+        <if test="collectTime != null ">
+             AND collect_time = #{collectTime}  <!-- 收藏时间 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 状态0待使用1已使用2已过期 -->
+		</if>
+        <if test="useTime != null ">
+             AND use_time = #{useTime}  <!-- 使用时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="memberCouponId != null and memberCouponId != ''">
+		      AND member_coupon_id LIKE '%${memberCouponId}%'  <!-- 会员优惠卷编号 -->
+		</if>
+        <if test="couponId != null and couponId != ''">
+		      AND coupon_id LIKE '%${couponId}%'  <!-- 优惠券编号 -->
+		</if>
+        <if test="memberId != null and memberId != ''">
+		      AND member_id LIKE '%${memberId}%'  <!-- 会员编号 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 状态0待使用1已使用2已过期 -->
+		</if>
+    </sql>
+
+</mapper>

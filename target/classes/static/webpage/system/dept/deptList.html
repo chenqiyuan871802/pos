@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html >
+<head >
+<meta charset="utf-8">
+<title>组织机构</title> 
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+<link rel="stylesheet"    href="../../../layuiadmin/style/font-awesome/css/font-awesome.min.css" media="all"/>
+<link rel="stylesheet"    href="../../../lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css" media="all">
+</head>
+<body>
+	<div class="layui-fluid">
+<div class="layui-row tree-item" >
+<div class="childLeft-item">
+			<div class="layui-card" style="overflow:auto">
+	          <div class="layui-card-header">组织机构树</div>
+	          <div class="layui-card-body">
+	          	<ul id="ztree" class="ztree"></ul>
+	          </div>
+	        </div>
+		</div>
+		
+		<div class="childRight-item">
+			<div class="layui-card">
+				<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">机构名称</label>
+							<div class="layui-input-block">
+							<input type="hidden" name="cascadeId" id="cascadeId"/>
+								<input type="text" name="deptName" id="deptName" placeholder="请输入"
+									autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-inline">
+							<button class="layui-btn layuiadmin-btn-sm" lay-submit
+								lay-filter="searchSubmit" >查询</button>
+							
+						</div>
+	
+					</div>
+				</div>
+				<div class="layui-card-body">
+					<table id="dataList" lay-filter="dataList" ></table>
+					
+		
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div type="text/html" id="trTool" style="display:none">
+    <a  data-grant="system:dept:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a  data-grant="system:dept:move" class="layui-btn layui-btn-success layui-btn-xs" lay-event="move"><i class="layui-icon layui-icon-right"></i>移动</button>
+    <a  data-grant="system:dept:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+<div type="text/html" id="toolbar" style="display:none" >
+  <div class="layui-btn-container">
+    <button data-grant="system:dept:add"  class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增</button>
+  </div>
+</div>
+<script type="text/html" id="switchTpl">
+  <input type="checkbox" name="isAutoExpand" value="{{d.deptId}}" lay-skin="switch" lay-text="是|否" lay-filter="isAutoExpand" {{ d.isAutoExpand == '1' ? 'checked' : '' }}>
+</script>
+	<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+   <script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.exedit.js"></script>
+	<script>
+		
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus' //主入口模块
+		}).use([ 'table', 'form','webplus' ], function() {
+			var $ = layui.$, 
+			form = layui.form, 
+			table = layui.table,
+			webplus=layui.webplus;
+			var reloadFlag=true;
+			var setting = {
+				check: {
+					enable: false
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onClick: zTreeOnClick//节点点击事件
+				}
+			};
+			function zTreeOnClick(event, treeId, treeNode) {
+			    var cascadeId="";
+			    if(treeNode.id!='0'){
+			    	//获取查询对象数据
+			    	cascadeId=treeNode.cascadeId;
+			    }
+			    $("#cascadeId").val(cascadeId)
+			    $("#deptName").val("")
+			    reloadFlag=false;
+	   			//执行重载
+	   			webplus.reloadTable();
+			    
+			};
+			
+			 var cols= [ [ {
+					type : 'numbers',
+					title : '序号'
+				}, {
+					field : 'deptId',
+					title : '编号',
+					hide : true 
+				}, {
+					field : 'deptName',
+					title : '机构名称',
+					minWidth : 140
+				}, {
+					field : 'deptCode',
+					title : '机构代码',
+					minWidth : 120
+				}, {
+					field : 'manager',
+					title : '主要负责人',
+					width : 120
+				}, {
+					field : 'phone',
+					title : '电话',
+					width : 120,
+				}, {
+					field : 'fax',
+					title : '传真',
+					width : 120,
+				}, {
+					field : 'isAutoExpand_dict',
+					title : '自动展开',
+					width : 90,
+					templet: '#switchTpl', 
+					unresize: true
+				}, {
+					field : 'sortNo',
+					title : '排序号',
+					width : 80
+					
+				}, {
+
+					title : '操作',
+					toolbar : '#trTool',
+					width : 210,
+					fixed: 'right'
+				} ] ];
+		   webplus.init('system/dept/list',cols,'','','','','','','',function(){
+			   if(reloadFlag){
+				   webplus.initTree("system/dept/loadDeptTree",setting);
+			   }
+			   reloadFlag=true;
+		   });
+		    //
+		    form.on('switch(isAutoExpand)', function(obj){
+		           var isAutoExpand="0";
+		    	   if(obj.elem.checked){
+		    		   isAutoExpand="1";
+		    	   }
+		    	   var deptId=obj.value;
+		    	   var params={};
+		    	   params.isAutoExpand=isAutoExpand;
+		    	   params.deptId=deptId;
+		    	   webplus.doAjax("system/dept/update",params,"","","3",function(data){
+		    		   webplus.initTree("system/dept/loadDeptTree",setting);
+		    	   });
+			 });
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    var data =rowObj.data;
+			    //判断操作的按钮类别  需要在标签上配置  lay-event='判断的类型值'
+			    switch(rowObj.event){
+			    	
+			    	case 'edit':
+			    		
+			    		//打开编辑弹出框
+			       		webplus.openEditWindow('editDept.html','编辑组织机构',rowObj,'deptId','','700','510');
+			   			break;
+                    case 'move':
+                      if(data.deptId=='0'){
+			    			
+			    			webplus.alertError("顶级机构不允许删除和移动");
+				    		 return false;
+			    		}
+			    		//打开编辑弹出框
+			    		var parentId=rowObj.parentId;
+			       		webplus.openEditWindow('moveDept.html?parentId='+parentId,'移动组织机构',rowObj,'deptId','deptId','400','510');
+			   			break;
+			    	case 'del':
+                        if(data.deptId=='0'){
+			    			
+			    			webplus.alertError("顶级机构不允许删除和移动");
+				    		 return false;
+			    		}
+                        
+			    		 webplus.removeRow('system/dept/remove',rowObj,'deptId','','','删除组织机构相应的组织机构下面的用户也会删除，请慎重，你确认删除当前组织机构吗？');
+			    		break;
+			    }
+			  });
+			 
+			 
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    var checkStatus = table.checkStatus(obj.config.id);
+			    switch(obj.event){
+			      	case 'add':
+			      	  //打开添加弹出框
+				         webplus.openWindow('addDept.html','新增组织机构','700','510');
+			     	     break;
+			    }
+			  });
+			 
+			
+		});
+		
+	</script>
+
+</body>
+</html>

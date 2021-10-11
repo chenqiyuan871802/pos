@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.RoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.system.model.Role">
+        <id column="role_id" property="roleId" />
+        <result column="role_name" property="roleName" />
+        <result column="status" property="status" />
+        <result column="role_type" property="roleType" />
+        <result column="role_remark" property="roleRemark" />
+        <result column="edit_mode" property="editMode" />
+        <result column="create_by" property="createBy" />
+        <result column="create_time" property="createTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        role_id AS roleId, role_name AS roleName, status, role_type AS roleType, role_remark AS roleRemark, edit_mode AS editMode, create_by AS createBy, create_time AS createTime, update_by AS updateBy, update_time AS updateTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.system.model.Role">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.system.model.Role" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.system.model.Role">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.system.model.Role" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_role
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM sys_role
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="roleId != null and roleId != ''">
+             AND role_id = #{roleId}  <!--  流水号 -->
+		</if>
+        <if test="roleName != null and roleName != ''">
+             AND role_name = #{roleName}  <!-- 角色名称 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 当前状态 1启用 0禁用 -->
+		</if>
+        <if test="roleType != null and roleType != ''">
+             AND role_type = #{roleType}  <!-- 角色类型 -->
+		</if>
+        <if test="roleRemark != null and roleRemark != ''">
+             AND role_remark = #{roleRemark}  <!-- 备注 -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+             AND edit_mode = #{editMode}  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建用户编号 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="roleId != null and roleId != ''">
+		      AND role_id LIKE '%${roleId}%'  <!--  流水号 -->
+		</if>
+        <if test="roleName != null and roleName != ''">
+		      AND role_name LIKE '%${roleName}%'  <!-- 角色名称 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 当前状态 1启用 0禁用 -->
+		</if>
+        <if test="roleType != null and roleType != ''">
+		      AND role_type LIKE '%${roleType}%'  <!-- 角色类型 -->
+		</if>
+        <if test="roleRemark != null and roleRemark != ''">
+		      AND role_remark LIKE '%${roleRemark}%'  <!-- 备注 -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+		      AND edit_mode LIKE '%${editMode}%'  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建用户编号 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户ID -->
+		</if>
+    </sql>
+
+</mapper>

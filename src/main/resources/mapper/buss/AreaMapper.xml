@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.AreaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.Area">
+        <id column="area_id" property="areaId" />
+        <result column="area_name" property="areaName" />
+        <result column="area_remark" property="areaRemark" />
+        <result column="sort_no" property="sortNo" />
+        <result column="shop_id" property="shopId" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    area_id AS areaId,area_name AS areaName,area_remark AS areaRemark,sort_no AS sortNo,shop_id AS shopId,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.Area">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_area
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.Area" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_area
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.Area">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_area
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.Area" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_area
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_area
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	 <!-- 向上更新排序 -->
+	 <update id="updateSortUp" parameterType="Map">
+      UPDATE t_area set sort_no=sort_no-1
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoGt != null ">
+              AND sort_no &gt;#{sortNoGt}
+		</if>
+      </where>
+       
+     </update>
+	
+	 <!-- 向下更新排序 -->
+	 <update id="updateSortDown" parameterType="String">
+      UPDATE t_area set sort_no=sort_no+1
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoLt != null ">
+              AND sort_no &lt;#{sortNoLt}
+		</if>
+      </where>
+     </update>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="areaId != null and areaId != ''">
+             AND area_id = #{areaId}  <!--  -->
+		</if>
+        <if test="areaName != null and areaName != ''">
+             AND area_name = #{areaName}  <!-- 区域名称 -->
+		</if>
+        <if test="areaRemark != null and areaRemark != ''">
+             AND area_remark = #{areaRemark}  <!-- 区域备注 -->
+		</if>
+        <if test="sortNo != null ">
+             AND sort_no = #{sortNo}  <!-- 排序号 -->
+		</if>
+		<if test="sortNoGt != null ">
+             AND sort_no &gt;#{sortNoGt}
+		</if>
+		 <if test="sortNoLt != null ">
+            AND  sort_no &lt;#{sortNoLt}
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="areaId != null and areaId != ''">
+		      AND area_id LIKE '%${areaId}%'  <!--  -->
+		</if>
+        <if test="areaName != null and areaName != ''">
+		      AND area_name LIKE '%${areaName}%'  <!-- 区域名称 -->
+		</if>
+        <if test="areaRemark != null and areaRemark != ''">
+		      AND area_remark LIKE '%${areaRemark}%'  <!-- 区域备注 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+
+</mapper>

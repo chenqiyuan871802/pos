@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8"/>
+    <title>新增菜单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<body>
+<form class="layui-form layui-form-pane" action=""  id="saveForm">
+   	<input type="hidden" name="parentId" id="parentId"/>
+   	<div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">菜单名称<span class="layui-red-star">*</span></label>
+          <div class="layui-input-inline">
+            <input type="text" name="menuName"   lay-verify="required|max:50"   autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">菜单编码<span class="layui-red-star">*</span></label>
+          <div class="layui-input-inline">
+            <input type="text" name="menuCode" lay-verify="required|alphaDash|max:50"   autocomplete="off" class="layui-input">
+          </div>
+        </div>
+     </div>
+   	<div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">URL</label>
+          <div class="layui-input-inline">
+            <input type="text" name="url"  lay-verify="max:100"  autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label"  >图标</label>
+          <div class="layui-input-inline">
+            <input type="text" id="iconName" name="iconName"   autocomplete="off" class="layui-input" >
+            
+          </div>
+        </div>
+     </div>
+     
+     <div class="layui-form-item">
+        
+        <div class="layui-inline">
+          <label class="layui-form-label">当前状态<span class="layui-red-star">*</span></label>
+          <div class="layui-input-inline">
+             <select name="status"   lay-select-dict="status" lay-select-title="NONE" lay-select-code="1">
+    
+     		 </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">编辑模式<span class="layui-red-star">*</span></label>
+          <div class="layui-input-inline">
+             <select name="editMode"   lay-select-dict="edit_mode" lay-select-title="NONE" lay-select-code="1">
+    
+     		 </select>
+          </div>
+        </div>
+     </div>
+   	 <div class="layui-form-item">
+        
+         <div class="layui-inline">
+          <label class="layui-form-label">是否展开<span class="layui-red-star">*</span></label>
+          <div class="layui-input-inline">
+             <select name="isAutoExpand"   lay-select-dict="is_auto_expand" lay-select-title="NONE" lay-select-code="1">
+    
+     		 </select>
+          </div>
+        </div>
+       <div class="layui-inline">
+          <label class="layui-form-label">排序号<span class="layui-red-star">*</span></label>
+          <div class="layui-input-inline">
+               <input type="mumber" name="sortNo" value="1"
+						lay-verify="required|max:10"    autocomplete="off" class="layui-input">
+          </div>
+        </div>
+     </div>
+     
+     <div class="layui-form-item">
+      <div class="layui-inline">
+          <label class="layui-form-label">菜单类型<span class="layui-red-star">*</span></label>
+        
+          <div class="layui-input-inline">
+     	
+             <select name="menuType" id="menuType"  lay-select-dict="menu_type" lay-select-code="1"  lay-select-title="NONE" >
+    
+     		 </select>
+     	 
+          </div>
+        </div>
+      <div class="layui-inline">
+          <label class="layui-form-label">模块类型<span class="layui-red-star">*</span></label>
+          <div class="layui-input-inline">
+             <select name="moduleType"  id="moduleType" lay-select-dict="module_type"  lay-select-disabled=true >
+    
+     		 </select>
+          </div>
+        </div>  
+     </div>
+     
+      <div class="layui-form-item" id="btnDiv" style="display:none">
+        
+        <div class="layui-inline" >
+          <label class="layui-form-label" >生成按钮</label>
+          <div class="layui-input-inline">
+             <select name="whether_add"   lay-select-dict="whether_type" lay-select-title="NONE" lay-select-code="0">
+    
+     		 </select>
+          </div>
+        </div>
+     </div>
+   <div class="layui-form-item">
+			<label class="layui-form-label layui-textarea-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="remark" lay-verify="max:500" style="width: 515px" 
+					class="layui-textarea"></textarea>
+			</div>
+		</div>
+  		
+  		
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+  <script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form', 'webplus' ], function() {
+		var webplus = layui.webplus;
+		
+		var moduleType=webplus.getUrlType().moduleType;
+		var menuType=webplus.getUrlType().menuType;
+		var id=webplus.getUrlType().id;
+		if(id=="0"){
+			$("#menuType").attr("lay-select-code","1")
+			$("#moduleType").attr("lay-select-code",'1');
+		}else{
+			
+			$("#menuType").attr("lay-select-code",menuType)
+			$("#menuType").attr("lay-select-disabled",true)
+			if(moduleType=='1'){
+			    $("#btnDiv").show();
+				$("#moduleType").attr("lay-select-code",'2');
+			}else{
+				$("#moduleType").attr("lay-select-code",'3');
+			}
+		}
+		
+		$("#parentId").val(id);
+		
+		
+		webplus.initForm('system/menu/save');
+		//打开机构树
+		$("#iconName").focus(function(){
+			  webplus.openWindow('plugsIcon.html','选择图标','500','400','1');
+		  });
+
+
+     
+	});
+	</script>
+
+</body>
+</html>

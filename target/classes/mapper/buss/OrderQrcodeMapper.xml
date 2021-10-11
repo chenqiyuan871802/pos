@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.OrderQrcodeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.OrderQrcode">
+        <id column="order_no" property="orderNo" />
+        <result column="shop_id" property="shopId" />
+        <result column="desk_id" property="deskId" />
+        <result column="order_qrcode" property="orderQrcode" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    order_no AS orderNo,shop_id AS shopId,desk_id AS deskId,order_qrcode AS orderQrcode,create_time AS createTime
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.OrderQrcode">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_qrcode
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.OrderQrcode" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_qrcode
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.OrderQrcode">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_qrcode
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.OrderQrcode" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_qrcode
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_order_qrcode
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="orderNo != null and orderNo != ''">
+             AND order_no = #{orderNo}  <!-- 点餐编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="deskId != null and deskId != ''">
+             AND desk_id = #{deskId}  <!-- 桌号编号 -->
+		</if>
+        <if test="orderQrcode != null and orderQrcode != ''">
+             AND order_qrcode = #{orderQrcode}  <!-- 点餐二维码 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="orderNo != null and orderNo != ''">
+		      AND order_no LIKE '%${orderNo}%'  <!-- 点餐编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="deskId != null and deskId != ''">
+		      AND desk_id LIKE '%${deskId}%'  <!-- 桌号编号 -->
+		</if>
+        <if test="orderQrcode != null and orderQrcode != ''">
+		      AND order_qrcode LIKE '%${orderQrcode}%'  <!-- 点餐二维码 -->
+		</if>
+    </sql>
+
+</mapper>

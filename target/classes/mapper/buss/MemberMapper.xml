@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MemberMapper">
+
+      <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.Member">
+        <id column="member_id" property="memberId" />
+        <result column="member_num" property="memberNum" />
+        <result column="mobile" property="mobile" />
+        <result column="first_name" property="firstName" />
+        <result column="last_name" property="lastName" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="email" property="email" />
+        <result column="birth_date" property="birthDate" />
+        <result column="sex" property="sex" />
+        <result column="status" property="status" />
+        <result column="enroll_time" property="enrollTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="whether_card" property="whetherCard" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    member_id AS memberId,member_num AS memberNum,mobile AS mobile,first_name AS firstName,last_name AS lastName,username AS username,password AS password,email AS email,birth_date AS birthDate,sex AS sex,status AS status,enroll_time AS enrollTime,update_time AS updateTime,whether_card AS whetherCard
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.Member">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.Member" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.Member">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.Member" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_member
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_member
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="memberId != null and memberId != ''">
+             AND member_id = #{memberId}  <!-- 会员ID -->
+		</if>
+        <if test="memberNum != null and memberNum != ''">
+             AND member_num = #{memberNum}  <!-- 会员编号 -->
+		</if>
+        <if test="mobile != null and mobile != ''">
+             AND mobile = #{mobile}  <!-- 手机号码 -->
+		</if>
+        <if test="firstName != null and firstName != ''">
+             AND first_name = #{firstName}  <!-- 姓 -->
+		</if>
+        <if test="lastName != null and lastName != ''">
+             AND last_name = #{lastName}  <!-- 名字 -->
+		</if>
+        <if test="username != null and username != ''">
+             AND username = #{username}  <!-- 全名 -->
+		</if>
+        <if test="password != null and password != ''">
+             AND password = #{password}  <!-- 密码 -->
+		</if>
+        <if test="email != null and email != ''">
+             AND email = #{email}  <!--  -->
+		</if>
+        <if test="birthDate != null ">
+             AND birth_date = #{birthDate}  <!-- 出生日期 -->
+		</if>
+        <if test="sex != null and sex != ''">
+             AND sex = #{sex}  <!-- 性别 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 用户状态 1:正常2:停用 3:锁定 -->
+		</if>
+        <if test="enrollTime != null ">
+             AND enroll_time = #{enrollTime}  <!-- 注册时间 -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 更细时间 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="memberId != null and memberId != ''">
+		      AND member_id LIKE '%${memberId}%'  <!-- 会员ID -->
+		</if>
+        <if test="memberNum != null and memberNum != ''">
+		      AND member_num LIKE '%${memberNum}%'  <!-- 会员编号 -->
+		</if>
+        <if test="mobile != null and mobile != ''">
+		      AND mobile LIKE '%${mobile}%'  <!-- 手机号码 -->
+		</if>
+        <if test="firstName != null and firstName != ''">
+		      AND first_name LIKE '%${firstName}%'  <!-- 姓 -->
+		</if>
+        <if test="lastName != null and lastName != ''">
+		      AND last_name LIKE '%${lastName}%'  <!-- 名字 -->
+		</if>
+        <if test="username != null and username != ''">
+		      AND username LIKE '%${username}%'  <!-- 全名 -->
+		</if>
+        <if test="password != null and password != ''">
+		      AND password LIKE '%${password}%'  <!-- 密码 -->
+		</if>
+        <if test="email != null and email != ''">
+		      AND email LIKE '%${email}%'  <!--  -->
+		</if>
+        <if test="sex != null and sex != ''">
+		      AND sex LIKE '%${sex}%'  <!-- 性别 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 用户状态 1:正常2:停用 3:锁定 -->
+		</if>
+		 <if test="whetherEnroll != null and whetherEnroll != ''">
+		      <if test="whetherEnroll==1">
+		          AND IFNULL(member_num,'')!=''
+		      </if>
+		       <if test="whetherEnroll==0">
+		       AND  IFNULL(member_num,'')=''
+		      </if>
+		</if>
+		<if test="beginTime!= null and beginTime != ''">
+				AND DATE_FORMAT(enroll_time,"%Y-%m-%d")
+				&gt;=#{beginTime}
+			</if>
+			<if test="endTime!= null and endTime != ''">
+				AND DATE_FORMAT(enroll_time,"%Y-%m-%d")
+				&lt;=#{endTime}
+			</if>
+    </sql>
+
+</mapper>

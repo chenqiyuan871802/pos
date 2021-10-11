@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.ApkVersionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.ApkVersion">
+        <id column="version_id" property="versionId" />
+        <result column="apk_name" property="apkName" />
+        <result column="fid" property="fid" />
+        <result column="version_name" property="versionName" />
+        <result column="version_num" property="versionNum" />
+        <result column="version_desc" property="versionDesc" />
+        <result column="release_status" property="releaseStatus" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+         <result column="apk_type" property="apkType" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    version_id AS versionId,apk_name AS apkName,fid AS fid,version_name AS versionName,version_num AS versionNum,version_desc AS versionDesc,release_status AS releaseStatus,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy,apk_type AS apkType
+    </sql>
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.ApkVersion">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_apk_version
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.ApkVersion" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_apk_version
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.ApkVersion">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_apk_version
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.ApkVersion" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_apk_version
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_apk_version
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="versionId != null and versionId != ''">
+             AND version_id = #{versionId}  <!-- 版本编号 -->
+		</if>
+        <if test="apkName != null and apkName != ''">
+             AND apk_name = #{apkName}  <!-- apk名称 -->
+		</if>
+        <if test="fid != null and fid != ''">
+             AND fid = #{fid}  <!-- 文件fid -->
+		</if>
+        <if test="versionName != null and versionName != ''">
+             AND version_name = #{versionName}  <!-- 版本名称 -->
+		</if>
+        <if test="versionNum != null and versionNum != ''">
+             AND version_num = #{versionNum}  <!-- 版本号 -->
+		</if>
+        <if test="versionDesc != null and versionDesc != ''">
+             AND version_desc = #{versionDesc}  <!--  -->
+		</if>
+        <if test="releaseStatus != null and releaseStatus != ''">
+             AND release_status = #{releaseStatus}  <!-- 发布状态0强制1不强制 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+		<if test="apkType != null and apkType != ''">
+             AND apk_type = #{apkType}  <!-- apk类型1安卓2POS -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="versionId != null and versionId != ''">
+		      AND version_id LIKE '%${versionId}%'  <!-- 版本编号 -->
+		</if>
+        <if test="apkName != null and apkName != ''">
+		      AND apk_name LIKE '%${apkName}%'  <!-- apk名称 -->
+		</if>
+        <if test="fid != null and fid != ''">
+		      AND fid LIKE '%${fid}%'  <!-- 文件fid -->
+		</if>
+        <if test="versionName != null and versionName != ''">
+		      AND version_name LIKE '%${versionName}%'  <!-- 版本名称 -->
+		</if>
+        <if test="versionNum != null and versionNum != ''">
+		      AND version_num LIKE '%${versionNum}%'  <!-- 版本号 -->
+		</if>
+        <if test="versionDesc != null and versionDesc != ''">
+		      AND version_desc LIKE '%${versionDesc}%'  <!--  -->
+		</if>
+        <if test="releaseStatus != null and releaseStatus != ''">
+		      AND release_status LIKE '%${releaseStatus}%'  <!-- 发布状态0强制1不强制 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+		<if test="apkType != null and apkType != ''">
+             AND apk_type = #{apkType}  <!-- apk类型1安卓2POS -->
+		</if>
+    </sql>
+
+</mapper>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html >
+
+<head >
+<meta charset="utf-8">
+<title>移动组织机构</title> 
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"    href="../../../lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css" media="all">
+</head>
+<style>
+html{background:#fff;}
+body{padding:0 0 5px 0!important;}
+body>form>ul{background:#fff;}
+</style>
+<body>
+<form class="layui-form layui-form-pane" action="" id="saveForm">
+    <ul id="ztree" class="ztree"></ul>
+    <input type="hidden" id="parentId" name="parentId"/>
+    <input type="hidden" id="deptId" name="deptId" />
+    <input type="hidden"  id="parentIdOld" name="parentIdOld"  />
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+   <script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.exedit.js"></script>
+<script>
+
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus' //主入口模块
+	}).use([ 'table', 'form','webplus' ], function() {
+		var $ = layui.$, 
+		form = layui.form, 
+		webplus=layui.webplus;
+		$("#parentId").val(webplus.getUrlType().parentId);
+		$("#parentIdOld").val(webplus.getUrlType().parentId);
+		$("#deptId").val(webplus.getUrlType().deptId);
+		var setting = {
+			check: {
+				enable: false
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {
+				onClick: zTreeOnClick//节点点击事件
+			}
+		};
+		function zTreeOnClick(event, treeId, treeNode) {
+			//获取当前树节点
+			var treeObj = $.fn.zTree.getZTreeObj("ztree");
+			var id=treeNode.id;
+			var deptId=$("#deptId").val();
+			var parentIdOld=$("#parentIdOld").val();
+			var parentNode = treeObj.getNodeByParam("id", parentIdOld);//根据ID找到该节点
+			var deptNode = treeObj.getNodeByParam("id", deptId);//根据ID找到该节点
+			if(deptId==id){
+				//恢复回原来的上级机构
+				treeObj.selectNode(parentNode);//根据该节点选中
+				$("#parentId").val(parentIdOld);
+				webplus.alertWarn('机构移动不允许移动到当前机构【'+deptNode.name+'】，系统将恢复原来的上级机构');
+				return  false;
+			}
+			var  nodes =treeObj.transformToArray(deptNode); 
+			for(var i=0; i<nodes.length; i++){
+				var nodeId=nodes[i].id;
+				if(id==nodeId){
+					//恢复回原来的上级机构
+					treeObj.selectNode(parentNode);//根据该节点选中
+					 $("#parentId").val(parentIdOld);
+					 webplus.alertWarn('机构移动不允许移动到当前机构【'+deptNode.name+'】下面的机构，其中你选择的机构【'+nodes[i].name+'】，系统将恢复原来的上级机构', 'warning');
+					return ;
+				}
+			}
+			 $("#parentId").val(id);
+		};
+		var selectId=$("#parentId").val();
+		webplus.initTree("system/dept/loadDeptTree",setting,'','',selectId)
+		webplus.initForm('system/dept/saveMoveDept');
+	});
+	</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html >
+<head >
+     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8"/>
+    <title>WEBPLUS快速开发框架</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">参数名称</label>
+						<div class="layui-input-block">
+							<input type="text" name="paramName" placeholder="请输入"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">参数键</label>
+						<div class="layui-input-block">
+							<input type="text" name="paramKey" placeholder="请输入"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">参数分类</label>
+						<div class="layui-input-block">
+							<select name="paramType" lay-select-dict="param_type" >
+								
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >查询</button>
+					</div>
+
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+
+<div type="text/html" id="trTool" style="display:none">
+    <a  data-grant="system:param:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a  data-grant="system:param:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+ <div class="layui-btn-container">
+  <button data-grant="system:param:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增</button>
+  <button data-grant="system:param:refreshParam" class="layui-btn layui-btn-danger layui-btn-sm" lay-event="refreshCache"> <i class="layui-icon">&#xe669;</i>刷新缓存</button>
+ </div>
+</div>
+<script type="text/html" id="statusTpl">
+  
+  <input type="checkbox" name="status"  value="{{d.paramId}}" title="启用" lay-filter="status" {{ d.status == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="editModeTpl">
+  <input type="checkbox" name="editMode" value="{{d.paramId}}"  lay-skin="switch" lay-text="可编辑|只读" lay-filter="editMode" {{ d.editMode == '1' ? 'checked' : '' }}>
+</script>
+	<script   src="../../../layuiadmin/layui/layui.js"></script>
+	<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+			;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '序号'
+			}, {
+				field : 'paramId',
+				title : '编号',
+				hide : true 
+			}, {
+				field : 'paramName',
+				title : '参数名称',
+				minWidth : 150
+			}, {
+				field : 'paramKey',
+				title : '参数键',
+				minWidth : 180
+			}, {
+				field : 'paramValue',
+				title : '参数值',
+				minWidth : 180
+			}, {
+				field : 'status_dict',
+				title : '当前状态',
+				templet: '#statusTpl', 
+				unresize: true,
+				width : 110
+			}, {
+				field : 'editMode_dict',
+				title : '编辑模式',
+				templet: '#editModeTpl', 
+				unresize: true,
+				width : 110
+			}, {
+				field : 'editMode',
+				title : '编辑模式',
+				hide : true 
+			}, {
+				field : 'paramType_dict',
+				title : '参数分类',
+				width : 100
+				
+			}, {
+
+				title : '操作',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width :150
+			} ] ];
+		  
+		   webplus.init('system/param/list',cols,'','','','','','','full-67')
+		     var rowObj;
+		     //行单击事件
+			  table.on('row(dataList)', function(obj){
+				  obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+				     rowObj=obj;
+			     });
+		      //监听启用操作
+			  form.on('checkbox(status)', function(obj){
+				  
+				  if(webplus.checkFormEditMode(obj)){
+					  var status="0";
+			    	   if(obj.elem.checked){
+			    		   status="1";
+			    	   }
+			    	   
+			    	   var paramId=obj.value;
+			    	   var params={};
+			    	   params.paramId=paramId;
+			    	   params.status=status;
+			    	   webplus.doAjax("system/param/update",params,"","0");
+				  }
+				 
+			  });
+			 
+			  //监听启用操作
+			  form.on('switch(editMode)', function(obj){
+				  if(webplus.checkFormEditMode(obj)){
+					  var editMode="0";
+			    	   if(obj.elem.checked){
+			    		   editMode="1";
+			    	   }
+			    	   
+			    	   var params={};
+			    	   params.paramId=obj.value;
+			    	   params.editMode=editMode;
+			    	   webplus.doAjax("system/param/update",params,"","","3",function(data){
+			    		   rowObj.update({editMode:editMode});
+			    	   }); 
+				  }
+					 
+			  });
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    var data = rowObj.data;
+			    //判断操作的按钮类别  需要在标签上配置  lay-event='判断的类型值'
+			    switch(rowObj.event){
+			    	case 'edit':
+			    		if(webplus.checkRowEditMode(rowObj)){
+			    		  webplus.openEditWindow('editParam.html','编辑键值参数',rowObj,'paramId','','700','560');
+			    		}
+			   			break;
+			    	case 'del':
+			    		if(webplus.checkRowEditMode(rowObj)){
+			    			webplus.removeRow('system/param/remove',rowObj,'paramId');
+			    		};
+			    		break;
+			    }
+			  });
+			 
+			 
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addParam.html','新增键值参数','700','560');
+			     	     break;
+			      	case 'refreshCache':
+			      		webplus.doAjax('system/param/refreshParam',{},'你确定刷新键值参数缓存吗？')
+				        break;
+			    }
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

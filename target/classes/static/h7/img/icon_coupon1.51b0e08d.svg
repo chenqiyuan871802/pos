@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>编组 9</title>
+    <desc>Created with Sketch.</desc>
+    <g id="整合" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="优惠券详情" transform="translate(-30.000000, -287.000000)">
+            <g id="编组-3" transform="translate(30.000000, 172.000000)">
+                <g id="编组-6">
+                    <g id="编组-9" transform="translate(0.000000, 115.000000)">
+                        <rect id="矩形" fill="#D8D8D8" opacity="0" x="0" y="0" width="24" height="24"></rect>
+                        <g id="地址" transform="translate(2.000000, 0.000000)" fill-rule="nonzero" stroke="#969798" stroke-width="1.5">
+                            <path d="M10.3658781,23.0327524 C16.7822292,17.7895726 19.9772727,13.4133089 19.9772727,10.0983607 C19.9772727,4.94321858 15.6739017,0.75 10.3636364,0.75 C5.05337101,0.75 0.75,4.94321858 0.75,10.0983607 C0.75,13.3797962 3.95165652,17.743013 10.3658781,23.0327524 Z" id="路径"></path>
+                            <path d="M6.75,9.36363638 C6.75,11.3736652 8.3536075,12.9772727 10.3636364,12.9772727 C12.3736652,12.9772727 13.9772727,11.3736652 13.9772727,9.36363638 C13.9772727,7.35360753 12.3736652,5.75 10.3636364,5.75 C8.35360751,5.75 6.75,7.35360751 6.75,9.36363638 Z" id="路径"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

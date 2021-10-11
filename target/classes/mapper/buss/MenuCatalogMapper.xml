@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MenuCatalogMapper">
+
+     <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.MenuCatalog">
+        <id column="catalog_id" property="catalogId" />
+        <result column="catalog_index_id" property="catalogIndexId" />
+        <result column="catalog_name" property="catalogName" />
+        <result column="print_num" property="printNum" />
+        <result column="shop_id" property="shopId" />
+        <result column="sort_no" property="sortNo" />
+        <result column="language_type" property="languageType" />
+        <result column="catalog_remark" property="catalogRemark" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="whether_buffet" property="whetherBuffet" />
+        <result column="buffet_image" property="buffetImage" />
+        <result column="buffet_price" property="buffetPrice" />
+        <result column="limit_num" property="limitNum" />
+        <result column="buffet_introduce" property="buffetIntroduce" />
+        <result column="meal_type" property="mealType" />
+        <result column="catalog_type" property="catalogType" />
+        <result column="tax_type" property="taxType" />
+        <result column="time_limit" property="timeLimit" />
+        <result column="whether_top" property="whetherTop" />
+        <result column="whether_first" property="whetherFirst" />
+        <result column="large_id" property="largeId" />
+    </resultMap>
+    
+   <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    catalog_id AS catalogId,catalog_index_id AS catalogIndexId,catalog_name AS catalogName,print_num AS printNum,shop_id AS shopId,sort_no AS sortNo,language_type AS languageType,catalog_remark AS catalogRemark,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy,whether_buffet AS whetherBuffet,buffet_image AS buffetImage,buffet_price AS buffetPrice,limit_num AS limitNum,buffet_introduce AS buffetIntroduce,meal_type AS mealType,catalog_type AS catalogType,tax_type AS taxType,time_limit AS timeLimit,whether_top AS whetherTop,whether_first AS whetherFirst,large_id AS largeId
+    </sql>
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.MenuCatalog">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_catalog
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.MenuCatalog" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_catalog
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.MenuCatalog">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_catalog
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.MenuCatalog" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_catalog
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_menu_catalog
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	 <!-- 向上更新排序 -->
+	 <update id="updateSortUp" parameterType="Map">
+      UPDATE t_menu_catalog set sort_no=sort_no-1
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoGt != null ">
+              AND sort_no &gt;#{sortNoGt}
+		</if>
+		  <if test="whetherBuffet != null and whetherBuffet != ''">
+             AND whether_buffet = #{whetherBuffet}  <!-- 是否自助餐0否1是 -->
+		</if>
+		<if test="catalogTypeList != null and catalogTypeList.size()>0">
+             AND catalog_type IN
+         <foreach item="catalogTypeItem" index="index" collection="catalogTypeList" separator="," open="(" close=")">
+		 #{catalogTypeItem}
+	    </foreach>
+	    </if>
+      </where>
+       
+     </update>
+	
+	 <!-- 向下更新排序 -->
+	 <update id="updateSortDown" parameterType="String">
+      UPDATE t_menu_catalog set sort_no=sort_no+1
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoLt != null ">
+              AND sort_no &lt;#{sortNoLt}
+		</if>
+		<if test="whetherBuffet != null and whetherBuffet != ''">
+             AND whether_buffet = #{whetherBuffet}  <!-- 是否自助餐0否1是 -->
+		</if>
+		<if test="catalogTypeList != null and catalogTypeList.size()>0">
+             AND catalog_type IN
+         <foreach item="catalogTypeItem" index="index" collection="catalogTypeList" separator="," open="(" close=")">
+		 #{catalogTypeItem}
+	    </foreach>
+	    </if>
+      </where>
+     </update>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="catalogId != null and catalogId != ''">
+             AND catalog_id = #{catalogId}  <!-- 主键编号 -->
+		</if>
+        <if test="catalogIndexId != null and catalogIndexId != ''">
+             AND catalog_index_id = #{catalogIndexId}  <!-- 类目编号 -->
+		</if>
+        <if test="catalogName != null and catalogName != ''">
+             AND catalog_name = #{catalogName}  <!-- 类名 -->
+		</if>
+        <if test="printNum != null and printNum != ''">
+             AND print_num = #{printNum}  <!-- 打印机编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="sortNo != null ">
+             AND sort_no = #{sortNo}  <!-- 顺序 -->
+		</if>
+		<if test="sortNoGt != null ">
+             AND sort_no &gt;#{sortNoGt}
+		</if>
+		 <if test="sortNoLt != null ">
+            AND  sort_no &lt;#{sortNoLt}
+		</if>
+        <if test="languageType != null and languageType != ''">
+             AND language_type = #{languageType}  <!-- 语言种类 -->
+		</if>
+        <if test="catalogRemark != null and catalogRemark != ''">
+             AND catalog_remark = #{catalogRemark}  <!-- 备注 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+		  <if test="whetherBuffet != null and whetherBuffet != ''">
+             AND whether_buffet = #{whetherBuffet}  <!-- 是否自助餐0否1是 -->
+		</if>
+        <if test="buffetImage != null and buffetImage != ''">
+             AND buffet_image = #{buffetImage}  <!-- 自助餐图片 -->
+		</if>
+        <if test="buffetPrice != null ">
+             AND buffet_price = #{buffetPrice}  <!-- 自助餐价格 -->
+		</if>
+        <if test="limitNum != null ">
+             AND limit_num = #{limitNum}  <!-- 限制点菜品数 -->
+		</if>
+        <if test="buffetIntroduce != null and buffetIntroduce != ''">
+             AND buffet_introduce = #{buffetIntroduce}  <!-- 自助餐介绍 -->
+		</if>
+		 <if test="mealType != null and mealType != ''">
+             AND meal_type = #{mealType}  <!-- 菜品所属1通用2中餐3晚餐 -->
+		</if>
+		 <if test="catalogType != null and catalogType != ''">
+             AND catalog_type = #{catalogType}  <!-- 类目类型0堂食1外带 -->
+		</if>
+		 <if test="taxType != null and taxType != ''">
+             AND tax_type = #{taxType}  <!-- 税金类型1税前2税后 -->
+		</if>
+		 <if test="timeLimit != null ">
+             AND time_limit = #{timeLimit}  <!-- 限制时间，分钟 -->
+		</if>
+		    <if test="whetherTop != null and whetherTop != ''">
+             AND whether_top = #{whetherTop}  <!-- 是否置顶0否1是 -->
+		</if>
+		 <if test="whetherFirst != null and whetherFirst != ''">
+             AND whether_first = #{whetherFirst}  <!-- 是否首页 -->
+		</if>
+		 <if test="largeId != null and largeId != ''">
+             AND large_id = #{largeId}  <!-- 大类编号 -->
+		</if>
+		<if test="catalogTypeList != null and catalogTypeList.size()>0">
+             AND catalog_type IN
+         <foreach item="catalogTypeItem" index="index" collection="catalogTypeList" separator="," open="(" close=")">
+		 #{catalogTypeItem}
+	    </foreach>
+	    </if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="catalogId != null and catalogId != ''">
+		      AND catalog_id LIKE '%${catalogId}%'  <!-- 主键编号 -->
+		</if>
+         <if test="catalogIndexId != null and catalogIndexId != ''">
+             AND catalog_index_id = #{catalogIndexId}  <!-- 类目编号 -->
+		</if>
+        <if test="catalogName != null and catalogName != ''">
+		      AND catalog_name LIKE '%${catalogName}%'  <!-- 类名 -->
+		</if>
+        <if test="printNum != null and printNum != ''">
+		      AND print_num LIKE '%${printNum}%'  <!-- 打印机编号 -->
+		</if>
+       <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+       <if test="languageType != null and languageType != ''">
+             AND language_type = #{languageType}  <!-- 语言种类 -->
+		</if>
+        <if test="catalogRemark != null and catalogRemark != ''">
+		      AND catalog_remark LIKE '%${catalogRemark}%'  <!-- 备注 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+		  <if test="whetherBuffet != null and whetherBuffet != ''">
+             AND whether_buffet = #{whetherBuffet}  <!-- 是否自助餐0否1是 -->
+		</if>
+		 <if test="buffetImage != null and buffetImage != ''">
+		      AND buffet_image LIKE '%${buffetImage}%'  <!-- 自助餐图片 -->
+		</if>
+        <if test="buffetIntroduce != null and buffetIntroduce != ''">
+		      AND buffet_introduce LIKE '%${buffetIntroduce}%'  <!-- 自助餐介绍 -->
+		</if>
+		 <if test="mealType != null and mealType != ''">
+             AND meal_type = #{mealType}  <!-- 菜品所属1通用2中餐3晚餐 -->
+		</if>
+		 <if test="catalogType != null and catalogType != ''">
+             AND catalog_type = #{catalogType}  <!-- 类目类型0堂食1外带 -->
+		</if>
+		 <if test="mealTypeList != null and mealTypeList.size()>0">
+             AND meal_type IN
+         <foreach item="mealTypeItem" index="index" collection="mealTypeList" separator="," open="(" close=")">
+		 #{mealTypeItem}
+	    </foreach>
+	    </if>
+		 <if test="catalogTypeList != null and catalogTypeList.size()>0">
+             AND catalog_type IN
+         <foreach item="catalogTypeItem" index="index" collection="catalogTypeList" separator="," open="(" close=")">
+		 #{catalogTypeItem}
+	    </foreach>
+	    </if>
+	     <if test="taxType != null and taxType != ''">
+             AND tax_type = #{taxType}  <!-- 税金类型1税前2税后 -->
+		</if>
+	
+		 <if test="timeLimit != null ">
+             AND time_limit = #{timeLimit}  <!-- 限制时间，分钟 -->
+		</if>
+		    <if test="whetherTop != null and whetherTop != ''">
+             AND whether_top = #{whetherTop}  <!-- 是否置顶0否1是 -->
+		</if>
+		  <if test="whetherFirst != null and whetherFirst != ''">
+             AND whether_first = #{whetherFirst}  <!-- 是否首页 -->
+		</if>
+		 <if test="largeId != null and largeId != ''">
+             AND large_id = #{largeId}  <!-- 大类编号 -->
+		</if>
+    </sql>
+
+</mapper>

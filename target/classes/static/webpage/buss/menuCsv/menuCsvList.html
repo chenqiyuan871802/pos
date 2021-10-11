@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">名称</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="fileName"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+                
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >検索</button>
+				</div>
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" layadmin-event="downloadCsv">テンプレート</button>
+				</div>
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" layadmin-event="downloadSpecCsv">オプションテンプレート</button>
+				</div>
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" layadmin-event="exportMenuDict">メニューダウンロード</button>
+				</div>
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" layadmin-event="exportStepSpec">オプションダウンロード</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+<div type="text/html" id="trTool" style="display:none">
+    <a  data-grant="buss:menuCsv:download" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="download"><i class="layui-icon layui-icon-download-circle"></i>ダウンロード</a>
+    <a  data-grant="buss:menuCsv:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>削除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="buss:menuCsv:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>追加</button>
+     <button data-grant="buss:menuCsv:add"   class="layui-btn layui-btn-sm" lay-event="addSpec"> <i class="layui-icon layui-icon-add-1"></i>オプション</button>
+</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			index: 'lib/index', //主入口模块
+			webplus: '../lib/webplus' //方法模块
+			
+		}).use([ 'index','table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			admin = layui.admin,
+			table = layui.table;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '番号'
+			}, {
+				field : 'fileId',
+				title : '编号',
+				hide : true 
+			},
+            {
+			 field : 'fileName',
+			 title : '名称',
+			 minWidth:350
+			},
+          
+            {
+			 field : 'status_dict',
+			 title : '状態',
+			 width:150
+			},
+             {
+
+				title : '編集',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width :240
+			} ] ];
+		   webplus.init('buss/menuCsv/list',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    switch(rowObj.event){
+			    	case 'download':
+			    		window.location.href=webplus.cxt()+"/buss/menuCsv/downloadCsv?token="+webplus.getToken()+"&id="+rowObj.data.fileId;
+			       		
+			   			break;
+			    	case 'del':
+				    	
+				        webplus.removeRow('buss/menuCsv/remove',rowObj,'fileId','','','CSVを削除しますか');
+			    		break;
+			    }
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addMenuCsv.html','追加','700','200','1');
+			     	     break;
+			      	case 'addSpec':
+				         //打开添加弹出框
+				         webplus.openWindow('addSpecCsv.html','オプション','700','200','1');
+			     	     break;
+			    }
+			  });
+			// 下载
+				admin.events.downloadCsv = function(){
+					  //打开添加弹出框
+				       window.location.href=webplus.cxt()+"/file/downloadTemplateFile?fileName=csv_template.xlsx&token="+webplus.getToken();
+				};
+				admin.events.downloadSpecCsv = function(){
+					
+					  //打开添加弹出框
+				       window.location.href=webplus.cxt()+"/file/downloadTemplateFile?fileName=spec_csv_template.xlsx&token="+webplus.getToken();
+				};
+				admin.events.exportMenuDict = function(){
+					 webplus.doAjax("/buss/menuCsv/exportMenuDict",{},"","","3",function(data){
+		        		 window.location.href=webplus.cxt()+"/file/downloadExcelFile?fid="+data.fid+"&fileName=export_csv_template.xlsx&token="+webplus.getToken();
+			    	   
+		        	 }); 
+				};
+				admin.events.exportStepSpec = function(){
+					 webplus.doAjax("/buss/menuCsv/exportStepSpec",{},"","","3",function(data){
+		        		 window.location.href=webplus.cxt()+"/file/downloadExcelFile?fid="+data.fid+"&fileName=export_spec_csv_template.xlsx&token="+webplus.getToken();
+			    	   
+		        	 }); 
+				};
+			
+
+		});
+	    //下载CSV文件
+		
+	</script>
+
+</body>
+</html>

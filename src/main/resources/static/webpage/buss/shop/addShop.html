@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html >
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<body>
+<form class="layui-form layui-form-pane" action="" id="saveForm">
+ <div class="layui-form-item">
+    <label class="layui-form-label">アカウント<span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <input type="text" name="account"  lay-verify="required|alphaDash|max:50"    autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label">パスワード<span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+     <input type="password" id="password" name="password" lay-verify="required|alphaDash|min:6|max:20"
+						autocomplete="off" class="layui-input">
+    </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label">再入力<span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+    <input type="password" name="repPassword" lay-verify="required|repeatPwd:password"
+						autocomplete="off" class="layui-input">
+    </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label">店舗名<span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <input type="text" name="shopName"  lay-verify="required|max:50"    autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item" >
+    <label class="layui-form-label">言語</label>
+    <div class="layui-input-block" id="languageDiv">
+     
+    </div>
+  </div>
+  
+ <div class="layui-form-item">
+    <label class="layui-form-label">決済ID</label>
+    <div class="layui-input-block">
+      <input type="text" name="payConfigId"  lay-verify="max:50" class="layui-input" />
+    </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label">アカウント</label>
+    <div class="layui-input-block">
+     <input type="text" name="payAccount" lay-verify="max:50" class="layui-input" />
+    </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label">パスワード</label>
+    <div class="layui-input-block">
+       <input type="text" name="payPassword" lay-verify="max:50" class="layui-input" />    </div>
+  </div>
+
+
+ 
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn"  lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus', //主入口模块
+		}).use([ 'form','webplus' ], function() {
+			var $ = layui.$, 
+			form = layui.form, 
+			webplus = layui.webplus;
+			webplus.getDict('language_type','',function(data){
+				var htmlStr='';
+				for(var i=0;i<data.length;i++){
+					var dict=data[i];
+					if("1"==dict.itemCode){
+						htmlStr+='<input type="checkbox" name="languageType" checked value="'+dict.itemCode+'" title="'+dict.itemName+'">'
+					}else{
+						htmlStr+='<input type="checkbox" name="languageType" value="'+dict.itemCode+'" title="'+dict.itemName+'">'
+					}
+					
+					
+				}
+				$("#languageDiv").html(htmlStr);
+				form.render('checkbox');
+			});
+			form.on('submit(saveSubmit)', function(data) {
+				 var checkResult=false;
+				 var arr = new Array();
+				 $("input:checkbox[name='languageType']:checked").each(function(i){
+					      var checkVal= $(this).val()
+				          arr[i] =checkVal;
+				          if("1"==checkVal){
+				        	  checkResult=true;
+				          }
+				 });
+				if(arr.length==0){
+					webplus.alertError("请选择语言");
+					return false;
+				}
+				if(!checkResult){
+					webplus.alertError("日本语为必须选项");
+					return false;
+				}
+				
+				var paramData = data.field;
+				paramData.language=arr.join(","); 
+				webplus.doAjax('buss/shop/save', paramData,
+						'', '', '1')
+				return false;
+			});
+			
+		});
+
+	</script>
+</body>
+</html>

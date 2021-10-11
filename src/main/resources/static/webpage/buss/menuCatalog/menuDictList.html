@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html 
+<head >
+<title>菜单管理-菜品</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<style>
+	.sort-box{margin:0 5px;}
+	.sort-box:hover{cursor: pointer;}
+</style>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+                 <div class="layui-inline">
+					<label class="layui-form-label">メニュー</label>
+					<div class="layui-input-block">
+						<input type="text" name="menuName"  autocomplete="off" class="layui-input">
+				    </div>
+				 </div>
+				 <div class="layui-inline">
+						<label class="layui-form-label">ジャンル</label>
+						<div class="layui-input-block">
+							<select name="menuType" lay-select-dict="food_type"  >
+								
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">時間帯</label>
+						<div class="layui-input-block">
+							<select name="mealType" lay-select-dict="meal_type"  >
+								
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">在庫</label>
+						<div class="layui-input-block">
+							<select name="menuStatus" lay-select-dict="menu_status"  >
+								
+							</select>
+						</div>
+					</div>
+				 <div class="layui-inline">
+				   <button class="layui-btn layuiadmin-btn-sm" lay-submit lay-filter="searchSubmit"  >検索</button>
+				 </div>
+				</div>
+				</div>
+				<div class="layui-card-body">
+					<table id="dataList" lay-filter="dataList" ></table>
+				</div>
+			</div>
+		</div>
+	</div>
+<script type="text/html" id="barDemo">
+  <a class="sort-box" lay-event="upt" ><img src="../../../img/arrow-upt.png" ></a>
+  <a class="sort-box" lay-event="up"  ><img src="../../../img/arrow-up.png"></a>
+  <a class="sort-box" lay-event="down" ><img src="../../../img/arrow-down.png"></a>
+  <a class="sort-box" lay-event="downt"  ><img src="../../../img/arrow-downt.png"></a>
+</script>
+<div type="text/html" id="trTool" style="display:none">
+	<a  data-grant="buss:menuCatalog:editMenuDict" class="layui-btn layui-btn-xs" lay-event="list"><i class="layui-icon layui-icon-template-1"></i>選択肢</a>
+    <a  data-grant="buss:menuCatalog:editMenuDict" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>編集</a>
+    <a  data-grant="buss:menuCatalog:removeMenuDict" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>削除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="buss:menuCatalog:addMenuDict"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>追加</button>
+     <button data-grant="buss:menuCatalog:resetSort"   class="layui-btn layui-btn-sm" lay-event="resetSort"> <i class="layui-icon layui-icon-refresh-3"></i>順番リセット</button>
+</div>
+</div>
+<script type="text/html" id="menuStatusTpl">
+  <input type="checkbox" name="menuStatusTpl" value="{{d.menuId}}"  lay-skin="switch" lay-text="在庫|売切れ" lay-filter="menuStatus" {{ d.menuStatus == '1' ? 'checked' : '' }}>
+</script>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+			var catalogName = decodeURIComponent(webplus.getUrlType().catalogName);
+			var catalogIndexId = webplus.getUrlType().id;
+		    var cols= [ [ {
+				type : 'numbers',
+				title : '番号'
+			}, {
+				field : 'menuId',
+				title : '编号',
+				hide:true
+			}, {
+				field : 'menuName',
+				title : catalogName,
+				minWidth : 130
+			},{
+				field : 'menuPrice',
+				title : '価格',
+				width : 80,
+				templet:function(d){
+					 
+					 return webplus.number_format(d.menuPrice,0,"",",");
+				 }
+			}, {
+				field : 'shortName',
+				title : '印字名称',
+				width : 140
+			}, {
+				field : 'menuType_dict',
+				title : 'ジャンル',
+				width : 90
+			}, {
+				field : 'mealType_dict',
+				title : '時間帯',
+				width : 90
+			},
+			
+			{
+				field : 'menuStatus',
+				title : '在庫',
+				templet: '#menuStatusTpl', 
+				unresize: true,
+				width : 95
+			},
+            {title: '並び替え', width:150, toolbar: '#barDemo'},
+			{
+				title : '編集',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width : 230
+			} ] ];
+		   webplus.init('buss/menuDict/list?catalogIndexId='+catalogIndexId,cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+				var id=rowObj.data.menuId;
+				var params = {};
+				params.id=id;
+			    switch(rowObj.event){
+					case 'list':
+						// 携带ID ,规格列表要根据菜品ID来查询菜品下的规格数据
+						webplus.openDetailWindow('../specs/specsList.html?catalogIndexId='+catalogIndexId,'規格',rowObj,'menuIndexId','','','');
+						break;
+			    	case 'edit':
+			    		webplus.openEditWindow('editMenuDictList.html?catalogIndexId='+catalogIndexId,'編集',rowObj,'menuId','','720','450');
+			   			break;
+			    	case 'del':
+				        webplus.removeRow('buss/menuDict/remove',rowObj,'menuId','','','このメニューを削除しますか？');
+			    		break;
+					case 'upt':
+						params.sortWay="1";
+						webplus.doAjax("buss/menuDict/updateSort",params,"","","0");
+						break;
+					case 'up':
+						params.sortWay="2";
+						webplus.doAjax("buss/menuDict/updateSort",params,"","","0");
+						
+						break;
+					case 'down':
+						params.sortWay="3";
+						webplus.doAjax("buss/menuDict/updateSort",params,"","","0");
+						
+						break;
+					case 'downt':
+						params.sortWay="4";
+						webplus.doAjax("buss/menuDict/updateSort",params,"","","0");
+						
+						break;
+			    }
+			  });
+		   
+		   //监听启用操作
+			  form.on('switch(menuStatus)', function(obj){
+				  if(webplus.checkFormEditMode(obj)){
+					  var menuStatus="2";
+			    	   if(obj.elem.checked){
+			    		   menuStatus="1";
+			    	   }
+			    	   
+			    	   var params={};
+			    	   params.menuId=obj.value;
+			    	   params.menuStatus=menuStatus;
+			    	   webplus.doAjax("buss/menuDict/updateMenuStatus",params,"","","3")
+				  }
+					 
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addMenuDictList.html?catalogIndexId='+catalogIndexId,'追加','720','450');
+			     	     break;
+			      	case 'resetSort':
+				         //打开添加弹出框
+				         var params={};
+			    	     params.catalogIndexId=catalogIndexId;
+				         webplus.doAjax("buss/menuDict/resetSort",params,"順番をリセットしますか？","","0");
+			     	     break;
+			    }
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,523 @@
+:after, :before{box-sizing: border-box;}
+.mt-10{margin-top: 10px!important;}
+.p10{padding: 0 .36rem;}
+/* 复选框 & 单选框 -------start--------- */
+/* @添加yzk-checkbox 类添加到<label> 
+ * @添加checkbox-* 用于更改复选框的外观：.checkbox-primary ...
+ * +-------------------------------书写标签-----------------------------------------
+ * <label class="yzk-checkbox checkbox-Primary">  ----单选框yzk-radio radio-Primary
+ *	 <input type="checkbox" checked>   -------单选框type="radio"
+ *	 <span>Primary（主色）</span>   -------文字描述
+ * </label>
+ * +---------------------------------内联-------------------------------------------
+ * 对于内联复选框 .checkbox-inline 类添加到<label>
+ * +---------------------------------颜色-------------------------------------------
+ * Primary（主色）
+ * Success（成功）
+ * Secondary（灰色）
+ * Info（一般信息）
+ * Warning（警告）
+ * Danger（警告）
+ * Dark（黑色）
+ * Purple（紫色）
+ * Pink（粉红色）
+ * Cyan（青色）
+ * Yellow（黄色）
+ * Brown（棕色）
+ */
+.yzk-checkbox,
+.yzk-radio {
+    display: block;
+    position: relative;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    padding-left: 50px;
+    font-weight: 400;
+    min-height: 18px;
+    height: auto!important;
+    line-height: 18px!important;
+}
+.yzk-checkbox:hover,
+.yzk-radio:hover{
+	cursor: pointer;
+} 
+input[type=checkbox],
+input[type=radio] {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+}
+.yzk-checkbox input,
+.yzk-radio input {
+    position: absolute;;
+    /*opacity: 0;*/
+    display: none;
+}
+.yzk-checkbox span::before,
+.yzk-radio span::before {
+    content: '';
+    position: absolute;
+    display: inline-block;
+    height: 36px;
+    width: 36px;
+    left: 0;
+    top: 0px;
+    border: 2px solid #ebebeb;;
+    -webkit-transition: all .1s;
+    -o-transition: all .1s;
+    transition: all .1s;
+}
+.yzk-checkbox span::after,
+.yzk-radio span::after {
+    content: '';
+    position: absolute;
+    display: none;
+    width: 5px;
+    height: 10px;
+    left: 7px;
+    top: 3px;
+    border: solid #4d5259;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.yzk-checkbox span,
+.yzk-radio span {
+    display: inline-block;
+}
+.yzk-checkbox input:checked~span:after,
+.yzk-radio input:checked~span:after {
+    display: inline-block;
+}
+.yzk-checkbox.checkbox-grey span::before,
+.yzk-checkbox.radio-grey span::before,
+.yzk-radio.checkbox-grey span::before,
+.yzk-radio.radio-grey span::before {
+    background-color: #ebebeb;
+    border-color: #ebebeb;
+}
+.yzk-checkbox input:disabled + span,
+.yzk-radio input:disabled + span {
+    cursor: not-allowed;
+}
+.yzk-checkbox input:disabled + span::before,
+.yzk-checkbox input:disabled + span::after,
+.yzk-radio input:disabled + span::before,
+.yzk-radio input:disabled + span::after {
+    opacity: .4;
+}
+/* checkbox */
+.checkbox-primary input:checked~span::before {
+    background-color: #33cabb;
+    border-color: #33cabb;
+}
+.checkbox-success input:checked~span::before {
+    background-color: #15c377;
+    border-color: #15c377;
+}
+.checkbox-info input:checked~span::before {
+    background-color: #48b0f7;
+    border-color: #48b0f7;
+}
+.checkbox-warning input:checked~span::before {
+    background-color: #faa64b;
+    border-color: #faa64b;
+}
+.checkbox-danger input:checked~span::before {
+    background-color: #f96868;
+    border-color: #f96868;
+}
+.checkbox-dark input:checked~span::before {
+    background-color: #465161;
+    border-color: #465161;
+}
+.checkbox-secondary input:checked~span::before {
+    background-color: #e4e7ea;
+    border-color: #e4e7ea;
+}
+.checkbox-purple input:checked~span::before {
+    background-color: #926dde;
+    border-color: #926dde;
+}
+.checkbox-pink input:checked~span::before {
+    background-color: #f96197;
+    border-color: #f96197;
+}
+.checkbox-cyan input:checked~span::before {
+    background-color: #57c7d4;
+    border-color: #57c7d4;
+}
+.checkbox-yellow input:checked~span::before {
+    background-color: #fcc525;
+    border-color: #fcc525;
+}
+.checkbox-brown input:checked~span::before {
+    background-color: #8d6658;
+    border-color: #8d6658;
+}
+.yzk-checkbox input:checked~span::after {
+	border-color: #fff;
+}
+/* radio */
+.yzk-radio span::before {
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+.yzk-radio span::after {
+    border: 0;
+    height: 6px;
+    left: 6px;
+    top: 6px;
+    width: 6px;
+    background: #4d5259;
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+}
+.radio-primary input:checked~span::before {
+    background-color: #33cabb;
+    border-color: #33cabb;
+}
+.radio-success input:checked~span::before {
+    background-color: #15c377;
+    border-color: #15c377;
+}
+.radio-info input:checked~span::before {
+    background-color: #48b0f7;
+    border-color: #48b0f7;
+}
+.radio-warning input:checked~span::before {
+    background-color: #faa64b;
+    border-color: #faa64b;
+}
+.radio-danger input:checked~span::before {
+    background-color: #f96868;
+    border-color: #f96868;
+}
+.radio-dark input:checked~span::before {
+    background-color: #465161;
+    border-color: #465161;
+}
+.radio-secondary input:checked~span::before {
+    background-color: #e4e7ea;
+    border-color: #e4e7ea;
+}
+.radio-purple input:checked~span::before {
+    background-color: #926dde;
+    border-color: #926dde;
+}
+.radio-pink input:checked~span::before {
+    background-color: #f96197;
+    border-color: #f96197;
+}
+.radio-cyan input:checked~span::before {
+    background-color: #57c7d4;
+    border-color: #57c7d4;
+}
+.radio-yellow input:checked~span::before {
+    background-color: #fcc525;
+    border-color: #fcc525;
+}
+.radio-brown input:checked~span::before {
+    background-color: #8d6658;
+    border-color: #8d6658;
+}
+.yzk-radio input:checked~span::after {
+    background-color: #fff;
+}
+.checkbox-inline, .radio-inline {
+    display: inline-block;
+}
+/* 弹出提示框 */
+.yzk-toast{
+	position: fixed;
+	z-index: 999;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%,-50%);
+	transform: translate(-50%,-50%);
+	text-align: center;
+	max-width: 80%;
+}
+.yzk-toast-title{
+    display: inline-block;
+    vertical-align: middle;
+    color: #fff;
+    background-color: rgba(17,17,17,.7);
+    padding: .3rem .5rem;
+    border-radius: .05rem;
+    font-size: .32rem;
+    text-align: center;
+    max-width: 100%;
+    word-break: break-all;
+    white-space: normal;
+	line-height: 22px;
+}
+/* 跳转弹出框 */
+.yzk-showing-bg{
+	background-color:rgba(255,255,255,.6) ;
+	position: fixed;
+	top:0;left:0;bottom:0;right: 0;
+	z-index: 1001;
+}
+.yzk-showing{
+	width:260px;
+	text-align: center;
+	position: relative;
+	top:50%;left:0;bottom:0;right: 0;
+	margin: auto;
+	background-color: rgb(107,184,32);
+	z-index: 1002;
+	padding: 10px;
+	border-radius: 5px;
+	transform: translateY(-50%);
+	box-shadow: 0 0 3px 0 #eee;
+}
+.yzk-showing>p{
+	font-size: 0.34rem;
+	color:#fff;
+	line-height: .54rem;
+	letter-spacing: 2px;
+}
+
+
+/*------ panel基础样式 ---------------*/
+.fs24{font-size: 0.24rem;}
+.fs28{font-size: 0.28rem;}
+.fs32{font-size: 0.32rem;}
+/* 整个panel */
+.yzk-panel{
+	position: fixed;
+	opacity: 0;
+	z-index: 105;
+	left: 0;top: 0;right: 0;bottom: 0;
+	transition: all 0.40s;
+	overflow: hidden;background: #fff;
+	display: none;
+	    overflow: auto;
+}
+/* X按钮 */
+.yzk-close-btn{
+	position: absolute;
+	top: 0.4rem;
+	width: 0.5rem;
+	height: 0.5rem;
+}
+/* X按钮图片 */
+.yzk-close-btn img {
+    top:-.2rem; 
+    width: 0.75rem;
+    height: 0.75rem;
+	left: 19px;
+    position: absolute;
+}
+/* panel头部 */
+.yzk-panel-header{
+	color: #333;
+	background-color: #fff;
+	padding-top: 1rem;
+	overflow: hidden;
+	text-align: center;
+	position: relative;
+}
+/* panel内容区域 */
+.yzk-panel-content{
+	position: relative;
+	padding: 0.36rem 0;
+	overflow: auto;
+}
+.yzk-content-items{
+	padding: .2rem .36rem 0;
+}
+.yzk-content-items>.yzk-content-item{
+	display: flex;
+	justify-content: space-between;
+	line-height: .56rem;
+	font-size: .3rem;
+	    font-weight: bold;
+}
+.yzk-panel-title{
+	color: #2699F8;
+	font-weight: bold;
+	font-size:.3rem;
+	padding: .2rem .36rem;
+	border-bottom: 1px solid #CECECE;
+}
+/* panel数据区域背景用于有时需要展示购物车的情况要加bottom：50px */
+.yzk-panel-bg{
+	opacity: 1;
+	background: rgba(255,255,255,1);
+}
+
+
+
+/* select */
+  .select-wrapper{
+    font: normal 14px '\5FAE\8F6F\96C5\9ED1';
+    width: 240px;
+    height: 34px;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    *display: inline;
+    *float: left;
+    *margin-right: 10px;
+    background: #fff;
+    border-radius: 3px;
+    border: 1px solid #e3e3e3;
+  }
+  .select-wrapper.focus{
+    border: 1px solid #61b988;
+  }
+  .select-button{
+    font: normal 14px '\5FAE\8F6F\96C5\9ED1';
+    width: 238px;
+    height: 34px;
+    border: 0;
+    border-radius: 3px;
+    background: #fff;
+    cursor: pointer;
+    padding: 0 26px 0 10px;
+    overflow: hidden;
+    text-align: left;
+    outline: none;
+    white-space: nowrap;
+    word-break: keep-all;
+    text-overflow: ellipsis;
+  }
+  .select-down{
+    position: absolute;
+    top: 21px;
+    right: 12px;
+    height:0;
+    width:0;
+    overflow: hidden;
+    font-size: 0;
+    border-color: #333 transparent transparent transparent;
+    border-style: solid;
+    border-width: 6px;
+  }  
+  .disabled{
+    color: #cccccc;
+  }
+  .select-list{
+    width: 238px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 0 3px #ddd;
+    border-radius: 3px;
+    display: none;
+    z-index: 2;
+    position: absolute;
+    left: -1px;
+    top: 35px;
+    overflow: hidden;
+  }
+  .select-list ul{
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    line-height: 34px;
+    max-height: 240px;
+  }
+  .select-list ul li{
+    width: auto;
+    height: 34px;
+    padding-left: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    word-break: keep-all;
+    text-overflow: ellipsis;
+  }
+  .select-list ul li.selected,
+  .select-list ul li:hover{
+    color: #fff;
+    background: rgb(107,184,32);
+  }
+  
+  /* 下拉列表不可用样式 */
+  .select-button-disable{
+    color: #ccc;
+    width: 238px;
+    height: 34px;
+    border: 1px solid #e3e3e3;
+    border-radius: 3px;
+    background: #fff;
+    cursor: pointer;
+    padding-left: 10px;
+    overflow: hidden;
+    text-align: left;
+    outline: none;
+  }
+  .select-down-disable{
+   color: #ccc;
+    font-size: 18px;
+    position: absolute;
+    top: 0;
+    right: 10px;
+   line-height: 34px;
+  }
+  
+  /* loading */
+.cu-load{
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 70px;
+	left: 0;
+	margin: auto;
+	width: 130px;
+	height: 130px;
+	background-color: #ffffff;
+	border-radius: 5px;
+	box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.5);
+	display: flex;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	z-index: 9999;
+	line-height: 2.4em;
+	flex-direction: column;
+	visibility: hidden;
+	touch-action: none;
+}
+.cu-load img{
+	width: 35px;
+	height: 35px;
+	display: inline-block;
+	position: relative;
+	z-index: 0;
+	box-sizing: border-box;
+	box-sizing: border-box;
+}
+.cu-load:after{
+	content: "";
+	position: absolute;
+	background-color: #ffffff;
+	border-radius: 50%;
+	width: 100px;
+	height: 100px;
+	font-size: 10px;
+	border-top: 3px solid rgba(0, 0, 0, 0.05);
+	border-right: 3px solid rgba(0, 0, 0, 0.05);
+	border-bottom: 3px solid rgba(0, 0, 0, 0.05);
+	border-left: 3px solid #f37b1d;
+	-webkit-animation: cuIcon-spin 1s infinite linear;
+	animation: cuIcon-spin 1s infinite linear;
+	z-index: -1;
+}
+@keyframes cuIcon-spin {
+	0% {
+		-webkit-transform: rotate(0);
+		transform: rotate(0);
+	}
+
+	100% {
+		-webkit-transform: rotate(359deg);
+		transform: rotate(359deg);
+	}
+}

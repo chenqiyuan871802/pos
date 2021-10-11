@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html >
+
+<head >
+<meta charset="utf-8">
+<title>授权菜单</title> 
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"    href="../../../lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css" media="all">
+</head>
+<style>
+html{background:#fff;}
+body{padding:0 0 5px 0!important;}
+body>form>ul{background:#fff;}
+</style>
+<link rel="stylesheet"    th:href="@{/lib/ztree/css/zTreeStyle/zTreeStyle.css}" type="text/css" media="all">
+<form class="layui-form layui-form-pane" action="" id="saveForm">
+    <ul id="ztree" class="ztree"></ul>
+  <input type="hidden" id="roleId"  />
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn" id="submitForm" lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+
+ 
+  <script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+   <script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.exedit.js"></script>
+	<script>
+
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus' //主入口模块
+	}).use([ 'table', 'form','webplus' ], function() {
+		var $ = layui.$, 
+		form = layui.form, 
+		webplus=layui.webplus;
+		$("#roleId").val(webplus.getUrlType().roleId);
+		//数据的配置
+		var setting = {
+			check: {
+				enable: true,
+				chkStyle: "checkbox",
+				chkboxType: { "Y": "ps", "N": "s" }
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			}
+		};
+		 var roleId=$("#roleId").val();
+		webplus.initTree("system/role/listRoleMenu?roleId="+roleId,setting)
+	   
+	    form.on('submit(saveSubmit)', function(data){
+	    	
+	 	     var menuIds=getTreeCheckNodeId();
+			 if(webplus.isEmpty(menuIds)){
+				 webplus.alertError("请选择你要授权的菜单");
+				 return false;
+			 }
+			  var params={};
+			  params.roleId=roleId;
+			  params.menuIds=menuIds;
+			  webplus.doAjax('system/role/saveRoleMenu',params,'','','2');
+			//阻止表单默认提交
+		    return false;
+		  }); 
+			
+			function getTreeCheckNodeId(){
+				var ids= "";
+				var treeObj = $.fn.zTree.getZTreeObj("ztree");
+		        var nodes = treeObj.getCheckedNodes(true);
+		        var len = nodes.length;
+		             for (var i=0; i<len; i++) {
+		               if(nodes[i].id!=0){
+		                   if(i==len-1){
+		                	   ids += nodes[i].id
+		                   }else{
+		                	   ids += nodes[i].id+",";
+		                   }
+		                	
+		              }
+		          }
+		       return ids;      
+			}
+			
+		});
+	</script>
+</body>
+</html>

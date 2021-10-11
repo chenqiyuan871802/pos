@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head >
+<meta charset="utf-8">
+<title>自助菜单选择</title> 
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+
+</head>
+<body>
+
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space1">
+			<div class="layui-col-md6">
+				<div class="layui-card">
+					<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+						id="searchForm">
+						<div class="layui-form-item">
+							<input type="hidden" id="outCatalogIndexId" name="outCatalogIndexId"  />
+							<div class="layui-inline">
+								<label class="layui-form-label" style="width: 60px;">メニュー</label>
+								<div class="layui-input-block" style="margin-left: 80px;">
+									<input type="text" name="menuName" placeholder="メニュー名入力"
+										autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-inline">
+								<label class="layui-form-label" style="width: 70px;">カテゴリー</label>
+								<div class="layui-input-block" style="margin-left: 90px;" >
+									<select name="catalogIndexId" id="catalogIndexId">
+
+									</select>
+								</div>
+							</div>
+
+							<div class="layui-inline">
+								<button class="layui-btn layuiadmin-btn-sm" lay-submit
+									lay-filter="searchSubmit">検索</button>
+
+							</div>
+
+						</div>
+					</div>
+					<div class="layui-card-body">
+						<table id="dataList" lay-filter="dataList"></table>
+
+
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-md6">
+			<div class="layui-card">
+					<div class="layui-form layui-card-header layuiadmin-card-header-auto"
+						id="menuDictForm">
+						<div class="layui-form-item">
+							<input type="hidden" id="inCatalogIndexId" name="inCatalogIndexId" />
+							<div class="layui-inline">
+								<label class="layui-form-label">メニュー</label>
+								<div class="layui-input-block">
+									<input type="text" name="menuName" placeholder="メニュー名入力"
+										autocomplete="off" class="layui-input">
+								</div>
+							</div>
+							<div class="layui-inline">
+								<button class="layui-btn layuiadmin-btn-sm" lay-submit
+									lay-filter="menuDictSubmit">検索</button>
+
+							</div>
+
+						</div>
+					</div>
+					<div class="layui-card-body">
+						<table id="menuDictList" lay-filter="menuDictList"></table>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		<script type="text/html" id="trTool">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="chooseMenu"><i class="layui-icon layui-icon-auz"></i>移動</a>
+</script>
+		<script type="text/html" id="menuDictTool">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>削除</a>
+</script>
+		<script type="text/html" id="toolbar">
+  <div class="layui-btn-container">
+    <button class="layui-btn layui-btn-sm" lay-event="batchChooseMenu"> <i class="layui-icon" >&#xe654;</i>一括移動</button>
+  </div>
+</script>
+		<script type="text/html" id="menuDictToolbar">
+  <div class="layui-btn-container">
+    
+    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="batchRemove"> <i class="layui-icon layui-icon-delete"></i>一括削除</button>
+  </div>
+</script>
+	<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+   <script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+
+	<script>
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus' //主入口模块
+	}).use([ 'table', 'form','webplus' ], function() {
+		var $ = layui.$, 
+		form = layui.form, 
+		table = layui.table,
+		webplus=layui.webplus;
+		webplus.createCustomSelect('catalogIndexId','buss/buffetCatalog/listMenuCatalog',{},'catalogIndexId','catalogName');
+		var catalogIndexId=webplus.getUrlType().catalogIndexId;
+		$("#outCatalogIndexId").val(catalogIndexId);
+		$("#inCatalogIndexId").val(catalogIndexId);
+		
+		 var cols= [ [{
+				checkbox: true
+			}, {
+				field : 'menuIndexId',
+				title : '编号',
+				hide : true 
+			}, {
+				field : 'menuName',
+				title : 'メニュー',
+				width : 260
+			}, {
+				field : 'catalogName',
+				title : 'カテゴリー',
+				width : 140
+			}, {
+
+				title : '編集',
+				toolbar : '#trTool',
+				width : 85,
+				fixed: 'right'
+			} ] ];
+	   var params={};
+	   params.outCatalogIndexId=catalogIndexId;
+	   webplus.init('buss/buffetCatalog/listMenuDict',cols,'','','','','',params,);
+	   
+	   var roleCols= [ [ {
+			checkbox: true
+		}, {
+			field : 'menuIndexId',
+			title : '编号',
+			hide : true 
+		}, {
+			field : 'menuName',
+			title : 'メニュー',
+			width : 260
+		}, {
+			field : 'catalogName',
+			title : 'カテゴリー',
+			width : 140
+		}, {
+
+			title : '編集',
+			toolbar : '#menuDictTool',
+			width : 85,
+			fixed: 'right'
+		} ] ];
+	 var menuParams={}
+	 menuParams.inCatalogIndexId=catalogIndexId;
+     webplus.init('buss/buffetCatalog/listMenuDict',roleCols,'menuDictForm','menuDictSubmit','menuDictList','menuDictToolbar','menuDictTool', menuParams);
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			   
+			    switch(rowObj.event){
+			    	
+			    	case 'chooseMenu':
+			    		var paramData = {};
+			    		paramData.menuIndexIds=rowObj.data.menuIndexId;
+			    		paramData.catalogIndexId=catalogIndexId;
+			    		webplus.doAjax('buss/buffetCatalog/saveBuffetMenu',paramData,'','','0');
+			    		break;
+			    }
+			    return false;
+			  
+			  });
+			 
+			 
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'batchChooseMenu':
+			        var paramData = {};
+		    		paramData.catalogIndexId=catalogIndexId;
+		    		webplus.batchRemoveRow('buss/buffetCatalog/saveBuffetMenu','','menuIndexId','menuIndexIds',paramData,'選択メニューを移動しますか');
+			     	     break;
+			      
+			    }
+			  });
+			   
+			  //监听行工具事件
+			  table.on('tool(menuDictList)', function(rowObj){
+			    switch(rowObj.event){
+			    	
+			    	case 'remove':
+			    		var paramData = {};
+			    		paramData.menuIndexIds=rowObj.data.menuIndexId;
+			    		paramData.catalogIndexId=catalogIndexId;
+			    		webplus.doAjax('buss/buffetCatalog/removeBuffetMenu',paramData,'このメニューを削除しますか','','0');
+				        
+			    		break;
+			    }
+			    
+			  });  
+			 
+			 
+			 //监听表头按钮事件
+			  table.on('toolbar(menuDictList)', function(obj){
+			    switch(obj.event){
+			      
+			      	case 'batchRemove':
+			      		var paramData = {};
+				    	paramData.catalogIndexId=catalogIndexId;
+					    webplus.batchRemoveRow('buss/buffetCatalog/removeBuffetMenu','menuDictList','menuIndexId','menuIndexIds',paramData,'この一列を削除しますが、よろしいですか？（メニューも削除します）');
+				        break;
+			    }
+			   
+			  });
+
+		});
+	</script>
+</body>
+</html>

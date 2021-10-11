@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">语言名称</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="languageName"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">语言对照码</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="languageCode"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">语言对照值</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="languageValue"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">语言类型</label>
+				  <div class="layui-input-block">
+				  <select name="languageType" lay-select-dict="language_type" >
+								
+					</select>
+				 
+				   </div>
+				 </div>
+
+                 <!-- <div class="layui-inline">
+				  <label class="layui-form-label">当前状态</label>
+				  <div class="layui-input-block">
+				 <select name="status" lay-select-dict="status" >
+								
+					</select>
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">编辑模式</label>
+				  <div class="layui-input-block">
+					<select name="editMode" lay-select-dict="edit_mode" >
+								
+					</select>
+				   </div>
+				 </div> -->
+
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >查询</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+<div type="text/html" id="trTool" style="display:none">
+<a  data-grant="system:languagePack:add" class="layui-btn layui-btn-xs" lay-event="add"><i class="layui-icon layui-icon-add-1"></i>复制新增</a>
+    <a  data-grant="system:languagePack:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a  data-grant="system:languagePack:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="system:languagePack:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增</button>
+    <button data-grant="system:languagePack:refreshCache" class="layui-btn layui-btn-danger layui-btn-sm" lay-event="refreshCache"> <i class="layui-icon">&#xe669;</i>刷新缓存</button>
+</div>
+</div>
+<script type="text/html" id="statusTpl">
+  
+  <input type="checkbox" name="status"  value="{{d.languageId}}" title="启用" lay-filter="status" {{ d.status == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="editModeTpl">
+  <input type="checkbox" name="editMode" value="{{d.languageId}}"  lay-skin="switch" lay-text="可编辑|只读" lay-filter="editMode" {{ d.editMode == '1' ? 'checked' : '' }}>
+</script>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '序号'
+			}, {
+				field : 'languageId',
+				title : '编号',
+				hide : true 
+			},
+            {
+			 field : 'languageName',
+			 title : '语言名称',
+			 width:150
+			},
+            {
+			 field : 'languageCode',
+			 title : '语言对照码',
+			 width:150
+			},
+            {
+			 field : 'languageValue',
+			 title : '语言对照值',
+			 width:160
+			},
+            {
+			 field : 'languageType_dict',
+			 title : '语言类型',
+			 width:110
+			}
+			, {
+				field : 'status_dict',
+				title : '当前状态',
+				templet: '#statusTpl', 
+				unresize: true,
+				width : 115
+			}, {
+				field : 'editMode_dict',
+				title : '编辑模式',
+				templet: '#editModeTpl', 
+				unresize: true,
+				width : 115
+			},
+           
+		
+       {
+
+				title : '操作',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width :250
+			} ] ];
+		   webplus.init('buss/languagePack/list',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    switch(rowObj.event){
+			    case 'add':
+		    	
+		    		webplus.openEditWindow('addLanguagePack.html?viewType=copyAdd','新增',rowObj,'languageId','','600','560');
+		    		
+		   			break;
+			    	case 'edit':
+			    		if(webplus.checkRowEditMode(rowObj)){
+			    			webplus.openEditWindow('editLanguagePack.html','编辑',rowObj,'languageId','','600','560');
+			    		}
+			   			break;
+			    	case 'del':
+			    		if(webplus.checkRowEditMode(rowObj)){
+			    		 webplus.removeRow('buss/languagePack/remove',rowObj,'languageId');
+			    		}
+			    		break;
+			    }
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addLanguagePack.html','新增','600','560');
+			     	     break;
+			    	case 'refreshCache':
+			      		webplus.doAjax('buss/languagePack/refreshCache',{},'你确定刷新语言包缓存吗？')
+				        break;
+			    }
+			  });
+			  var rowObj;
+			     //行单击事件
+				  table.on('row(dataList)', function(obj){
+					  obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+					     rowObj=obj;
+				     });
+			      //监听启用操作
+				  form.on('checkbox(status)', function(obj){
+					  
+					  if(webplus.checkFormEditMode(obj)){
+						  var status="0";
+				    	   if(obj.elem.checked){
+				    		   status="1";
+				    	   }
+				    	   
+				    	   var languageId=obj.value;
+				    	   var params={};
+				    	   params.languageId=languageId;
+				    	   params.status=status;
+				    	   webplus.doAjax("buss/languagePack/update",params,"","0");
+					  }
+					 
+				  });
+				 
+				  //监听启用操作
+				  form.on('switch(editMode)', function(obj){
+					  if(webplus.checkFormEditMode(obj)){
+						  var editMode="0";
+				    	   if(obj.elem.checked){
+				    		   editMode="1";
+				    	   }
+				    	   
+				    	   var params={};
+				    	   params.languageId=obj.value;
+				    	   params.editMode=editMode;
+				    	   webplus.doAjax("buss/languagePack/update",params,"","","3",function(data){
+				    		   rowObj.update({editMode:editMode});
+				    	   }); 
+					  }
+						 
+				  });
+
+		});
+	</script>
+
+</body>
+</html>

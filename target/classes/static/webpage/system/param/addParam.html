@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8"/>
+    <title>新增参数</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+<body>
+<form class="layui-form layui-form-pane" action="" id="saveForm">
+  <div class="layui-form-item">
+    <label class="layui-form-label">参数名称 <span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <input type="text" name="paramName"   lay-verify="required|max:50"  autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">参数键  <span class="layui-red-star">*</span></label>
+    <div class=layui-input-block>
+      <input type="text" name="paramKey"  lay-verify="required|keyname"  autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">参数值  <span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <input type="text" name="paramValue"  lay-verify="required|max:500"  autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">参数分类<span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <select name="paramType"  lay-select-dict="param_type"  lay-select-title="NONE" lay-select-code="1">
+     
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">当前状态<span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <select name="status" lay-select-dict="status" lay-select-title="NONE" lay-select-code="1">
+     
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">编辑模式<span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <select name="editMode"  lay-select-dict="edit_mode" lay-select-title="NONE" lay-select-code="1">	
+      </select>
+    </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label layui-textarea-label" >备注</label>
+    <div class="layui-input-block">
+      <textarea name="paramRemark" lay-verify="max:200" placeholder="请输入内容" class="layui-textarea"></textarea>
+    </div>
+  </div>
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn"  lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus', //主入口模块
+		}).use([ 'form','webplus' ], function() {
+		    var webplus=layui.webplus;
+			webplus.initForm('system/param/save');
+			
+		});
+
+	</script>
+	
+</body>
+</html>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.system.mapper.MenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.system.model.Menu">
+        <id column="menu_id" property="menuId" />
+        <result column="cascade_id" property="cascadeId" />
+        <result column="menu_name" property="menuName" />
+        <result column="menu_code" property="menuCode" />
+        <result column="menu_type" property="menuType" />
+        <result column="parent_id" property="parentId" />
+        <result column="icon_name" property="iconName" />
+        <result column="is_auto_expand" property="isAutoExpand" />
+        <result column="url" property="url" />
+        <result column="remark" property="remark" />
+        <result column="status" property="status" />
+        <result column="edit_mode" property="editMode" />
+        <result column="sort_no" property="sortNo" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="module_type" property="moduleType" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        menu_id AS menuId, cascade_id AS cascadeId, menu_name AS menuName, menu_code AS menuCode, menu_type AS menuType, parent_id AS parentId, icon_name AS iconName, is_auto_expand AS isAutoExpand, url, remark, status, edit_mode AS editMode, sort_no AS sortNo, create_time AS createTime, create_by AS createBy, update_time AS updateTime, update_by AS updateBy, module_type AS moduleType
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.system.model.Menu">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_menu
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.system.model.Menu" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_menu
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.system.model.Menu">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_menu
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.system.model.Menu" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM sys_menu
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM sys_menu
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="menuId != null and menuId != ''">
+             AND menu_id = #{menuId}  <!-- 菜单编号 -->
+		</if>
+        <if test="cascadeId != null and cascadeId != ''">
+             AND cascade_id = #{cascadeId}  <!-- 分类科目语义ID -->
+		</if>
+        <if test="menuName != null and menuName != ''">
+             AND menu_name = #{menuName}  <!-- 菜单名称 -->
+		</if>
+        <if test="menuCode != null and menuCode != ''">
+             AND menu_code = #{menuCode}  <!-- 菜单编码 -->
+		</if>
+        <if test="menuType != null and menuType != ''">
+             AND menu_type = #{menuType}  <!-- 菜单类型 1系统菜单2app菜单 -->
+		</if>
+        <if test="parentId != null and parentId != ''">
+             AND parent_id = #{parentId}  <!-- 菜单父级编号 -->
+		</if>
+        <if test="iconName != null and iconName != ''">
+             AND icon_name = #{iconName}  <!-- 图标名称 -->
+		</if>
+        <if test="isAutoExpand != null and isAutoExpand != ''">
+             AND is_auto_expand = #{isAutoExpand}  <!-- 是否自动展开 -->
+		</if>
+        <if test="url != null and url != ''">
+             AND url = #{url}  <!-- url地址 -->
+		</if>
+        <if test="remark != null and remark != ''">
+             AND remark = #{remark}  <!-- 备注 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 当前状态(0:停用;1:启用) -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+             AND edit_mode = #{editMode}  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+        <if test="sortNo != null ">
+             AND sort_no = #{sortNo}  <!-- 排序号 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人 -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 更新用户 -->
+		</if>
+        <if test="moduleType != null and moduleType != ''">
+             AND module_type = #{moduleType}  <!-- 模块类型 1父级菜单2子菜单3按钮 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="menuId != null and menuId != ''">
+		      AND menu_id LIKE '%${menuId}%'  <!-- 菜单编号 -->
+		</if>
+        <if test="cascadeId != null and cascadeId != ''">
+		      AND cascade_id LIKE '${cascadeId}%'  <!-- 分类科目语义ID -->
+		</if>
+        <if test="menuName != null and menuName != ''">
+		      AND menu_name LIKE '%${menuName}%'  <!-- 菜单名称 -->
+		</if>
+        <if test="menuCode != null and menuCode != ''">
+		      AND menu_code LIKE '%${menuCode}%'  <!-- 菜单编码 -->
+		</if>
+        <if test="menuType != null and menuType != ''">
+		      AND menu_type LIKE '%${menuType}%'  <!-- 菜单类型 1系统菜单2app菜单 -->
+		</if>
+        <if test="parentId != null and parentId != ''">
+		      AND parent_id LIKE '%${parentId}%'  <!-- 菜单父级编号 -->
+		</if>
+        <if test="iconName != null and iconName != ''">
+		      AND icon_name LIKE '%${iconName}%'  <!-- 图标名称 -->
+		</if>
+        <if test="isAutoExpand != null and isAutoExpand != ''">
+		      AND is_auto_expand LIKE '%${isAutoExpand}%'  <!-- 是否自动展开 -->
+		</if>
+        <if test="url != null and url != ''">
+		      AND url LIKE '%${url}%'  <!-- url地址 -->
+		</if>
+        <if test="remark != null and remark != ''">
+		      AND remark LIKE '%${remark}%'  <!-- 备注 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 当前状态(0:停用;1:启用) -->
+		</if>
+        <if test="editMode != null and editMode != ''">
+		      AND edit_mode LIKE '%${editMode}%'  <!-- 编辑模式(0:只读;1:可编辑) -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 更新用户 -->
+		</if>
+        <if test="moduleType != null and moduleType != ''">
+		      AND module_type LIKE '%${moduleType}%'  <!-- 模块类型 1父级菜单2子菜单3按钮 -->
+		</if>
+    </sql>
+
+</mapper>

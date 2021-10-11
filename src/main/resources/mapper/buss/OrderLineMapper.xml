@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.OrderLineMapper">
+
+  
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.OrderLine">
+        <id column="line_id" property="lineId" />
+        <result column="order_id" property="orderId" />
+        <result column="shop_id" property="shopId" />
+        <result column="catalog_index_id" property="catalogIndexId" />
+        <result column="menu_index_id" property="menuIndexId" />
+        <result column="spec_index_id" property="specIndexId" />
+        <result column="menu_name" property="menuName" />
+        <result column="print_menu_name" property="printMenuName" />
+        <result column="menu_price" property="menuPrice" />
+        <result column="buy_num" property="buyNum" />
+        <result column="whether_print" property="whetherPrint" />
+        <result column="whether_add" property="whetherAdd" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="whether_spec" property="whetherSpec" />
+        <result column="whether_buffet" property="whetherBuffet" />
+        <result column="parent_id" property="parentId" />
+        <result column="choose_num" property="chooseNum" />
+        <result column="whether_take_out" property="whetherTakeOut" />
+        <result column="tax_type" property="taxType" />
+        <result column="sub_amount" property="subAmount" />
+        <result column="sub_rate" property="subRate" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    line_id AS lineId,order_id AS orderId,shop_id AS shopId,catalog_index_id AS catalogIndexId,menu_index_id AS menuIndexId,spec_index_id AS specIndexId,menu_name AS menuName,print_menu_name AS printMenuName,menu_price AS menuPrice,buy_num AS buyNum,whether_print AS whetherPrint,whether_add AS whetherAdd,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy,whether_spec AS whetherSpec,whether_buffet AS whetherBuffet,parent_id AS parentId,choose_num AS chooseNum,whether_take_out AS whetherTakeOut,tax_type AS taxType,sub_amount AS subAmount,sub_rate AS subRate
+    </sql>
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.OrderLine">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_line
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.OrderLine" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_line
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.OrderLine">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_line
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.OrderLine" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_order_line
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_order_line
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="lineId != null and lineId != ''">
+             AND line_id = #{lineId}  <!-- 明细编号 -->
+		</if>
+        <if test="orderId != null and orderId != ''">
+             AND order_id = #{orderId}  <!-- 订单编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="catalogIndexId != null and catalogIndexId != ''">
+             AND catalog_index_id = #{catalogIndexId}  <!-- 类目或者自助餐编号 -->
+		</if>
+        <if test="menuIndexId != null and menuIndexId != ''">
+             AND menu_index_id = #{menuIndexId}  <!-- 菜品索引 -->
+		</if>
+        <if test="specIndexId != null and specIndexId != ''">
+             AND spec_index_id = #{specIndexId}  <!-- 菜品规格索引 -->
+		</if>
+        <if test="menuName != null and menuName != ''">
+             AND menu_name = #{menuName}  <!-- 菜单名称 -->
+		</if>
+        <if test="printMenuName != null and printMenuName != ''">
+             AND print_menu_name = #{printMenuName}  <!-- 打印菜单名称 -->
+		</if>
+        <if test="menuPrice != null ">
+             AND menu_price = #{menuPrice}  <!-- 菜单价格 -->
+		</if>
+        <if test="buyNum != null ">
+             AND buy_num = #{buyNum}  <!-- 数量 -->
+		</if>
+        <if test="whetherPrint != null and whetherPrint != ''">
+             AND whether_print = #{whetherPrint}  <!-- 是否打印0否1是 -->
+		</if>
+        <if test="whetherAdd != null and whetherAdd != ''">
+             AND whether_add = #{whetherAdd}  <!-- 是否追加0否1是 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+        <if test="whetherSpec != null and whetherSpec != ''">
+             AND whether_spec = #{whetherSpec}  <!-- 是否规格0否1是 -->
+		</if>
+        <if test="whetherBuffet != null and whetherBuffet != ''">
+             AND whether_buffet = #{whetherBuffet}  <!-- 是否自助餐菜单0否1是 -->
+		</if>
+        <if test="parentId != null and parentId != ''">
+             AND parent_id = #{parentId}  <!-- 规格上级编号 -->
+		</if>
+        <if test="chooseNum != null ">
+             AND choose_num = #{chooseNum}  <!-- 自助餐可选菜单个数 -->
+		</if>
+		 <if test="whetherTakeOut != null and whetherTakeOut != ''">
+             AND whether_take_out = #{whetherTakeOut}  <!-- 是否外卖 -->
+		</if>
+		<if test="orderIdList != null and orderIdList.size()>0">
+             AND order_Id IN
+         <foreach item="orderIdItem" index="index" collection="orderIdList" separator="," open="(" close=")">
+		 #{orderIdItem}
+	    </foreach>
+		</if>
+		 <if test="parentOrderNo != null and parentOrderNo != ''">
+             AND EXISTS (SELECT 1 FROM t_order_link  WHERE child_order_no=order_id AND parent_order_no=#{parentOrderNo})  <!-- 是否外卖 -->
+		 </if>
+		  <if test="taxType != null and taxType != ''">
+             AND tax_type = #{taxType}  <!-- 税金类型1税前2税后 -->
+		</if>
+		 <if test="subAmount != null ">
+             AND sub_amount = #{subAmount}  <!-- 递减金额 -->
+		</if>
+        <if test="subRate != null ">
+             AND sub_rate = #{subRate}  <!-- 抵扣率 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="lineId != null and lineId != ''">
+		      AND line_id LIKE '%${lineId}%'  <!-- 明细编号 -->
+		</if>
+        <if test="orderId != null and orderId != ''">
+		      AND order_id LIKE '%${orderId}%'  <!-- 订单编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="catalogIndexId != null and catalogIndexId != ''">
+		      AND catalog_index_id LIKE '%${catalogIndexId}%'  <!-- 类目或者自助餐编号 -->
+		</if>
+        <if test="menuIndexId != null and menuIndexId != ''">
+		      AND menu_index_id LIKE '%${menuIndexId}%'  <!-- 菜品索引 -->
+		</if>
+        <if test="specIndexId != null and specIndexId != ''">
+		      AND spec_index_id LIKE '%${specIndexId}%'  <!-- 菜品规格索引 -->
+		</if>
+        <if test="menuName != null and menuName != ''">
+		      AND menu_name LIKE '%${menuName}%'  <!-- 菜单名称 -->
+		</if>
+        <if test="printMenuName != null and printMenuName != ''">
+		      AND print_menu_name LIKE '%${printMenuName}%'  <!-- 打印菜单名称 -->
+		</if>
+        <if test="whetherPrint != null and whetherPrint != ''">
+		      AND whether_print LIKE '%${whetherPrint}%'  <!-- 是否打印0否1是 -->
+		</if>
+        <if test="whetherAdd != null and whetherAdd != ''">
+		      AND whether_add LIKE '%${whetherAdd}%'  <!-- 是否追加0否1是 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+        <if test="whetherSpec != null and whetherSpec != ''">
+		      AND whether_spec LIKE '%${whetherSpec}%'  <!-- 是否规格0否1是 -->
+		</if>
+        <if test="whetherBuffet != null and whetherBuffet != ''">
+		      AND whether_buffet LIKE '%${whetherBuffet}%'  <!-- 是否自助餐菜单0否1是 -->
+		</if>
+        <if test="parentId != null and parentId != ''">
+		      AND parent_id LIKE '%${parentId}%'  <!-- 规格上级编号 -->
+		</if>
+		 <if test="whetherTakeOut != null and whetherTakeOut != ''">
+             AND whether_take_out = #{whetherTakeOut}  <!-- 是否外卖 -->
+		</if>
+		<if test="orderIdList != null and orderIdList.size()>0">
+             AND order_id IN
+         <foreach item="orderIdItem" index="index" collection="orderIdList" separator="," open="(" close=")">
+		 #{orderIdItem}
+	    </foreach>
+	    
+		</if>
+		 <if test="parentOrderNo != null and parentOrderNo != ''">
+             AND EXISTS (SELECT 1 FROM t_order_link  WHERE child_order_no=order_id AND parent_order_no=#{parentOrderNo})  <!-- 是否外卖 -->
+		 </if>
+		  <if test="taxType != null and taxType != ''">
+             AND tax_type = #{taxType}  <!-- 税金类型1税前2税后 -->
+		</if>
+		 <if test="subAmount != null ">
+             AND sub_amount = #{subAmount}  <!-- 递减金额 -->
+		</if>
+        <if test="subRate != null ">
+             AND sub_rate = #{subRate}  <!-- 抵扣率 -->
+		</if>
+    </sql>
+
+</mapper>

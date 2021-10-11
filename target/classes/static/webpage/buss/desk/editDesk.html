@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html >
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<body>
+<form class="layui-form layui-form-pane" action="" id="saveForm" lay-filter="saveForm">
+<input type="hidden" name="deskId"   />
+ <div class="layui-form-item">
+    <label class="layui-form-label">卓番<span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <input type="text" name="deskName"  lay-verify="required|max:50"   autocomplete="off"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+			<label class="layui-form-label">エリア</label>
+			<div class="layui-input-block">
+				<select name="areaId" id="areaId"></select>
+			</div>
+		</div>
+
+   <div class="layui-form-item">
+    <label class="layui-form-label">状態</label>
+    <div class="layui-input-block">
+      <select name="deskStatus"  lay-select-dict="desk_status" lay-select-title="NONE" >
+      </select>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">メニュー切替</label>
+    <div class="layui-input-block">
+      <select name="displayType"   lay-select-dict="display_type" lay-select-title="NONE" >
+      </select>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label layui-textarea-label" >備考</label>
+    <div class="layui-input-block">
+      <textarea name="deskRemark" lay-verify="max:200"  class="layui-textarea"></textarea>
+    </div>
+  </div>
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn"  lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus', //主入口模块
+		}).use([ 'form','webplus' ], function() {
+		    var webplus=layui.webplus;
+		    webplus.initForm('buss/desk/update','','','',function(){
+				webplus.doAjax('buss/desk/edit',{id:webplus.getUrlType().id},'','0','',function(res){
+					if(webplus.isEmpty(res.data)) return false;
+					webplus.setFormData("saveForm",res.data);
+					webplus.createCustomSelect('areaId','buss/area/queryAreaList',{},'areaId','areaName',res.data.areaId,'選択')
+				})
+				
+			});
+			
+		});
+
+	</script>
+</body>
+</html>

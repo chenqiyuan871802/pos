@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MenuCsvMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.MenuCsv">
+        <id column="file_id" property="fileId" />
+        <result column="file_name" property="fileName" />
+        <result column="fid" property="fid" />
+        <result column="shop_id" property="shopId" />
+        <result column="create_time" property="createTime" />
+        <result column="status" property="status" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    file_id AS fileId,file_name AS fileName,fid AS fid,shop_id AS shopId,create_time AS createTime,status AS status
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.MenuCsv">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_csv
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.MenuCsv" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_csv
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.MenuCsv">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_csv
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.MenuCsv" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_csv
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_menu_csv
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="fileId != null and fileId != ''">
+             AND file_id = #{fileId}  <!-- 菜单编号 -->
+		</if>
+        <if test="fileName != null and fileName != ''">
+             AND file_name = #{fileName}  <!-- 文件名称 -->
+		</if>
+        <if test="fid != null and fid != ''">
+             AND fid = #{fid}  <!-- 文件fid -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="status != null and status != ''">
+             AND status = #{status}  <!-- 状态0失败1成功 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="fileId != null and fileId != ''">
+		      AND file_id LIKE '%${fileId}%'  <!-- 菜单编号 -->
+		</if>
+        <if test="fileName != null and fileName != ''">
+		      AND file_name LIKE '%${fileName}%'  <!-- 文件名称 -->
+		</if>
+        <if test="fid != null and fid != ''">
+		      AND fid LIKE '%${fid}%'  <!-- 文件fid -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="status != null and status != ''">
+		      AND status LIKE '%${status}%'  <!-- 状态0失败1成功 -->
+		</if>
+    </sql>
+
+</mapper>

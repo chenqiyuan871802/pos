@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.ShopCouponMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.ShopCoupon">
+        <id column="coupon_id" property="couponId" />
+        <result column="shop_id" property="shopId" />
+        <result column="coupon_title" property="couponTitle" />
+        <result column="coupon_slogan" property="couponSlogan" />
+        <result column="valid_begin_date" property="validBeginDate" />
+        <result column="valid_end_date" property="validEndDate" />
+        <result column="coupon_introduce" property="couponIntroduce" />
+        <result column="coupon_status" property="couponStatus" />
+        <result column="coupon_image" property="couponImage" />
+        <result column="whether_remove" property="whetherRemove" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    coupon_id AS couponId,shop_id AS shopId,coupon_title AS couponTitle,coupon_slogan AS couponSlogan,valid_begin_date AS validBeginDate,valid_end_date AS validEndDate,coupon_introduce AS couponIntroduce,coupon_status AS couponStatus,coupon_image AS couponImage,whether_remove AS whetherRemove,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy
+    </sql>
+    <sql id="Common_Column_List">
+    a.coupon_id AS couponId,a.shop_id AS shopId,a.coupon_title AS couponTitle,a.coupon_slogan AS couponSlogan,a.valid_begin_date AS validBeginDate,a.valid_end_date AS validEndDate,a.coupon_introduce AS couponIntroduce,a.coupon_status AS couponStatus,a.coupon_image AS couponImage,
+    a.whether_remove AS whetherRemove,a.create_time AS createTime,a.create_by AS createBy,a.update_time AS updateTime,a.update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.ShopCoupon">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop_coupon
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.ShopCoupon" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop_coupon
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.ShopCoupon">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop_coupon
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.ShopCoupon" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop_coupon
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_shop_coupon
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="couponId != null and couponId != ''">
+             AND coupon_id = #{couponId}  <!-- 优惠券编号 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="couponTitle != null and couponTitle != ''">
+             AND coupon_title = #{couponTitle}  <!-- 优惠券标题 -->
+		</if>
+        <if test="couponSlogan != null and couponSlogan != ''">
+             AND coupon_slogan = #{couponSlogan}  <!-- 优惠券宣传语 -->
+		</if>
+        <if test="validBeginDate != null ">
+             AND valid_begin_date = #{validBeginDate}  <!-- 有效起始日期 -->
+		</if>
+        <if test="validEndDate != null ">
+             AND valid_end_date = #{validEndDate}  <!-- 有效结束日期 -->
+		</if>
+        <if test="couponIntroduce != null and couponIntroduce != ''">
+             AND coupon_introduce = #{couponIntroduce}  <!-- 优惠卷介绍 -->
+		</if>
+        <if test="couponStatus != null and couponStatus != ''">
+             AND coupon_status = #{couponStatus}  <!-- 优惠券状态0待发布1上架2下架 -->
+		</if>
+        <if test="couponImage != null and couponImage != ''">
+             AND coupon_image = #{couponImage}  <!-- 优惠券图片 -->
+		</if>
+        <if test="whetherRemove != null and whetherRemove != ''">
+             AND whether_remove = #{whetherRemove}  <!-- 是否删除0否1是 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="couponId != null and couponId != ''">
+		      AND coupon_id LIKE '%${couponId}%'  <!-- 优惠券编号 -->
+		</if>
+         <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="couponTitle != null and couponTitle != ''">
+		      AND coupon_title LIKE '%${couponTitle}%'  <!-- 优惠券标题 -->
+		</if>
+        <if test="couponSlogan != null and couponSlogan != ''">
+		      AND coupon_slogan LIKE '%${couponSlogan}%'  <!-- 优惠券宣传语 -->
+		</if>
+        <if test="couponIntroduce != null and couponIntroduce != ''">
+		      AND coupon_introduce LIKE '%${couponIntroduce}%'  <!-- 优惠卷介绍 -->
+		</if>
+        <if test="couponStatus != null and couponStatus != ''">
+             AND coupon_status = #{couponStatus}  <!-- 优惠券状态0待发布1上架2下架 -->
+		</if>
+        <if test="couponImage != null and couponImage != ''">
+		      AND coupon_image LIKE '%${couponImage}%'  <!-- 优惠券图片 -->
+		</if>
+       <if test="whetherRemove != null and whetherRemove != ''">
+             AND whether_remove = #{whetherRemove}  <!-- 是否删除0否1是 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+    <!-- 查询店铺优惠券-->
+    <select  id="listShopCouponPage" parameterType="Map"
+		resultType="com.ims.buss.model.ShopCoupon" useCache="false">
+		SELECT <include refid="Common_Column_List" />,b.shop_name AS shopName,b.shop_address AS shopAddress,b.shop_telephone AS shopTelephone
+       FROM t_shop_coupon a INNER JOIN t_shop b ON a.shop_id=b.shop_id
+      <where>
+      <if test="couponStatus != null and couponStatus != ''">
+             AND a.coupon_status = #{couponStatus}  <!-- 优惠券状态0待发布1上架2下架 -->
+		</if>
+    
+        <if test="whetherRemove != null and whetherRemove != ''">
+             AND a.whether_remove = #{whetherRemove}  <!-- 是否删除0否1是 -->
+		</if>
+		 <if test="couponTitle != null and couponTitle != ''">
+		      AND a.coupon_title LIKE '%${couponTitle}%'  <!-- 优惠券标题 -->
+		</if>
+		  <if test="shopName != null and shopName != ''">
+		      AND b.shop_name LIKE '%${shopName}%'  <!-- 店铺名称 -->
+		</if>
+        <if test="shopAddress != null and shopAddress != ''">
+		      AND b.shop_address LIKE '%${shopAddress}%'  <!-- 店铺地址 -->
+		</if>
+        <if test="shopTelephone != null and shopTelephone != ''">
+		      AND b.shop_telephone LIKE '%${shopTelephone}%'  <!-- 店铺电话 -->
+		</if>
+      </where>
+      <if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>	
+    </select>
+     <!-- 分页查询会员优惠券信息 -->
+     <select  id="listMemberCouponPage" parameterType="Map"
+		resultType="com.ims.buss.model.ShopCoupon" useCache="false">
+		SELECT <include refid="Common_Column_List" />,b.shop_name AS shopName,b.shop_address AS shopAddress,b.shop_telephone AS shopTelephone
+        FROM t_shop_coupon a INNER JOIN t_shop b ON a.shop_id=b.shop_id INNER JOIN t_member_coupon c ON a.coupon_id=c.coupon_id
+      <where>
+      <if test="couponStatus != null and couponStatus != ''">
+             AND a.coupon_status = #{couponStatus}  <!-- 优惠券状态0待发布1上架2下架 -->
+		</if>
+    
+        <if test="whetherRemove != null and whetherRemove != ''">
+             AND a.whether_remove = #{whetherRemove}  <!-- 是否删除0否1是 -->
+		</if>
+		 <if test="couponTitle != null and couponTitle != ''">
+		      AND a.coupon_title LIKE '%${couponTitle}%'  <!-- 优惠券标题 -->
+		</if>
+		  <if test="shopName != null and shopName != ''">
+		      AND b.shop_name LIKE '%${shopName}%'  <!-- 店铺名称 -->
+		</if>
+        <if test="shopAddress != null and shopAddress != ''">
+		      AND b.shop_address LIKE '%${shopAddress}%'  <!-- 店铺地址 -->
+		</if>
+        <if test="shopTelephone != null and shopTelephone != ''">
+		      AND b.shop_telephone LIKE '%${shopTelephone}%'  <!-- 店铺电话 -->
+		</if>
+		 <if test="collectStatus != null and collectStatus                            != ''">
+             AND c.status = #{collectStatus}  <!-- 优惠券状态0待发布1上架2下架 -->
+		</if>
+		<if test="memberId != null and memberId != ''">
+             AND c.member_id = #{memberId}  <!-- 会员编号 -->
+		</if>
+      </where>
+      <if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>	
+    </select>
+</mapper>

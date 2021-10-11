@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8"/>
+    <title>编辑用户</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+    <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+   <link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<body>
+	<form class="layui-form layui-form-pane" action="" id="saveForm" lay-filter="saveForm">
+	<input type="hidden" name="userId" />
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">用户账号<span class="layui-red-star">*</span></label>
+				<div class="layui-input-inline">
+					<input type="text" name="account" disabled  lay-verify="required|alphaDash|max:50"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">用户名<span class="layui-red-star">*</span></label>
+				<div class="layui-input-inline">
+					<input type="text" name="username" lay-verify="required|max:50"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			
+		</div>
+	
+		<!-- <div class="layui-form-item">
+		  <div class="layui-inline">
+				<label class="layui-form-label"  >所属机构
+				<span class="layui-red-star">*</span></label>
+				<div class="layui-input-inline">
+				<input type="hidden" id="deptId" name="deptId"  />
+				<input type="text" id="parentName" name="deptName"  lay-verify="required"
+						autocomplete="off" class="layui-input" >
+				</div>
+			</div>
+		<div class="layui-inline">
+				<label class="layui-form-label">性别<span class="layui-red-star">*</span></label>
+				<div class="layui-input-inline">
+					<select name="sex"  lay-select-dict="sex" lay-select-title="NONE" lay-select-code="sex">
+
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">手机<span class="layui-red-star">*</span></label>
+				<div class="layui-input-inline">
+					<input type="text" name="mobile"  lay-verify="required|phone"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-inline">
+					<input type="text" name="email" lay-verify="email"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">QQ</label>
+				<div class="layui-input-inline">
+					<input type="text" name="qq" lay-verify="qq"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">微信</label>
+				<div class="layui-input-inline">
+					<input type="text" name="wechat"  lay-verify="wechat"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+		<div class="layui-inline">
+				<label class="layui-form-label">证件号码</label>
+				<div class="layui-input-inline">
+					<input type="text" name="idno" lay-verify="idCard"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">联系地址</label>
+				<div class="layui-input-inline">
+					<input type="text"  name="address"  lay-verify="max:200"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+		</div> -->
+		<div class="layui-form-item">
+		<div class="layui-inline">
+				<label class="layui-form-label">用户状态<span class="layui-red-star">*</span></label>
+				<div class="layui-input-inline">
+					<select name="status"  lay-select-dict="status" lay-select-title="NONE"  lay-select-code="status">
+
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">锁定次数<span class="layui-red-star">*</span></label>
+				<div class="layui-input-inline">
+					<input type="text"  name="lockNum" lay-verify="required|integer|minInt:3|maxInt:10"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-textarea-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="remark" lay-verify="max:400"  style="width: 515px" 
+					class="layui-textarea"></textarea>
+			</div>
+		</div>
+
+		<!-- 隐藏域 -->
+		<div class="layui-form-item" style="display: none;">
+			<button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+		</div>
+	</form>
+    <script   src="../../../layuiadmin/layui/layui.js"></script>
+    <script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus', //主入口模块
+		}).use([ 'form', 'webplus' ], function() {
+			var webplus = layui.webplus;
+			webplus.initForm('system/user/update','','','',function(){
+				webplus.doAjax('system/user/edit',{id:webplus.getUrlType().id},'','0','',function(res){
+					if(webplus.isEmpty(res.data)) return false;
+					// 处理后的数据赋值
+					webplus.setFormData("saveForm",res.data);
+				})
+			});
+			//打开机构树
+			$("#parentName").focus(function(){
+				  webplus.openWindow('../dept/deptTree.html?hiddenId=deptId&showName=parentName','选择组织机构','400','400','1');
+			  });
+
+         
+		});
+		  
+	</script>
+</body>
+</html>

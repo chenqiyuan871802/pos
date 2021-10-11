@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html 
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">区域代码</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="positionCode"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">区域名称</label>
+				  <div class="layui-input-block">
+				  <input type="text" name="positionName"  autocomplete="off" class="layui-input">
+				   </div>
+				 </div>
+
+              
+
+                 <div class="layui-inline">
+				  <label class="layui-form-label">区域类型</label>
+				  <div class="layui-input-block">
+				 <select name="positionType" lay-select-dict="position_type" >
+								
+				</select>
+				   </div>
+				 </div>
+
+               
+				 <div class="layui-inline">
+				  <button class="layui-btn layuiadmin-btn-sm" lay-submit
+							lay-filter="searchSubmit"  >查询</button>
+				</div>
+				</div>
+			</div>
+			<div class="layui-card-body">
+				<table id="dataList" lay-filter="dataList" ></table>
+				
+	
+			</div>
+		</div>
+	</div>
+<div type="text/html" id="trTool" style="display:none">
+    <a  data-grant="buss:position:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a  data-grant="buss:position:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="buss:position:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>新增</button>
+ <button data-grant="system:position:refreshCache" class="layui-btn layui-btn-danger layui-btn-sm" lay-event="refreshCache"> <i class="layui-icon">&#xe669;</i>刷新缓存</button>
+</div>
+</div>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '序号'
+			}, {
+				field : 'positionId',
+				title : '区域编号',
+				hide : true 
+			},
+            {
+			 field : 'positionCode',
+			 title : '区域代码',
+			 width:150
+			},
+            {
+			 field : 'positionName',
+			 title : '区域名称',
+			 width:150
+			},
+            {
+			 field : 'parentCode_dict',
+			 title : '上级区域',
+			 width:150
+			},
+            {
+			 field : 'positionType_dict',
+			 title : '区域类型',
+			 width:90
+			},
+            {
+			 field : 'kana',
+			 title : '日文名称',
+			 width:250
+			} ] ];
+		   webplus.init('buss/position/list',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+			    switch(rowObj.event){
+			    	case 'edit':
+			    		webplus.openEditWindow('editPosition.html','编辑',rowObj,'positionId','','700','560');
+			       		
+			   			break;
+			    	case 'del':
+				    	
+				        webplus.removeRow('buss/position/remove',rowObj,'positionId');
+			    		break;
+			    }
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addPosition.html','新增','700','560');
+			     	     break;
+			      	case 'refreshCache':
+			      		webplus.doAjax('buss/position/refreshCache',{},'你确定刷新区域数据缓存吗？')
+				        break;
+			    }
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

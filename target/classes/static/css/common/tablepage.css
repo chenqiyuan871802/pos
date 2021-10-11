@@ -1,0 +1,96 @@
+/*表单label 文本居中*/
+.layui-form-label{text-align:right;}
+
+/*50%两列布局*/
+html,body{height: 100%;margin: 0;margin: 0;}
+.parent-item{
+	position: relative;
+	padding-left: 50%;
+	height: 100%;
+}
+.parent-item .childLeft-item{
+	position: absolute;
+	width: 50%;
+	left: 0;
+	height: 100%;
+}
+.parent-item .childRight-item{
+	height: 100%;
+}
+/*树两列布局*/
+.tree-item{
+	position: relative;
+	padding-left: 230px;
+	height: 100%;
+}
+.tree-item .childLeft-item{
+	position: absolute;
+	width: 230px;
+	left: 0;
+	height: 100%;
+}
+.tree-item .childRight-item{
+	height: 100%;
+}
+.tree-item .childLeft-item .layui-card-header{
+    height: 49px;
+    text-indent: 20px;
+    line-height: 52px;
+}
+.tree-item .childLeft-item .layui-card{
+	height:100%;
+}
+/*输入框弹出框table*/
+.alert-table-box{
+  position: absolute;
+  z-index: 998;
+  left: 90px;
+  top: 31px;
+  width: 500px;
+  height: 290px;
+  overflow: auto;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  display: none;
+  box-shadow: 0 -1px 8px rgba(0,0,0,.08);
+}
+.alert-table-box .layui-table-view{
+  margin: 0;
+  z-index: 999;
+  position: relative;
+}
+.alert-table-box .layui-table-body{
+  height: 200px;
+  overflow: auto;
+}
+.alert-table-box .layui-table-cell{
+  height: 20px;
+  line-height: 20px;
+}
+.alert-table-box .layui-laypage-prev, 
+.alert-table-box .layui-laypage-next{
+	position:relative;
+}
+.alert-table-box .layui-icon{
+	right:7px;
+}
+
+/*统一修改select选项框宽度*/
+.layui-form>.layui-form-item>.layui-inline>.layui-input-block>.layui-form-select .layui-input,
+.layui-form>.layui-form-item>.layui-inline>.layui-input-block>.layui-input{
+	width:135px;
+}
+/* 必填*样式 */
+.layui-form-label span{
+	color:#f20;
+}
+/* 读卡弹出框样式 */
+#readCard-iframe{
+	padding:30px;
+}
+.ztree *{
+	padding: 0;
+    margin: 0;
+    font-size: 14px;
+    font-family: Verdana, Arial, Helvetica, AppleGothic, sans-serif;
+}

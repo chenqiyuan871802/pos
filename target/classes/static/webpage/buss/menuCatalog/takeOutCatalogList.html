@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html 
+<head >
+<title>菜单管理-カテゴリー</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+</head>
+<style>
+	.sort-box{margin:0 5px;}
+	.sort-box:hover{cursor: pointer;}
+</style>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div class="layui-form layui-card-header layuiadmin-card-header-auto" id="searchForm">
+			   <div class="layui-form-item">
+                 <div class="layui-inline">
+					<label class="layui-form-label">カテゴリー</label>
+					<div class="layui-input-block">
+						<input type="text" name="catalogName"  autocomplete="off" class="layui-input">
+				    </div>
+				 </div>
+				 <div class="layui-inline">
+				   <button class="layui-btn layuiadmin-btn-sm" lay-submit lay-filter="searchSubmit"  >検索</button>
+				 </div>
+				</div>
+				</div>
+				<div class="layui-card-body">
+					<table id="dataList" lay-filter="dataList" ></table>
+				</div>
+			</div>
+		</div>
+	</div>
+<script type="text/html" id="barDemo">
+  <a class="sort-box" lay-event="upt" ><img src="../../../img/arrow-upt.png" ></a>
+  <a class="sort-box" lay-event="up" ><img src="../../../img/arrow-up.png"></a>
+  <a class="sort-box" lay-event="down" ><img src="../../../img/arrow-down.png"></a>
+  <a class="sort-box" lay-event="downt"  ><img src="../../../img/arrow-downt.png"></a>
+</script>
+<div type="text/html" id="trTool" style="display:none">
+	<a  data-grant="buss:menuCatalog:menuDict" class="layui-btn layui-btn-warm layui-btn-xs" lay-event="menuDict"><i class="layui-icon layui-icon-shrink-right"></i>メニュー</a>
+    <a  data-grant="buss:menuCatalog:edit" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>編集</a>
+    <a  data-grant="buss:menuCatalog:remove" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>削除</a>
+</div>
+
+<div type="text/html" id="toolbar" style="display:none" >
+<div class="layui-btn-container">
+     <button data-grant="buss:menuCatalog:add"   class="layui-btn layui-btn-sm" lay-event="add"> <i class="layui-icon layui-icon-add-1"></i>追加</button>
+</div>
+</div>
+<script type="text/html" id="taxTypeTpl">
+  <input type="checkbox" name="taxTypeTpl" value="{{d.catalogId}}"  lay-skin="switch" lay-text="税別|税込" lay-filter="taxType" {{ d.taxType == '1' ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="topTpl">
+  <input type="checkbox" name="topTpl" value="{{d.catalogId}}"  lay-skin="switch" lay-text="YES|NO" lay-filter="topType" {{ d.whetherTop == '1' ? 'checked' : '' }}>
+</script>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus'//主入口模块
+			
+		}).use([ 'table','form','webplus' ], function() {
+			var $ = layui.$,
+			webplus=layui.webplus,
+			form = layui.form,
+			table = layui.table;
+		   var cols= [ [ {
+				type : 'numbers',
+				title : '番号'
+			}, {
+				field : 'catalogId',
+				title : 'カテゴリー编号',
+				hide:'true'
+			},
+			{
+				field : 'catalogIndeId',
+				title : 'カテゴリー索引编号',
+				hide:'true'
+			},
+			{
+				field : 'catalogName',
+				title : 'カテゴリー',
+				minWidth:180
+			},
+			
+			{
+				field : 'printNum',
+				title : 'プリンター',
+				width:150
+			
+			},
+			
+			{
+				field : 'taxType',
+				title : '税込税別',
+				templet: '#taxTypeTpl', 
+				unresize: true,
+				width : 95
+			},
+			
+			
+            {title: '並び替え', width:150, toolbar: '#barDemo'},
+			{
+				title : '編集',
+				toolbar : '#trTool',
+				fixed: 'right',
+				width : 270
+			} ] ];
+		   webplus.init('buss/menuCatalog/list?catalogTypes=2',cols)
+			 //监听行工具事件
+			  table.on('tool(dataList)', function(rowObj){
+				var id=rowObj.data.catalogId;
+				var catalogName=encodeURIComponent(rowObj.data.catalogName);
+				var params = {};
+				params.id=id;
+				params.whetherBuffet='0'
+			    switch(rowObj.event){
+				    case 'menuDict':
+			    		webplus.openDetailWindow('menuDictList.html?catalogName='+catalogName+"&catalogIndexId="+rowObj.data.catalogIndexId,'メニュー編集',rowObj,'catalogId','','','');
+						// webplus.openEditWindow('addMenuDictList.html','菜品管理',rowObj,'catalogId','','','');
+			   			break;
+			    	case 'edit':
+			    		webplus.openEditWindow('editTakeOutCatalog.html','編集',rowObj,'catalogId','','650','400');
+			   			break;
+			    	case 'del':
+				    	
+				        webplus.removeRow('buss/menuCatalog/remove',rowObj,'catalogId','','','この一列を削除しますが、よろしいですか？（メニューも削除します）');
+			    		break;
+					case 'upt':
+						params.sortWay="1";
+						webplus.doAjax("buss/menuCatalog/updateSort",params,"","","0");
+						break;
+					case 'up':
+						params.sortWay="2";
+						webplus.doAjax("buss/menuCatalog/updateSort",params,"","","0");
+						
+						break;
+					case 'down':
+						params.sortWay="3";
+						webplus.doAjax("buss/menuCatalog/updateSort",params,"","","0");
+						
+						break;
+					case 'downt':
+						params.sortWay="4";
+						webplus.doAjax("buss/menuCatalog/updateSort",params,"","","0");
+						
+						break;
+			    }
+			  });
+		   
+		 //监听启用操作
+			  form.on('switch(taxType)', function(obj){
+				  if(webplus.checkFormEditMode(obj)){
+					  var taxType="2";
+			    	   if(obj.elem.checked){
+			    		   taxType="1";
+			    	   }
+			    	   
+			    	   var params={};
+			    	   params.catalogId=obj.value;
+			    	   params.taxType=taxType;
+			    	   webplus.doAjax("buss/menuCatalog/updateTaxType",params,"","","3")
+				  }
+					 
+			  });
+			  form.on('switch(topType)', function(obj){
+				  if(webplus.checkFormEditMode(obj)){
+					  var whetherTop="0";
+			    	   if(obj.elem.checked){
+			    		   whetherTop="1";
+			    	   }
+			    	   
+			    	   var params={};
+			    	   params.catalogId=obj.value;
+			    	   params.whetherTop=whetherTop;
+			    	   webplus.doAjax("buss/menuCatalog/updateTop",params,"","","3")
+				  }
+					 
+			  });
+			 //监听表头按钮事件
+			  table.on('toolbar(dataList)', function(obj){
+			    switch(obj.event){
+			      	case 'add':
+				         //打开添加弹出框
+				         webplus.openWindow('addTakeOutCatalog.html','追加','650','400');
+			     	     break;
+			    }
+			  });
+
+		});
+	</script>
+
+</body>
+</html>

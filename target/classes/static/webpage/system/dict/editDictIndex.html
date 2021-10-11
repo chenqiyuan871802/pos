@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head >
+	<meta charset="utf-8"/>
+	<title>编辑字典标识</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+	<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+	<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+	<link rel="stylesheet"  href="../../../css/common/tablepage.css" media="all"/>
+	<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<body>
+<form class="layui-form layui-form-pane" action="" id="saveForm" lay-filter="saveForm">
+  <input type="hidden" name="dictIndexId"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">字典标识 <span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <input type="text" 
+			name="dictKey" 
+			lay-verify="required|keyname"  
+			autocomplete="off"  
+			class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">字典名称  <span class="layui-red-star">*</span></label>
+    <div class="layui-input-block">
+      <input type="text" 
+			name="dictName" 
+			lay-verify="required|max:100"  
+			autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">字典类型</label>
+    <div class="layui-input-block">
+      <select 
+			name="dictType"  
+			lay-select-code="dictType" 
+			lay-select-dict="dict_type" 
+			lay-select-title="NONE" >
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label layui-textarea-label" >备注</label>
+    <div class="layui-input-block">
+      <textarea 
+			name="dictRemark" 
+			lay-verify="max:200" 
+			placeholder="请输入内容" 
+			class="layui-textarea">
+			</textarea>
+    </div>
+  </div>
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn"  lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+	<script>
+	layui.config({
+		base : '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form','webplus' ], function() {
+	  var form=layui.form,webplus=layui.webplus;
+		// 初始化事件和基本数据
+		webplus.initForm('system/dict/updateDictIndex','','','',function(){
+			
+			webplus.doAjax('system/dict/editDictIndex',{id:webplus.getUrlType().dictIndexId},'','0','',function(res){
+				if(webplus.isEmpty(res.data)) return false;
+				// 处理后的数据赋值
+				webplus.setFormData("saveForm",res.data);
+			})
+			
+			
+		});
+	});
+</script>
+</body>
+</html>

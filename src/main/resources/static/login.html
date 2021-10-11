@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>アーチモバイル店舗管理</title> 
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="css/index.css" media="all"/>
+	<link rel="stylesheet"    href="css/login.css" media="all"/>
+	<link rel="stylesheet" href="layuiadmin/layui/css/layui.css"  media="all"/>
+	<link rel="stylesheet" href="layuiadmin/style/admin.css" media="all"/>
+	<link rel="stylesheet"  href="css/common/loader.css" media="all"/>
+</head>
+<style>
+	body{background: #1aa8d8!important;}
+	.layadmin-user-login-header{height: 180px;}
+.layadmin-user-login-body>.layui-form-item input{height:38px;}
+.layadmin-user-login-body>.layui-form-item button{font-weight:500;font-size: 18px;color:#1aa8d8;width:100%;}
+</style>
+<body>
+  <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+    <div class="layadmin-user-login-main">
+      <div class="layadmin-user-login-box layadmin-user-login-header">
+        <img src="img/dc-logo.jpeg" th:src="@{/img/dc_logo.png}" id="logos">
+      </div>
+      <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+        <div class="layui-form-item">
+          <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+          <input type="text" name="username" id="LAY-user-login-username" lay-verify="required" autocomplete="off" placeholder="アカウント" class="layui-input" >
+        </div>
+        <div class="layui-form-item">
+          <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+          <input type="password" name="password" id="LAY-user-login-password" autocomplete="off" lay-verify="required" placeholder="パスワード" class="layui-input" >
+        </div>
+        <div class="layui-form-item">
+          <button class="layui-btn layui-btn-primary" lay-submit id="loginSubmit" lay-filter="LAY-user-login-submit">ログイン</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="layuiadmin/layui/layui.js"></script>
+	<script type="text/javascript" src="lib/jQuery-2.2.0.min.js" ></script>
+  <script type="text/javascript" src="lib/md5.js"></script>
+  <script>
+	layui.config({
+		base : 'layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus', //主入口模块
+	}).use([ 'form', 'webplus' ], function() {
+		var $ = layui.$, form=layui.form, webplus = layui.webplus;
+		 webplus.clearLogin();  //调到登陆页面就清空信息
+		   var fullUrl= window.location.href;
+		    var httpPrefix=window.location.protocol+"//"+window.location.host+"/";
+		    var urlTmp=fullUrl.replace(httpPrefix,"");
+		    var  len=urlTmp.indexOf("/");
+		    if(len>-1){
+		    	urlTmp=urlTmp.substring(0,len+1);
+		    }else{
+		    	urlTmp=urlTmp+"/"
+		    }
+		    var reqUrl=httpPrefix+urlTmp
+		    webplus.setName('reqUrl',reqUrl)
+			function login(account,password){
+				var params={};
+				params.account=account;
+				params.password=hex_md5(password);
+				webplus.doAjax('doLogin',params,'','','3',function(data){
+					sessionStorage.removeItem('lockStatus');
+					webplus.setName('loginAccount',data.user.account);
+					var b=webplus.setName('token',data.token);
+					if(b){
+						setTimeout(function(){
+					        window.location.href = webplus.cxt()+'webpage/main.html'; //后台主页
+			        },500)
+					}
+					
+				});
+			}
+		    //提交
+    form.on('submit(LAY-user-login-submit)', function(obj){
+      //请求登入接口
+      var account = $.trim($("#LAY-user-login-username").val());
+      var password = $.trim($("#LAY-user-login-password").val());
+      login(account,password);
+		});
+    $(document).keydown(function(event) {
+    	if (event.keyCode == 13) {
+    	
+           $("#loginSubmit").click();
+    	}
+    });
+  });
+  </script>
+</body>
+</html>

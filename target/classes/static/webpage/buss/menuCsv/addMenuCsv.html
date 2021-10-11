@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html >
+<head >
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/openshow.css" media="all"/>
+</head>
+<body>
+<form class="layui-form layui-form-pane" action="" id="saveForm">
+ <div class="layui-form-item">
+				
+				<div class="layui-input-inline img-box">
+				
+					<button type="button" class="layui-btn" id="uploadCsv">アップロード</button>
+					
+				</div>
+			</div>
+  <!-- 隐藏域 -->
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn"  lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+<script   src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script>
+		layui.config({
+			base :  '../../../layuiadmin/' //静态资源所在路径
+		}).extend({
+			webplus : 'lib/webplus', //主入口模块
+		}).use([ 'form','webplus','upload' ], function() {
+		    var webplus=layui.webplus,
+		    upload = layui.upload;
+			var uploadInst = upload.render({
+				elem: "#uploadCsv",
+				exts: 'xlsx|xls',
+				data: {
+					token: webplus.getToken()
+				},
+				url: webplus.cxt() + '/buss/menuCsv/uploadCsv',
+				done: function(res) {
+					//如果上传成功
+					if (res.appCode == '1') {
+						webplus.alertSuccess(res.appMsg);
+						webplus.reloadTable('1')
+					}else{
+						webplus.alertWarn(res.appMsg);
+					}
+				},
+				error: function() {
+					layer.msg('Error、タイムオーバー！');
+				}
+			});
+		});
+
+	</script>
+</body>
+</html>

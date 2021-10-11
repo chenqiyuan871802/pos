@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>图标/侧边栏列表/编辑</title>
+    <desc>Created with Sketch.</desc>
+    <g id="组件" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标/列表/编辑">
+            <g id="图标/列表/优惠券">
+                <rect id="矩形" fill="#D8D8D8" opacity="0" x="0" y="0" width="30" height="30"></rect>
+                <g id="优惠券" transform="translate(5.000000, 4.000000)">
+                    <path d="M20,5.89355469 L20,10.4038086 L20,19.25 C20,20.7687831 18.7789584,22 17.2727273,22 L2.72727273,22 C1.22104159,22 0,20.7687831 0,19.25 L0,2.75 C0,1.23121694 1.22104159,0 2.72727273,0 L9.79225852,0 L13.6928711,0" id="路径" stroke="#787879" stroke-width="1.5" stroke-linecap="round"></path>
+                    <rect id="矩形" fill="#787879" transform="translate(15.750000, 5.000000) rotate(45.000000) translate(-15.750000, -5.000000) " x="15" y="-1" width="1.5" height="12" rx="0.75"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

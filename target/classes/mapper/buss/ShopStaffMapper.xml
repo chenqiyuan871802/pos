@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.ShopStaffMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.ShopStaff">
+        <id column="staff_id" property="staffId" />
+        <result column="staff_num" property="staffNum" />
+        <result column="staff_name" property="staffName" />
+        <result column="staff_type" property="staffType" />
+        <result column="staff_phone" property="staffPhone" />
+        <result column="shop_id" property="shopId" />
+        <result column="staff_remark" property="staffRemark" />
+        <result column="whether_remove" property="whetherRemove" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    staff_id AS staffId,staff_num AS staffNum,staff_name AS staffName,staff_type AS staffType,staff_phone AS staffPhone,shop_id AS shopId,staff_remark AS staffRemark,whether_remove AS whetherRemove,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.ShopStaff">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop_staff
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.ShopStaff" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop_staff
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.ShopStaff">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop_staff
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.ShopStaff" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop_staff
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_shop_staff
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="staffId != null and staffId != ''">
+             AND staff_id = #{staffId}  <!-- 员工ID -->
+		</if>
+        <if test="staffNum != null and staffNum != ''">
+             AND staff_num = #{staffNum}  <!-- 员工号 -->
+		</if>
+        <if test="staffName != null and staffName != ''">
+             AND staff_name = #{staffName}  <!-- 员工姓名 -->
+		</if>
+        <if test="staffType != null and staffType != ''">
+             AND staff_type = #{staffType}  <!-- 员工类型0缺省默认 -->
+		</if>
+        <if test="staffPhone != null and staffPhone != ''">
+             AND staff_phone = #{staffPhone}  <!-- 电话 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="staffRemark != null and staffRemark != ''">
+             AND staff_remark = #{staffRemark}  <!-- 备注 -->
+		</if>
+        <if test="whetherRemove != null and whetherRemove != ''">
+             AND whether_remove = #{whetherRemove}  <!-- 是否删除0否1是 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="staffId != null and staffId != ''">
+		      AND staff_id LIKE '%${staffId}%'  <!-- 员工ID -->
+		</if>
+        <if test="staffNum != null and staffNum != ''">
+		      AND staff_num LIKE '%${staffNum}%'  <!-- 员工号 -->
+		</if>
+        <if test="staffName != null and staffName != ''">
+		      AND staff_name LIKE '%${staffName}%'  <!-- 员工姓名 -->
+		</if>
+        <if test="staffType != null and staffType != ''">
+		      AND staff_type LIKE '%${staffType}%'  <!-- 员工类型0缺省默认 -->
+		</if>
+        <if test="staffPhone != null and staffPhone != ''">
+		      AND staff_phone LIKE '%${staffPhone}%'  <!-- 电话 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="staffRemark != null and staffRemark != ''">
+		      AND staff_remark LIKE '%${staffRemark}%'  <!-- 备注 -->
+		</if>
+        <if test="whetherRemove != null and whetherRemove != ''">
+		      AND whether_remove LIKE '%${whetherRemove}%'  <!-- 是否删除0否1是 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+    </sql>
+
+</mapper>

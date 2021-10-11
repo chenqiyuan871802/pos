@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>图标/侧边栏列表/登出</title>
+    <desc>Created with Sketch.</desc>
+    <g id="整合" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="左上角选择推出页" transform="translate(-37.000000, -448.000000)">
+            <g id="列表/侧边栏" transform="translate(0.000000, 412.000000)">
+                <g id="编组-7">
+                    <g id="图标/列表/登出" transform="translate(37.000000, 36.000000)">
+                        <g id="图标/侧边栏列表/登出">
+                            <g id="椭圆形-2" transform="translate(4.000000, 3.000000)">
+                                <path d="M6.65588436,1.89106432 C5.96639722,2.18775141 5.31331862,2.55291453 4.70521113,2.97799108 C1.86056746,4.96644108 0,8.26594113 0,12 C0,18.0751322 4.92486775,23 11,23 C17.0751322,23 22,18.0751322 22,12 C22,8.22064706 20.0940215,4.88645926 17.1908396,2.90621177 C16.6184801,2.51580788 16.0073616,2.1780286 15.3644477,1.89983762" id="路径" stroke="#787879" stroke-width="1.5" stroke-linecap="round"></path>
+                                <rect id="矩形" fill="#787879" x="10.5" y="0" width="1.5" height="10" rx="0.75"></rect>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

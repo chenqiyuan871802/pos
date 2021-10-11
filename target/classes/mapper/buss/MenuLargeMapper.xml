@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.MenuLargeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.MenuLarge">
+        <id column="large_id" property="largeId" />
+        <result column="large_name" property="largeName" />
+        <result column="shop_id" property="shopId" />
+        <result column="sort_no" property="sortNo" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    large_id AS largeId,large_name AS largeName,shop_id AS shopId,sort_no AS sortNo,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.MenuLarge">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_large
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.MenuLarge" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_large
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.MenuLarge">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_large
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.MenuLarge" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_menu_large
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_menu_large
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="largeId != null and largeId != ''">
+             AND large_id = #{largeId}  <!-- 分类编号 -->
+		</if>
+        <if test="largeName != null and largeName != ''">
+             AND large_name = #{largeName}  <!-- 大类名称 -->
+		</if>
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="sortNo != null ">
+             AND sort_no = #{sortNo}  <!-- 排序号 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+		<if test="sortNoGt != null ">
+             AND sort_no &gt;#{sortNoGt}
+		</if>
+		 <if test="sortNoLt != null ">
+            AND  sort_no &lt;#{sortNoLt}
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="largeId != null and largeId != ''">
+		      AND large_id LIKE '%${largeId}%'  <!-- 分类编号 -->
+		</if>
+        <if test="largeName != null and largeName != ''">
+		      AND large_name LIKE '%${largeName}%'  <!-- 大类名称 -->
+		</if>
+         <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+		<if test="sortNoGt != null ">
+             AND sort_no &gt;#{sortNoGt}
+		</if>
+		 <if test="sortNoLt != null ">
+            AND  sort_no &lt;#{sortNoLt}
+		</if>
+    </sql>
+     <!-- 向上更新排序 -->
+	 <update id="updateSortUp" parameterType="Map">
+      UPDATE t_menu_large set sort_no=sort_no-1
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoGt != null ">
+              AND sort_no &gt;#{sortNoGt}
+		</if>
+		
+      </where>
+       
+     </update>
+	
+	 <!-- 向下更新排序 -->
+	 <update id="updateSortDown" parameterType="String">
+      UPDATE t_menu_large set sort_no=sort_no+1
+      <where>
+         shop_id=#{shopId} 
+        <if test="sortNoEq != null ">
+             AND sort_no = #{sortNoEq}  <!-- 排序号 -->
+		</if>
+        <if test="sortNoLt != null ">
+              AND sort_no &lt;#{sortNoLt}
+		</if>
+      </where>
+     </update>
+</mapper>

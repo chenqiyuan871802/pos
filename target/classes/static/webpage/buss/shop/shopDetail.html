@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all" />
+		<link rel="stylesheet" href="../../../css/common/loader.css" media="all" />
+		<link rel="stylesheet" href="../../../css/common/tablepage.css" media="all" />
+	</head>
+<style>
+.layui-form {padding: 15px;}
+/* 上传照片样式 */
+.img-box button,.img-box .imgItem{display: inline-block;position: relative;}
+.img-box button:hover {border-color: #009688;cursor: pointer;}
+.img-box button>img,.img-box .imgItem>img{width: 140px;height: 140px;}
+.img-box button,.img-box .imgItem{
+	height: 140px;
+	width: 140px;
+	border: 2px solid #eee;
+	box-sizing: border-box;
+}
+.qrcodeHref{
+	text-decoration: none;text-align: center;
+	padding: 5px 20px; color: #fff; letter-spacing: 2px;
+	width: 120px;background-color: #009688;display: inline-block;margin-top: 5px;
+}
+.layui-form-item .layui-input-inline{width:auto;}
+.layui-upload-choose{display: none;}
+.layui-form-select dl { max-height:160px; }
+</style>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-card">
+		<form class="layui-form" id="saveForm" lay-filter="saveForm">
+			<input type="hidden" name="shopId" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">アカウント</label>
+				<div class="layui-input-inline">
+					<input type="text" name="account"  style="width:280px;" lay-verify="required|alphaDash|max:50" disabled autocomplete="off" class="layui-input">
+				</div>
+				<label class="layui-form-label" style="width: 100px;">店舗名</label>
+				<div class="layui-input-inline" style="width: 100px;">
+					<input type="text" name="shopName"  style="width: 280px;" lay-verify="required|max:50" class="layui-input" />
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">バナー</label>
+				<div class="layui-input-inline img-box">
+					<div class="imgItem">
+						<img id="firstImg" src="" alt="">
+					</div>
+					<button type="button" class="layui-btn" id="selectPto">写真を追加</button>
+					<!-- <button type="button" class="layui-btn" id="uploadPto">上传照片</button> -->
+					<!-- 隐藏图片信息传值输入框 -->
+					<input type="hidden" id="shopFirstImage" name="shopFirstImage" />
+				</div>
+					<label class="layui-form-label">営業切替</label>
+					<div class="layui-input-block">
+						<input type="checkbox" id="shopStatus" name="shopStatus" lay-skin="switch"
+							lay-filter="shopStatus" lay-text="営業|休み">
+					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">住所</label>
+				<div class="layui-input-inline">
+					<input type="text" name="shopAddress" style="width: 280px;" lay-verify="max:500" class="layui-input" />
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label" style="width: 100px;">電話番号</label>
+					<div class="layui-input-inline" style="width: 100px;">
+						<input type="text" name="shopTelephone" style="width: 280px;" lay-verify="max:50" class="layui-input" />
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">お通し</label>
+					<div class="layui-input-inline">
+						<input type="text" name="tableAmount" style="width: 280px;" lay-verify="integer|maxInt:1000000" class="layui-input" />
+					</div>
+				</div>
+				
+				<div class="layui-inline">
+				<label class="layui-form-label" style="width: 100px;">ランチタイム</label>
+                 <div class="layui-input-inline" style="width: 100px;">
+				    <select name="timeLimitStart" id="timeLimitStart" >
+					
+					</select>
+				</div>
+               <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline" style="width: 100px;">
+				    <select name="timeLimit" id="timeLimit" >
+					</select>
+	            </div>
+                </div>
+				<!-- <div class="layui-inline">
+					<label class="layui-form-label">税率</label>
+					<div class="layui-input-inline">
+						<input type="text" name="taxes" lay-verify="integer|minInt:1|maxInt:99" class="layui-input" />
+					</div>
+					<div class="layui-form-mid layui-word-aux">%</div>
+				</div> -->
+			</div>
+				<div class="layui-form-item">
+			
+				<div class="layui-inline">
+					<label class="layui-form-label">日報時間</label>
+					<div class="layui-input-inline" style="width: 100px;">
+				    <select name="timeReport" id="timeReport" >
+					
+					</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">放題制限</label>
+					<div class="layui-input-inline" style="width: 100px;" >
+				   <input type="text" class="layui-input"   name="orderLimit"  lay-verify="required|integer|minInt:0|maxInt:100" autocomplete="off" >
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">呼出会計</label>
+					<div class="layui-input-inline" style="width: 100px;" >
+				   <select name="pushType" lay-select-dict="push_type"   lay-select-title="NONE">
+					
+					</select>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div class="layui-form-item">
+			
+				
+				<div class="layui-inline">
+					<label class="layui-form-label">ゆいポイント</label>
+					<div class="layui-input-inline" style="width: 100px;" >
+				  <input type="text" name="mertCode" lay-verify="max:50" class="layui-input" />
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">outletCode</label>
+					<div class="layui-input-inline" style="width: 100px;" >
+				  <input type="text" name="outletCode" lay-verify="max:50" class="layui-input" />
+					</div>
+				</div>
+					<div class="layui-inline">
+					<label class="layui-form-label">種類</label>
+					<div class="layui-input-inline" style="width: 100px;" >
+				   <select name="orderFoodType" lay-select-dict="category_type"   lay-select-title="NONE">
+					
+					</select>
+					</div>
+			</div>
+			<div class="layui-form-item" >
+			<div class="layui-inline">
+					<label class="layui-form-label">配達料</label>
+					<div class="layui-input-inline">
+						<input type="text" name="deliverAmount" style="width: 100px;" lay-verify="integer|maxInt:10000" class="layui-input" />
+					</div>
+			</div>
+			<div class="layui-inline">
+					<label class="layui-form-label">配達時間</label>
+					<div class="layui-input-inline">
+						<input type="text" name="deliverTime" style="width: 100px;" lay-verify="integer|maxInt:10000" class="layui-input" />
+					</div>
+				</div>
+			<div class="layui-inline">
+					<label class="layui-form-label">最小金額</label>
+					<div class="layui-input-inline" style="width: 100px;" >
+				  <input type="text" name="minAmount" style="width: 100px;" lay-verify="integer|maxInt:10000" class="layui-input" />
+					</div>
+				</div>
+			</div>
+			<!-- <div class="layui-form-item" >
+			<div class="layui-inline">
+					<label class="layui-form-label">決済ID</label>
+					<div class="layui-input-inline">
+						<input type="text" name="payConfigId" style="width: 100px;" lay-verify="max:50" class="layui-input" />
+					</div>
+			</div>
+			<div class="layui-inline">
+					<label class="layui-form-label">アカウント</label>
+					<div class="layui-input-inline">
+						<input type="text" name="payAccount" style="width: 100px;" lay-verify="max:50" class="layui-input" />
+					</div>
+				</div>
+			<div class="layui-inline">
+					<label class="layui-form-label">パスワード</label>
+					<div class="layui-input-inline" style="width: 100px;" >
+				  <input type="text" name="payPassword" style="width: 100px;" lay-verify="max:50" class="layui-input" />
+					</div>
+				</div>
+			</div> -->
+			<div class="layui-form-item" >
+				<label class="layui-form-label">定休時間</label>
+				<div class="layui-input-inline">
+				 <textarea name="restNote"  lay-verify="max:1000"  style="width: 685px;min-height: 60px"  class="layui-textarea"></textarea>
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">宣传语</label>
+				<div class="layui-input-inline">
+					<input type="text" name="shopSlogan"  lay-verify="max:200" style="width: 685px;"  class="layui-input" />
+				</div>
+			</div>  -->
+      <div class="layui-form-item">
+       <label class="layui-form-label layui-textarea-label" style="height:145px"  >配達説明</label>
+        <div class="layui-input-block">
+        <textarea id="deliverNote"  style="display: none;"></textarea>
+        </div>
+      </div>
+			<div class="layui-form-item" style="display:none" id="languageDiv1">
+				<label class="layui-form-label">簡単紹介(日本語)</label>
+				<div class="layui-input-inline">
+				 <textarea name="shopIntroduce"  lay-verify="max:1000"  style="width: 685px;min-height: 60px"  class="layui-textarea"></textarea>
+				</div>
+			</div> 
+			<div class="layui-form-item" style="display:none" id="languageDiv2">
+				<label class="layui-form-label">簡単紹介(中国简体)</label>
+				<div class="layui-input-inline">
+				 <textarea name="shopIntroduceCh"  lay-verify="max:1000"  style="width: 685px;min-height: 60px"  class="layui-textarea"></textarea>
+				</div>
+			</div> 
+			<div class="layui-form-item" style="display:none" id="languageDiv3">
+				<label class="layui-form-label">簡単紹介(中文繁體)</label>
+				<div class="layui-input-inline">
+				 <textarea name="shopIntroduceTc"  lay-verify="max:1000"  style="width: 685px;min-height: 60px;"  class="layui-textarea"></textarea>
+				</div>
+			</div> 
+			<div class="layui-form-item" style="display:none" id="languageDiv4">
+				<label class="layui-form-label">簡単紹介(한국어)</label>
+				<div class="layui-input-inline">
+				 <textarea name="shopIntroduceKro"  lay-verify="max:1000"  style="width: 685px;min-height: 60px"  class="layui-textarea"></textarea>
+				</div>
+			</div> 
+			<div class="layui-form-item" style="display:none" id="languageDiv5">
+				<label class="layui-form-label">簡単紹介(English)</label>
+				<div class="layui-input-inline">
+				 <textarea name="shopIntroduceEng"  lay-verify="max:1000"  style="width: 685px; min-height: 60px"  class="layui-textarea"></textarea>
+				</div>
+			</div> 
+
+		
+
+			<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">QRコード</label>
+				<div class="layui-input-inline">
+					<img style="width: 200px; height: 200px;" id="qrcodeImg" alt="">
+					<a class="down-btn qrcodeHref"  id="qrcodeHref">ダウンロード</a>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">Pick&Deli</label>
+				<div class="layui-input-inline">
+					<img style="width: 200px; height: 200px;" id="takeOutImg" alt="">
+					<a class="down-btn qrcodeHref"  id="takeOutHref">ダウンロード</a>
+				</div>
+			</div>
+			</div>
+			<div class="layui-form-item" style="text-align: center;">
+				<button style="width: 300px;" class="layui-btn" lay-submit="" lay-filter="saveSubmit">保存</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js"></script>
+<script>
+	layui.config({
+		base: '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus: 'lib/webplus', //主入口模块
+	}).use(['form', 'webplus', 'upload','layedit'], function() {
+		var $ = layui.$,
+			form = layui.form,
+			upload = layui.upload,
+			layedit = layui.layedit,
+			webplus = layui.webplus;
+		webplus.initSelect('saveForm');
+		webplus.doAjax('buss/menuCatalog/listLanguage','','','',3,function(data){
+			
+			for(var i=0;i<data.dataList.length;i++){
+				var dict=data.dataList[i];
+				$("#languageDiv"+dict.itemCode).show();
+			} 
+			
+		});
+		var index ;
+	
+			webplus.doAjax('buss/shop/show', '', '', '0', '',
+					function(res) {
+						if (webplus.isEmpty(res.data))
+							return false;
+						var qrcode = res.data.shopQrcode;
+						var shopFirstImage = res.data.shopFirstImage;
+						
+						webplus.setFormData("saveForm",
+							res.data);
+						var imgSrc = webplus.cxt() + "/file/showShopQrcode?fileName=" + qrcode+"&shopId=" + res.data.shopId;
+						var takeOutSrc = webplus.cxt() + "/file/showTakeOutQrcode?shopId=" + res.data.shopId;
+						var firstImgSrc = webplus.cxt() + "/file/showImage?fileName=" + shopFirstImage;
+						$("#firstImg").attr("src", firstImgSrc)
+						$("#shopFirstImage").val(shopFirstImage);
+						$("#qrcodeImg").attr("src", imgSrc);
+						$("#qrcodeHref").attr("href", imgSrc);
+						$("#takeOutImg").attr("src", takeOutSrc);
+						$("#takeOutHref").attr("href", takeOutSrc);
+						
+						var shopStatus=res.data.shopStatus;
+						if(shopStatus=='1'){
+							$("#shopStatus").attr('checked',"checked");
+							
+							
+						}else{
+							$("#shopStatus").removeAttr('checked');
+						}
+						form.render("checkbox"); 
+					    var timeLimit=res.data.timeLimit;
+					    var timeReport=res.data.timeReport;
+					    var timeLimitStart=res.data.timeLimitStart;
+					    var timeHtml='';
+					    var n=6;
+						var html='';
+						var h=11
+						var reportHtml='';
+					    var r=0;
+					    for(var i=0;i<25;i++){
+							   var t=i%2;
+							   var m="00";
+								if(t==0){
+									if(i>0){
+										h=h+1
+									}
+							
+								}else{
+									m="30"
+								}
+								var timeLimitTmp=h+m;
+								var  timeLimitStr=h+":"+m;
+								if(timeLimit==timeLimitTmp){
+									html+='<option value="'+timeLimitTmp+'" selected >'+timeLimitStr+'</option>'
+								}else{
+									html+='<option value="'+timeLimitTmp+'" >'+timeLimitStr+'</option>';
+								}
+								
+							}
+					    for(var i=0;i<37;i++){
+							   var t=i%2;
+							   var m="00";
+								if(t==0){
+									if(i>0){
+										n=n+1
+									}
+							
+								}else{
+									m="30"
+								}
+								var timeLimitTmp=n+m;
+								var  timeLimitStr=n+":"+m;
+								if(timeLimitStart==timeLimitTmp){
+									timeHtml+='<option value="'+timeLimitTmp+'" selected >'+timeLimitStr+'</option>'
+								}else{
+									timeHtml+='<option value="'+timeLimitTmp+'" >'+timeLimitStr+'</option>';
+								}
+								
+							}
+						for(var i=0;i<48;i++){
+						   var t=i%2;
+						   var m="00";
+							if(t==0){
+								if(i>0){
+									r=r+1
+								}
+						
+							}else{
+								m="30"
+							}
+							var  timeReportStr
+							if(r>9){
+								timeReportStr=r+":"+m;
+							}else{
+								timeReportStr="0"+r+":"+m;
+								
+							}
+							
+							if(timeReport==timeReportStr){
+								reportHtml+='<option value="'+timeReportStr+'" selected >'+timeReportStr+'</option>'
+							}else{
+								reportHtml+='<option value="'+timeReportStr+'" >'+timeReportStr+'</option>';
+							}
+							
+						}
+						
+						$("#timeLimitStart").html(timeHtml);
+						$("#timeLimit").html(html);
+						$("#timeReport").html(reportHtml);
+						$("#deliverNote").val(res.data.deliverNote);
+						 form.render('select');
+						 form.render();
+					  index=	 layedit.build('deliverNote', {
+							  height: 150,
+							  tool: [
+								  'strong' //加粗
+								  ,'italic' //斜体
+								  ,'underline' //下划线
+								  ,'del' //删除线
+								  
+								  ,'|' //分割线
+								  
+								  ,'left' //左对齐
+								  ,'center' //居中对齐
+								  ,'right' //右对齐
+								  ]
+							});   
+					});
+
+		
+		// +-----------------------------
+		// 文件上传
+		// +-----------------------------
+		var uploadInst = upload.render({
+			elem: "#selectPto",
+			exts: 'jpg|png|jpeg',
+			data: {
+				token: webplus.getToken(),
+				filePrefix: 'S'
+			},
+			url: webplus.cxt() + '/file/uploadImage',
+			done: function(res) {
+				//如果上传成功
+				if (res.appCode == '1') {
+					//layer.msg('上传成功');
+					var imgSrc = webplus.cxt() +
+						"/file/showImage?fileName=" +
+						res.fileName;
+					$("#firstImg").attr("src", imgSrc);
+					$("#shopFirstImage").val(res.fileName);
+				}else{
+					$("#firstImg").attr("src", "");
+				}
+			},
+			error: function() {
+				layer.msg('Error、タイムオーバー！');
+			}
+		});
+		
+		form.on('submit(saveSubmit)', function(data) {
+
+			var paramData = data.field;
+			var deliverNote =layedit.getContent(index);
+			paramData.deliverNote=deliverNote;
+			webplus.doAjax('buss/shop/update', paramData)
+			return false;
+		});
+		  //监听启用操作
+		  form.on('switch(shopStatus)', function(obj){
+			 
+				  var shopStatus="2";
+		    	   if(obj.elem.checked){
+		    		   shopStatus="1";
+		    	   }
+		    	   
+		    	   var params={};
+		    	   params.shopStatus=shopStatus;
+		    	   webplus.doAjax("buss/shop/updateShopStatus",params,"","","3");
+			 
+				 
+		  });
+	});
+</script>
+</body>
+</html>

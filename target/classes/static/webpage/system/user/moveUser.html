@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html >
+
+<head >
+<title>移动用户</title> 
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css"  media="all"/>
+<link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all"/>
+<link rel="stylesheet"  href="../../../css/common/loader.css" media="all"/>
+<link rel="stylesheet"    href="../../../lib/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css" media="all">
+</head>
+<style>
+html{background:#fff;}
+body{padding:0 0 5px 0!important;}
+body>form>ul{background:#fff;}
+</style>
+<body>
+<form class="layui-form layui-form-pane" action="" id="saveForm">
+    <ul id="ztree" class="ztree"></ul>
+    <input type="hidden" id="ids" name="ids"/>
+    <input type="hidden" id="deptId" name="deptId" />
+   <div class="layui-form-item" style="display:none;">
+    <button class="layui-btn" lay-submit="" lay-filter="saveSubmit">提交</button>
+  </div>
+</form>
+ <script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+   <script type="text/javascript" src="../../../lib/jQuery-2.2.0.min.js" ></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="../../../lib/ztree/js/jquery.ztree.exedit.js"></script>
+	<script>
+
+	layui.config({
+		base :  '../../../layuiadmin/' //静态资源所在路径
+	}).extend({
+		webplus : 'lib/webplus' //主入口模块
+	}).use([ 'table', 'form','webplus' ], function() {
+		var $ = layui.$, 
+		form = layui.form, 
+		webplus=layui.webplus;
+		$("#ids").val(webplus.getUrlType().ids);
+		var setting = {
+			check: {
+				enable: false
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {
+				onClick: zTreeOnClick//节点点击事件
+			}
+		};
+		function zTreeOnClick(event, treeId, treeNode) {
+			var confirmMsg="你确认把选择的用户移动到当前组织机构["+treeNode.name+"]下面吗？";
+			var params={};
+			params.ids=$("#ids").val();
+			params.deptId=treeNode.id;
+			webplus.doAjax('system/user/saveMoveUser',params,confirmMsg,'','1');
+		};
+		
+		webplus.initTree("system/dept/loadDeptTree",setting)
+		
+	});
+	</script>
+
+<link rel="stylesheet"    th:href="@{/css/common/openshow.css}" media="all"/>
+
+</body>
+</html>

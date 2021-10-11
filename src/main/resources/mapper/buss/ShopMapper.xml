@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ims.buss.mapper.ShopMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ims.buss.model.Shop">
+        <id column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName" />
+        <result column="shop_first_image" property="shopFirstImage" />
+        <result column="shop_address" property="shopAddress" />
+        <result column="shop_telephone" property="shopTelephone" />
+        <result column="table_amount" property="tableAmount" />
+        <result column="taxes" property="taxes" />
+        <result column="shop_qrcode" property="shopQrcode" />
+        <result column="language" property="language" />
+        <result column="time_limit" property="timeLimit" />
+        <result column="whether_remove" property="whetherRemove" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="shop_slogan" property="shopSlogan" />
+        <result column="shop_introduce" property="shopIntroduce" />
+        <result column="shop_introduce_ch" property="shopIntroduceCh" />
+        <result column="shop_introduce_tc" property="shopIntroduceTc" />
+        <result column="shop_introduce_kro" property="shopIntroduceKro" />
+        <result column="shop_introduce_eng" property="shopIntroduceEng" />
+        <result column="time_report" property="timeReport" />
+        <result column="time_limit_start" property="timeLimitStart" />
+        <result column="order_limit" property="orderLimit" />
+        <result column="push_type" property="pushType" />
+        <result column="mert_code" property="mertCode" />
+        <result column="outlet_code" property="outletCode" />
+        <result column="order_food_type" property="orderFoodType" />
+        <result column="deliver_amount" property="deliverAmount" />
+        <result column="deliver_time" property="deliverTime" />
+        <result column="min_amount" property="minAmount" />
+        <result column="rest_note" property="restNote" />
+        <result column="shop_status" property="shopStatus" />
+        <result column="deliver_note" property="deliverNote" />
+        <result column="pay_config_id" property="payConfigId" />
+        <result column="pay_account" property="payAccount" />
+        <result column="pay_password" property="payPassword" />
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    shop_id AS shopId,shop_name AS shopName,shop_first_image AS shopFirstImage,shop_address AS shopAddress,shop_telephone AS shopTelephone,table_amount AS tableAmount,taxes AS taxes,shop_qrcode AS shopQrcode,language AS language,time_limit AS timeLimit,whether_remove AS whetherRemove,create_time AS createTime,create_by AS createBy,update_time AS updateTime,update_by AS updateBy,shop_slogan AS shopSlogan,shop_introduce AS shopIntroduce,shop_introduce_ch AS shopIntroduceCh,shop_introduce_tc AS shopIntroduceTc,shop_introduce_kro AS shopIntroduceKro,shop_introduce_eng AS shopIntroduceEng,time_report AS timeReport,time_limit_start AS timeLimitStart,order_limit AS orderLimit,push_type AS pushType,mert_code AS mertCode,outlet_code AS outletCode,order_food_type AS orderFoodType,deliver_amount AS deliverAmount,deliver_time AS deliverTime,min_amount AS minAmount,rest_note AS restNote,shop_status AS shopStatus,deliver_note AS deliverNote,pay_config_id AS payConfigId,pay_account AS payAccount,pay_password AS payPassword
+    </sql>
+
+
+    <sql id="Common_Column_List">
+    a.shop_id AS shopId,a.shop_name AS shopName,a.shop_first_image AS shopFirstImage,a.shop_address AS shopAddress,a.shop_telephone AS shopTelephone,a.table_amount AS tableAmount,a.taxes AS taxes,a.shop_qrcode AS shopQrcode,a.language AS language,a.time_limit AS timeLimit,a.whether_remove AS whetherRemove,a.create_time AS createTime,a.create_by AS createBy,a.update_time AS updateTime,update_by AS updateBy,a.shop_slogan AS shopSlogan,a.shop_introduce AS shopIntroduce,a.shop_introduce_ch AS shopIntroduceCh,a.shop_introduce_tc AS shopIntroduceTc,a.shop_introduce_kro AS shopIntroduceKro,a.shop_introduce_eng AS shopIntroduceEng,a.time_report AS timeReport,a.time_limit_start AS timeLimitStart,a.order_limit AS orderLimit,a.push_type AS pushType,a.mert_code AS mertCode,a.outlet_code AS outletCode
+     ,a.order_food_type AS orderFoodType,a.deliver_amount AS deliverAmount,a.deliver_time AS deliverTime,a.min_amount AS minAmount,a.rest_note AS restNote,a.shop_status AS shopStatus,a.deliver_note AS deliverNote
+    </sql>
+
+<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Map" resultType="com.ims.buss.model.Shop">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop
+		<where>
+		    <include refid="equal" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Map" resultType="com.ims.buss.model.Shop" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop
+		<where>
+		    <include refid="equal" />
+		</where>	
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>		
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="like" parameterType="Map" resultType="com.ims.buss.model.Shop">
+		SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配) -->
+	<select id="likePage" parameterType="Map" resultType="com.ims.buss.model.Shop" useCache="false">
+	    SELECT
+			<include refid="Base_Column_List" />	
+		FROM t_shop
+		<where>
+		    <include refid="like" />
+		</where>
+		<if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>			
+	</select>
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Map" resultType="String">
+		SELECT
+			${_expr}
+		FROM t_shop
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="shopId != null and shopId != ''">
+             AND shop_id = #{shopId}  <!-- 店铺编号 -->
+		</if>
+        <if test="shopName != null and shopName != ''">
+             AND shop_name = #{shopName}  <!-- 店铺名称 -->
+		</if>
+        <if test="shopFirstImage != null and shopFirstImage != ''">
+             AND shop_first_image = #{shopFirstImage}  <!-- 店铺首图 -->
+		</if>
+        <if test="shopAddress != null and shopAddress != ''">
+             AND shop_address = #{shopAddress}  <!-- 店铺地址 -->
+		</if>
+        <if test="shopTelephone != null and shopTelephone != ''">
+             AND shop_telephone = #{shopTelephone}  <!-- 店铺电话 -->
+		</if>
+        <if test="tableAmount != null ">
+             AND table_amount = #{tableAmount}  <!-- 桌位费 -->
+		</if>
+        <if test="taxes != null ">
+             AND taxes = #{taxes}  <!-- 税金 -->
+		</if>
+        <if test="shopQrcode != null and shopQrcode != ''">
+             AND shop_qrcode = #{shopQrcode}  <!-- 二维码地址 -->
+		</if>
+        <if test="language != null and language != ''">
+             AND language = #{language}  <!-- 语言 -->
+		</if>
+        <if test="timeLimit != null and timeLimit != ''">
+             AND time_limit = #{timeLimit}  <!-- 时间分割 -->
+		</if>
+        <if test="whetherRemove != null and whetherRemove != ''">
+             AND whether_remove = #{whetherRemove}  <!-- 是否删除 0否1是 -->
+		</if>
+        <if test="createTime != null ">
+             AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+             AND create_by = #{createBy}  <!-- 创建人ID -->
+		</if>
+        <if test="updateTime != null ">
+             AND update_time = #{updateTime}  <!-- 修改时间 -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+             AND update_by = #{updateBy}  <!-- 修改用户编号 -->
+		</if>
+        <if test="shopSlogan != null and shopSlogan != ''">
+             AND shop_slogan = #{shopSlogan}  <!-- 店铺宣传语 -->
+		</if>
+        <if test="shopIntroduce != null and shopIntroduce != ''">
+             AND shop_introduce = #{shopIntroduce}  <!-- 店铺介绍（日语） -->
+		</if>
+        <if test="shopIntroduceCh != null and shopIntroduceCh != ''">
+             AND shop_introduce_ch = #{shopIntroduceCh}  <!-- 店铺介绍(简体) -->
+		</if>
+        <if test="shopIntroduceTc != null and shopIntroduceTc != ''">
+             AND shop_introduce_tc = #{shopIntroduceTc}  <!-- 店铺介绍（繁体） -->
+		</if>
+        <if test="shopIntroduceKro != null and shopIntroduceKro != ''">
+             AND shop_introduce_kro = #{shopIntroduceKro}  <!-- 店铺介绍(韩文) -->
+		</if>
+        <if test="shopIntroduceEng != null and shopIntroduceEng != ''">
+             AND shop_introduce_eng = #{shopIntroduceEng}  <!-- 店铺介绍(英文) -->
+		</if>
+        <if test="timeReport != null and timeReport != ''">
+             AND time_report = #{timeReport}  <!-- 报表统计时间段00:00 -->
+		</if>
+		<if test="timeLimitStart != null and timeLimitStart != ''">
+             AND time_limit_start = #{timeLimitStart}  <!-- 午餐起始时间 -->
+		</if>
+		 <if test="orderLimit != null ">
+             AND order_limit = #{orderLimit}  <!-- 下单时间间隔 -->
+		</if>
+		<if test="pushType != null and pushType != ''">
+             AND push_type = #{pushType}  <!-- 服务推送类型0所有1app2打印机 -->
+		</if>
+		<if test="mertCode != null and mertCode != ''">
+		      AND mert_code LIKE '%${mertCode}%'  <!-- 积分店铺编码 -->
+		</if>
+		<if test="outletCode != null and outletCode != ''">
+             AND outlet_code = #{outletCode}  <!-- 分店编码 -->
+		</if>
+		<if test="shopStatus != null and shopStatus != ''">
+             AND shop_status = #{shopStatus}  <!-- 店铺状态1营业2停业 -->
+		</if>
+    </sql>
+
+
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="shopId != null and shopId != ''">
+		      AND shop_id LIKE '%${shopId}%'  <!-- 店铺编号 -->
+		</if>
+        <if test="shopName != null and shopName != ''">
+		      AND shop_name LIKE '%${shopName}%'  <!-- 店铺名称 -->
+		</if>
+        <if test="shopFirstImage != null and shopFirstImage != ''">
+		      AND shop_first_image LIKE '%${shopFirstImage}%'  <!-- 店铺首图 -->
+		</if>
+        <if test="shopAddress != null and shopAddress != ''">
+		      AND shop_address LIKE '%${shopAddress}%'  <!-- 店铺地址 -->
+		</if>
+        <if test="shopTelephone != null and shopTelephone != ''">
+		      AND shop_telephone LIKE '%${shopTelephone}%'  <!-- 店铺电话 -->
+		</if>
+        <if test="shopQrcode != null and shopQrcode != ''">
+		      AND shop_qrcode LIKE '%${shopQrcode}%'  <!-- 二维码地址 -->
+		</if>
+        <if test="language != null and language != ''">
+		      AND language LIKE '%${language}%'  <!-- 语言 -->
+		</if>
+        <if test="timeLimit != null and timeLimit != ''">
+		      AND time_limit LIKE '%${timeLimit}%'  <!-- 时间分割 -->
+		</if>
+        <if test="whetherRemove != null and whetherRemove != ''">
+		      AND whether_remove LIKE '%${whetherRemove}%'  <!-- 是否删除 0否1是 -->
+		</if>
+        <if test="createBy != null and createBy != ''">
+		      AND create_by LIKE '%${createBy}%'  <!-- 创建人ID -->
+		</if>
+        <if test="updateBy != null and updateBy != ''">
+		      AND update_by LIKE '%${updateBy}%'  <!-- 修改用户编号 -->
+		</if>
+        <if test="shopSlogan != null and shopSlogan != ''">
+		      AND shop_slogan LIKE '%${shopSlogan}%'  <!-- 店铺宣传语 -->
+		</if>
+        <if test="shopIntroduce != null and shopIntroduce != ''">
+		      AND shop_introduce LIKE '%${shopIntroduce}%'  <!-- 店铺介绍（日语） -->
+		</if>
+        <if test="shopIntroduceCh != null and shopIntroduceCh != ''">
+		      AND shop_introduce_ch LIKE '%${shopIntroduceCh}%'  <!-- 店铺介绍(简体) -->
+		</if>
+        <if test="shopIntroduceTc != null and shopIntroduceTc != ''">
+		      AND shop_introduce_tc LIKE '%${shopIntroduceTc}%'  <!-- 店铺介绍（繁体） -->
+		</if>
+        <if test="shopIntroduceKro != null and shopIntroduceKro != ''">
+		      AND shop_introduce_kro LIKE '%${shopIntroduceKro}%'  <!-- 店铺介绍(韩文) -->
+		</if>
+        <if test="shopIntroduceEng != null and shopIntroduceEng != ''">
+		      AND shop_introduce_eng LIKE '%${shopIntroduceEng}%'  <!-- 店铺介绍(英文) -->
+		</if>
+        <if test="timeReport != null and timeReport != ''">
+		      AND time_report LIKE '%${timeReport}%'  <!-- 报表统计时间段00:00 -->
+		</if>
+		<if test="timeLimitStart != null and timeLimitStart != ''">
+             AND time_limit_start = #{timeLimitStart}  <!-- 午餐起始时间 -->
+		</if>
+		 <if test="orderLimit != null ">
+             AND order_limit = #{orderLimit}  <!-- 下单时间间隔 -->
+		</if>
+		<if test="pushType != null and pushType != ''">
+             AND push_type = #{pushType}  <!-- 服务推送类型0所有1app2打印机 -->
+		</if>
+		<if test="mertCode != null and mertCode != ''">
+		      AND mert_code LIKE '%${mertCode}%'  <!-- 积分店铺编码 -->
+		</if>
+		<if test="outletCode != null and outletCode != ''">
+             AND outlet_code = #{outletCode}  <!-- 分店编码 -->
+		</if>
+		 <if test="orderFoodType != null and orderFoodType != ''">
+             AND order_food_type = #{orderFoodType}  <!-- 订餐类型0所有1配送2外带 -->
+		</if>
+		<if test="shopStatus != null and shopStatus != ''">
+             AND shop_status = #{shopStatus}  <!-- 店铺状态1营业2停业 -->
+		</if>
+    </sql>
+    <!-- 查询店铺 -->
+    <select id="listShopPage" parameterType="Map" resultType="com.ims.buss.model.Shop" useCache="false">
+    SELECT <include refid="Common_Column_List" />,IFNULL(c.whetherCoupon,'0') as whetherCoupon FROM t_shop a 
+    LEFT  JOIN (SELECT (CASE WHEN count(1)>0 THEN '1' ELSE '0' END) AS whetherCoupon ,b.shop_id FROM t_shop_coupon b  GROUP BY b.shop_id ) c 
+     ON a.shop_id=c.shop_id 
+     <where>
+        IFNULL(a.mert_code,'')!=''
+        <if test="shopName != null and shopName != ''">
+		      AND a.shop_name LIKE '%${shopName}%'  <!-- 店铺名称 -->
+		</if>
+		 <if test="whetherRemove != null and whetherRemove != ''">
+             AND a.whether_remove = #{whetherRemove}  <!-- 是否删除 0否1是 -->
+		</if>
+		 <if test="shopTelephone != null and shopTelephone != ''">
+		      AND a.shop_telephone LIKE '%${shopTelephone}%'  <!-- 店铺电话 -->
+		</if>
+		 <if test="whetherCoupon != null and whetherCoupon != ''">
+		      AND IFNULL(c.whetherCoupon,'0')=#{whetherCoupon}
+		</if>
+		<if test="orderFoodType != null and orderFoodType != ''">
+             AND order_food_type = #{orderFoodType}  <!-- 订餐类型0所有1配送2外带 -->
+		</if>
+		<if test="shopStatus != null and shopStatus != ''">
+             AND a.shop_status = #{shopStatus}  <!-- 店铺状态1营业2停业 -->
+		</if>
+     </where>
+     <if test="_order != null and _order != ''">
+		     ORDER BY ${_order}
+		</if>	
+    </select>
+</mapper>
