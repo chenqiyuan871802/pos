@@ -8,3 +8,7 @@
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/1011/231639_b36bd922_436510.png "后台订单统计.png")
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/1011/231659_4820c509_436510.png "店铺详情功能.png")
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/1011/231718_9d3581ab_436510.png "店铺管理.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2021/1011/232334_4cbb0084_436510.png "h5点餐页面.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2021/1011/232403_e2191e13_436510.png "h5菜品详情页面.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2021/1011/232435_7266b78a_436510.png "h5多语言选择功能.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2021/1011/232536_c754b353_436510.png "订单页面.png")
